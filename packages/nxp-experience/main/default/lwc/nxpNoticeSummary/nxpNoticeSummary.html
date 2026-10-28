@@ -1,0 +1,141 @@
+<template>
+    <template lwc:if={loading}>
+        <lightning-spinner alternative-text="Loading notice" size="small"></lightning-spinner>
+    </template>
+    <template lwc:if={detail}>
+        <div class="wrap">
+            <section class="card header" aria-label="Notice summary">
+                <div class="tiles">
+                    <div class={dueClass}>
+                        <span class="tile-value">{daysLabel}</span>
+                        <span class="tile-caption">{daysCaption}</span>
+                    </div>
+                    <c-nxp-fit-badge score={notice.Fit_Score__c}></c-nxp-fit-badge>
+                </div>
+                <dl class="facts">
+                    <div>
+                        <dt>Response due</dt>
+                        <dd>{dueText}</dd>
+                    </div>
+                    <div>
+                        <dt>Estimated value</dt>
+                        <dd>{valueText}</dd>
+                    </div>
+                    <div>
+                        <dt>Set-aside</dt>
+                        <dd>{notice.Set_Aside__c}</dd>
+                    </div>
+                    <div>
+                        <dt>NAICS / PSC</dt>
+                        <dd>{notice.NAICS_Code__c} / {notice.PSC_Code__c}</dd>
+                    </div>
+                    <div>
+                        <dt>Sources</dt>
+                        <dd>{sourcesText}</dd>
+                    </div>
+                </dl>
+                <div class="actions">
+                    <lightning-button variant="brand" label={pushLabel} onclick={handlePush}></lightning-button>
+                    <lightning-button label={followLabel} onclick={handleFollow}></lightning-button>
+                    <lightning-button
+                        label="Open on SAM.gov"
+                        icon-name="utility:new_window"
+                        onclick={handleOpenSam}
+                    ></lightning-button>
+                </div>
+            </section>
+
+            <div class="columns">
+                <section class="card summary" aria-label="AI summary">
+                    <div class="card-head">
+                        <h2 class="slds-text-heading_small">Summary</h2>
+                        <template lwc:if={summaryText}
+                            ><span class="ai-label">AI draft · check against the solicitation</span></template
+                        >
+                    </div>
+                    <template lwc:if={summaryText}>
+                        <lightning-formatted-text class="text" value={summaryText} linkify></lightning-formatted-text>
+                    </template>
+                    <template lwc:else>
+                        <p class="slds-text-color_weak">{summaryNote}</p>
+                    </template>
+                    <template lwc:if={descriptionText}>
+                        <details class="slds-m-top_medium">
+                            <summary>Full description</summary>
+                            <lightning-formatted-text
+                                class="text"
+                                value={descriptionText}
+                                linkify
+                            ></lightning-formatted-text>
+                        </details>
+                    </template>
+                </section>
+
+                <div class="side">
+                    <template lwc:if={hasBreakdown}>
+                        <section class="card" aria-label="Fit breakdown">
+                            <h2 class="slds-text-heading_small">Why it scores {notice.Fit_Score__c}</h2>
+                            <template for:each={breakdown} for:item="r">
+                                <div key={r.key} class="rule" title={r.reason}>
+                                    <div class="rule-head">
+                                        <span>{r.rule}</span><span class="rule-score">{r.score}</span>
+                                    </div>
+                                    <div class="rule-track"><div class="rule-fill" style={r.style}></div></div>
+                                    <div class="rule-reason">{r.reason}</div>
+                                </div>
+                            </template>
+                        </section>
+                    </template>
+
+                    <section class="card" aria-label="Version history">
+                        <h2 class="slds-text-heading_small">Version history</h2>
+                        <ol class="versions">
+                            <template for:each={versions} for:item="v">
+                                <li key={v.id}>
+                                    <span class="dot" aria-hidden="true"></span>
+                                    <div>
+                                        <div class="v-name">{v.name} <span class="v-when">· {v.when}</span></div>
+                                        <lightning-formatted-text
+                                            class="v-what"
+                                            value={v.what}
+                                        ></lightning-formatted-text>
+                                    </div>
+                                </li>
+                            </template>
+                        </ol>
+                    </section>
+
+                    <template lwc:if={hasContacts}>
+                        <section class="card" aria-label="Contacts">
+                            <h2 class="slds-text-heading_small">Points of contact</h2>
+                            <ul>
+                                <template for:each={contacts} for:item="c">
+                                    <li key={c.Id} class="contact">
+                                        <strong>{c.Name}</strong> · {c.Role__c}
+                                        <div>
+                                            <lightning-formatted-email value={c.Email__c}></lightning-formatted-email>
+                                            <lightning-formatted-phone value={c.Phone__c}></lightning-formatted-phone>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </section>
+                    </template>
+
+                    <template lwc:if={hasPushLogs}>
+                        <section class="card" aria-label="Push history">
+                            <h2 class="slds-text-heading_small">Push history</h2>
+                            <ul>
+                                <template for:each={pushLogs} for:item="l">
+                                    <li key={l.Id} class="contact">
+                                        {l.when} · {l.Mode__c} · <strong>{l.Status__c}</strong>
+                                    </li>
+                                </template>
+                            </ul>
+                        </section>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

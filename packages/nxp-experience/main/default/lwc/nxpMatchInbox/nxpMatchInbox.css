@@ -1,0 +1,162 @@
+:host {
+    display: block;
+}
+.page {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1rem;
+}
+.panel {
+    background: #fff;
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+.searches {
+    flex: 1 1 15rem;
+    max-width: 22rem;
+}
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+}
+.search-list button {
+    width: 100%;
+    min-height: 2.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.625rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+.search-row_active {
+    background: #e3f0ff !important;
+}
+.search-text {
+    display: flex;
+    flex-direction: column;
+}
+.search-name {
+    font-weight: 600;
+}
+.search-freq {
+    font-size: 0.75rem;
+    color: #5c6b80;
+}
+.count {
+    background: #0b5cab;
+    color: #fff;
+    border-radius: 0.625rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.matches {
+    flex: 999 1 35rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+}
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+.toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+.card {
+    background: #fff;
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.card-select {
+    padding-top: 1.25rem;
+}
+.card-body {
+    flex: 1 1 22rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+.chip {
+    background: #eef1f6;
+    color: #2e3a4d;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.chip_light {
+    font-weight: 400;
+}
+.chip_warn {
+    background: #fff1e0;
+    color: #8a4b00;
+}
+.title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+.meta,
+.why {
+    color: #5c6b80;
+}
+.why {
+    font-size: 0.75rem;
+}
+.why strong,
+.due {
+    color: #181818;
+}
+.due_soon {
+    color: #8a4b00;
+}
+.summary {
+    line-height: 1.45;
+}
+.card-actions {
+    flex: 0 0 auto;
+    min-width: 10rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.secondary {
+    display: flex;
+    gap: 0.5rem;
+}
+.empty {
+    background: #fff;
+    border: 1px dashed #c9c9c9;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+}

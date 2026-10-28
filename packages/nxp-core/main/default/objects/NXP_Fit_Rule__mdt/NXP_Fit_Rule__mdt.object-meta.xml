@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Weighted fit-score rule. Active weights should sum to 100.</description>
+    <label>NXP Fit Rule</label>
+    <pluralLabel>NXP Fit Rules</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

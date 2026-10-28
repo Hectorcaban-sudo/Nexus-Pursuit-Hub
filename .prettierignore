@@ -1,0 +1,6 @@
+**/staticresources/**
+.sfdx
+.sf
+node_modules
+coverage
+docs/diagrams/*.jpg

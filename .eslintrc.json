@@ -1,0 +1,10 @@
+{
+    "extends": ["@salesforce/eslint-config-lwc/recommended"],
+    "overrides": [
+        {
+            "files": ["**/__tests__/**/*.js", "jest-mocks/**/*.js"],
+            "env": { "jest": true, "node": true },
+            "rules": { "@lwc/lwc/no-async-operation": "off" }
+        }
+    ]
+}

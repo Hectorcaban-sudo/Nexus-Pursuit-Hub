@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "salesforce.salesforcedx-vscode-expanded",
+        "salesforce.sfdx-code-analyzer-vscode",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "redhat.vscode-xml",
+        "eamodio.gitlens"
+    ]
+}

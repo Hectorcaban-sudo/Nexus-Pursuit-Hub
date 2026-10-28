@@ -1,0 +1,310 @@
+<template>
+    <div class="page">
+        <aside class="panel mine" aria-label="My searches">
+            <div class="panel-head">
+                <h2 class="slds-text-heading_small">My searches</h2>
+                <lightning-button-icon
+                    icon-name="utility:add"
+                    alternative-text="New search"
+                    title="New search"
+                    onclick={handleNew}
+                ></lightning-button-icon>
+            </div>
+            <ul>
+                <template for:each={searchRows} for:item="s">
+                    <li key={s.id} class={s.rowClass}>
+                        <button class="my-open" data-id={s.id} onclick={handleEdit}>
+                            <span class="my-name">{s.name}</span>
+                            <span class="my-meta">{s.frequency} · {s.visibility}</span>
+                        </button>
+                        <template lwc:if={s.canDelete}>
+                            <lightning-button-icon
+                                icon-name="utility:delete"
+                                variant="bare"
+                                alternative-text="Delete search"
+                                title="Delete search"
+                                data-id={s.id}
+                                onclick={handleDelete}
+                            ></lightning-button-icon>
+                        </template>
+                    </li>
+                </template>
+            </ul>
+        </aside>
+
+        <div class="main">
+            <div class="header">
+                <div class="name">
+                    <span class="slds-text-title_caps">{title}</span>
+                    <lightning-input
+                        label="Search name"
+                        data-field="name"
+                        data-preview="false"
+                        value={form.name}
+                        onchange={handleField}
+                        required
+                    ></lightning-input>
+                </div>
+                <lightning-button
+                    variant="brand"
+                    label="Save search"
+                    onclick={handleSave}
+                    disabled={saving}
+                ></lightning-button>
+            </div>
+
+            <div class="panel describe">
+                <lightning-icon icon-name="utility:sparkles" size="x-small" alternative-text=""></lightning-icon>
+                <lightning-input
+                    class="describe-input"
+                    label="Describe it"
+                    placeholder="e.g. DHS and CBP cyber notices, small business or 8(a), over $5M, due in the next 45 days"
+                    value={nlText}
+                    onchange={handleNl}
+                ></lightning-input>
+                <lightning-button label="Draft criteria" onclick={handleDraft} disabled={drafting}></lightning-button>
+                <p class="hint">Fills the criteria below. Nothing is saved until you click Save search.</p>
+            </div>
+
+            <div class="columns">
+                <section class="panel criteria" aria-label="Criteria">
+                    <h2 class="slds-text-heading_small">Criteria</h2>
+                    <lightning-input
+                        label="Keywords"
+                        data-field="keywords"
+                        value={form.keywords}
+                        onchange={handleField}
+                        field-level-help="Use AND, OR, NOT, parentheses, quoted exact phrases and prefix* (for example: cyber AND (zero trust OR ZTA))"
+                    ></lightning-input>
+                    <lightning-checkbox-group
+                        label="Search in"
+                        data-field="searchIn"
+                        options={searchInOptions}
+                        value={form.searchIn}
+                        onchange={handleField}
+                    ></lightning-checkbox-group>
+                    <lightning-input
+                        label="Buyer (agencies or offices)"
+                        data-field="agencies"
+                        value={form.agencies}
+                        onchange={handleField}
+                        placeholder="Homeland Security, Customs and Border Protection"
+                    ></lightning-input>
+                    <lightning-input
+                        label="Exclude buyers"
+                        data-field="excludeAgencies"
+                        value={form.excludeAgencies}
+                        onchange={handleField}
+                    ></lightning-input>
+                    <div class="pair">
+                        <lightning-input
+                            label="NAICS"
+                            data-field="naics"
+                            value={form.naics}
+                            onchange={handleField}
+                            placeholder="541512, 5415*"
+                        ></lightning-input>
+                        <lightning-input
+                            label="PSC"
+                            data-field="psc"
+                            value={form.psc}
+                            onchange={handleField}
+                            placeholder="DA01, D3*"
+                        ></lightning-input>
+                    </div>
+                    <lightning-checkbox-group
+                        label="Set-aside"
+                        data-field="setAsides"
+                        options={setAsideOptions}
+                        value={form.setAsides}
+                        onchange={handleField}
+                    ></lightning-checkbox-group>
+                    <lightning-checkbox-group
+                        label="Notice type"
+                        data-field="noticeTypes"
+                        options={typeOptions}
+                        value={form.noticeTypes}
+                        onchange={handleField}
+                    ></lightning-checkbox-group>
+                    <div class="pair">
+                        <lightning-input
+                            type="number"
+                            formatter="currency"
+                            step="1"
+                            label="Minimum value"
+                            data-field="minValue"
+                            value={form.minValue}
+                            onchange={handleField}
+                        ></lightning-input>
+                        <lightning-input
+                            type="number"
+                            formatter="currency"
+                            step="1"
+                            label="Maximum value"
+                            data-field="maxValue"
+                            value={form.maxValue}
+                            onchange={handleField}
+                        ></lightning-input>
+                    </div>
+                    <div class="pair">
+                        <lightning-input
+                            type="number"
+                            label="Due within (days)"
+                            data-field="dueWithinDays"
+                            value={form.dueWithinDays}
+                            onchange={handleField}
+                        ></lightning-input>
+                        <lightning-input
+                            type="number"
+                            label="Posted within (days)"
+                            data-field="postedWithinDays"
+                            value={form.postedWithinDays}
+                            onchange={handleField}
+                        ></lightning-input>
+                    </div>
+                    <div class="pair">
+                        <lightning-input
+                            type="number"
+                            label="Minimum fit score"
+                            min="0"
+                            max="100"
+                            data-field="minFit"
+                            value={form.minFit}
+                            onchange={handleField}
+                        ></lightning-input>
+                        <lightning-input
+                            label="Place of performance"
+                            data-field="places"
+                            value={form.places}
+                            onchange={handleField}
+                            placeholder="VA, DC"
+                        ></lightning-input>
+                    </div>
+                </section>
+
+                <section class="preview-col" aria-label="Live preview">
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h2 class="slds-text-heading_small">Live preview</h2>
+                            <template lwc:if={previewing}
+                                ><span class="slds-text-body_small slds-text-color_weak">Updating…</span></template
+                            >
+                        </div>
+                        <template lwc:if={previewError}>
+                            <div class="error" role="alert">{previewError}</div>
+                        </template>
+                        <p class="count">
+                            <span class="count-number">{countLabel}</span> active notices match now · about
+                            {weeklyAverage} a week over the last 13 weeks
+                        </p>
+                        <div class="bars" role="img" aria-label="Matches per week over the last 13 weeks">
+                            <template for:each={bars} for:item="b">
+                                <div key={b.key} class="bar" style={b.style} title={b.title}></div>
+                            </template>
+                        </div>
+                        <div class="bar-axis"><span>13 weeks ago</span><span>This week</span></div>
+                    </div>
+                    <div class="panel top">
+                        <h2 class="slds-text-heading_small">Top matches</h2>
+                        <template lwc:if={hasTop}>
+                            <ul>
+                                <template for:each={topRows} for:item="r">
+                                    <li key={r.id} class="top-row">
+                                        <c-nxp-fit-badge score={r.fit} size="small"></c-nxp-fit-badge>
+                                        <div class="top-text">
+                                            <a href="#" data-id={r.id} onclick={handleOpenNotice}>{r.title}</a>
+                                            <div class="top-meta">{r.meta}</div>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </template>
+                        <template lwc:else>
+                            <p class="slds-text-color_weak slds-m-top_small">
+                                No active notices match yet. Loosen a filter or check back after the next feed run.
+                            </p>
+                        </template>
+                    </div>
+                </section>
+            </div>
+
+            <section class="panel settings" aria-label="Alert and push settings">
+                <lightning-combobox
+                    label="Visibility"
+                    data-field="visibility"
+                    data-preview="false"
+                    value={form.visibility}
+                    options={visibilityOptions}
+                    onchange={handleField}
+                ></lightning-combobox>
+                <template lwc:if={showTeamGroup}>
+                    <lightning-input
+                        label="Team public group (API name)"
+                        data-field="teamGroup"
+                        data-preview="false"
+                        value={form.teamGroup}
+                        onchange={handleField}
+                    ></lightning-input>
+                </template>
+                <lightning-combobox
+                    label="Alerts"
+                    data-field="frequency"
+                    data-preview="false"
+                    value={form.frequency}
+                    options={frequencyOptions}
+                    onchange={handleField}
+                ></lightning-combobox>
+                <lightning-checkbox-group
+                    class="channels"
+                    label="Channels"
+                    data-field="channels"
+                    data-preview="false"
+                    options={channelOptions}
+                    value={form.channels}
+                    onchange={handleField}
+                ></lightning-checkbox-group>
+                <lightning-input
+                    type="toggle"
+                    label="Alert on changes"
+                    data-field="alertOnChanges"
+                    data-preview="false"
+                    checked={form.alertOnChanges}
+                    onchange={handleField}
+                    message-toggle-active=""
+                    message-toggle-inactive=""
+                ></lightning-input>
+                <lightning-combobox
+                    label="Auto-push to TechnoMile"
+                    data-field="autoPush"
+                    data-preview="false"
+                    value={form.autoPush}
+                    options={autoPushOptions}
+                    onchange={handleField}
+                    field-level-help="Power Users only"
+                ></lightning-combobox>
+                <template lwc:if={showMinFit}>
+                    <lightning-input
+                        type="number"
+                        label="Auto-push at fit"
+                        min="0"
+                        max="100"
+                        data-field="autoPushMinFit"
+                        data-preview="false"
+                        value={form.autoPushMinFit}
+                        onchange={handleField}
+                    ></lightning-input>
+                </template>
+                <lightning-input
+                    type="toggle"
+                    label="Active"
+                    data-field="active"
+                    data-preview="false"
+                    checked={form.active}
+                    onchange={handleField}
+                    message-toggle-active=""
+                    message-toggle-inactive=""
+                ></lightning-input>
+            </section>
+        </div>
+    </div>
+</template>

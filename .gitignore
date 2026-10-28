@@ -1,0 +1,18 @@
+# Salesforce
+.sfdx/
+.sf/*
+!.sf/config.json
+.localdevserver/
+deploy-options.json
+# Node
+node_modules/
+coverage/
+# OS / editors
+.DS_Store
+*.log
+.idea/
+# Secrets: never commit
+*.key
+*.pem
+server.key
+env-config/**/secrets*

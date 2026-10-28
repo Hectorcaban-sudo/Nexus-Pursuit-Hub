@@ -1,0 +1,8 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[apex]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+    "search.exclude": { "**/node_modules": true, ".sfdx": true, ".sf": true, "coverage": true },
+    "salesforcedx-vscode-core.show-cli-success-msg": false,
+    "salesforcedx-vscode-apex.enable-semantic-errors": true
+}

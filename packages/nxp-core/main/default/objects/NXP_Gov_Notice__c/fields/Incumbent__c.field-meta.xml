@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Incumbent__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Incumbent</label>
+    <referenceTo>NXP_Gov_Vendor__c</referenceTo>
+    <relationshipLabel>Incumbent On</relationshipLabel>
+    <relationshipName>Incumbent_Notices</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

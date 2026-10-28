@@ -1,0 +1,19 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Saved search matching and alerts\n";
+  rankdir=LR;
+  ev [label="NXP_Gov_Notice_Changed__e\nnew or amended notice"];
+  m  [label="NXP_SearchMatchService\nevery active saved search\ncriteria + keyword expression", fillcolor="#E3F0FF", color="#0B5CAB"];
+  sm [label="NXP_Search_Match__c\nPending / Suppressed"];
+  rt [label="Real-time alert\ncustom notification + e-mail"];
+  dg [label="Daily / weekly digest\nNXP_DigestBatch 06:30"];
+  ib [label="Match Inbox\nPush · Watch · Dismiss"];
+  fo [label="Follow alerts\nfollowed notice changed"];
+  ai [label="AI summary requested\nAI_Summary_Status__c = Pending"];
+  ap [label="Match listeners\nNXP_AutoPushListener → auto-push"];
+  ev -> m -> sm;
+  sm -> rt [label="Real Time"]; sm -> dg [label="Daily / Weekly"]; sm -> ib;
+  m -> fo [label="change, not new"]; m -> ai; m -> ap;
+}

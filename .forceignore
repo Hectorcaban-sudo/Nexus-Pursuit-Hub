@@ -1,0 +1,15 @@
+# Salesforce DX: files never deployed
+package.xml
+**/jsconfig.json
+**/.eslintrc.json
+**/__tests__/**
+**/*.test.js
+**/tsconfig.json
+**/*.ts
+
+# Agent Script reference bundles and prompt-template references.
+# Government Cloud orgs cannot deploy Agent Script; these are the reference design.
+packages/nxp-agents/reference/**
+
+# LWC configuration files
+**/.eslintrc.json

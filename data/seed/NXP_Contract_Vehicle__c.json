@@ -1,0 +1,22 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "NXP_Contract_Vehicle__c",
+                "referenceId": "V1"
+            },
+            "Name": "OASIS+ (sample)",
+            "Vehicle_Code__c": "OASIS+",
+            "We_Hold__c": true
+        },
+        {
+            "attributes": {
+                "type": "NXP_Contract_Vehicle__c",
+                "referenceId": "V2"
+            },
+            "Name": "GSA MAS IT (sample)",
+            "Vehicle_Code__c": "GSA-MAS-IT",
+            "We_Hold__c": true
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+# Data Cloud Ingestion API schema for the NXP_Awards connector (OpenAPI 3).
+# Upload in Data Cloud Setup > Ingestion API > NXP_Awards > Upload Schema.
+openapi: 3.0.3
+components:
+  schemas:
+    NXP_Award:
+      type: object
+      properties:
+        award_key:          { type: string }   # PIID + "|" + modification number (primary key)
+        piid:               { type: string }
+        modification:       { type: string }
+        parent_idv_piid:    { type: string }
+        awarding_agency:    { type: string }
+        awarding_sub_agency: { type: string }
+        awarding_office:    { type: string }
+        recipient_uei:      { type: string }
+        recipient_name:     { type: string }
+        naics_code:         { type: string }
+        psc_code:           { type: string }
+        obligated_amount:   { type: number }
+        base_and_all_options_value: { type: number }
+        period_start:       { type: string, format: date }
+        period_end:         { type: string, format: date }
+        potential_end:      { type: string, format: date }
+        set_aside:          { type: string }
+        description:        { type: string }
+        last_modified:      { type: string, format: date-time }   # event time / record modified field

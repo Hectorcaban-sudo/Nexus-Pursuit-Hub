@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Notice_Id__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Source system notice identifier (SAM.gov noticeId or source-prefixed key).</description>
+    <externalId>true</externalId>
+    <label>Notice ID</label>
+    <length>100</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

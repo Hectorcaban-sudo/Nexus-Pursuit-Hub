@@ -1,0 +1,141 @@
+<template>
+    <div class="page">
+        <aside class="panel searches" aria-label="My searches">
+            <div class="panel-head">
+                <h2 class="slds-text-heading_small">My searches</h2>
+                <span class="slds-text-body_small slds-text-color_weak">{totalNew} new</span>
+            </div>
+            <ul class="search-list">
+                <li>
+                    <button class={allRowClass} onclick={handleSelectSearch}>
+                        <span class="search-name">All searches</span>
+                    </button>
+                </li>
+                <template for:each={searchRows} for:item="s">
+                    <li key={s.id}>
+                        <button class={s.rowClass} data-id={s.id} onclick={handleSelectSearch}>
+                            <span class="search-text">
+                                <span class="search-name">{s.name}</span>
+                                <span class="search-freq">{s.frequency}</span>
+                            </span>
+                            <template lwc:if={s.showCount}><span class="count">{s.newCount}</span></template>
+                        </button>
+                    </li>
+                </template>
+            </ul>
+            <lightning-button
+                class="slds-m-top_medium new-search"
+                label="New search"
+                icon-name="utility:add"
+                onclick={handleNewSearch}
+                stretch
+            ></lightning-button>
+        </aside>
+
+        <section class="matches" aria-label="Matches">
+            <div class="toolbar">
+                <div>
+                    <h1 class="slds-text-heading_large">Match Inbox</h1>
+                    <p class="slds-text-color_weak">New matches from your saved searches.</p>
+                </div>
+                <div class="toolbar-actions">
+                    <lightning-input
+                        type="toggle"
+                        label="Include watching"
+                        checked={includeWatching}
+                        onchange={handleWatchingToggle}
+                        message-toggle-active=""
+                        message-toggle-inactive=""
+                    ></lightning-input>
+                    <lightning-combobox
+                        label="Sort"
+                        variant="label-inline"
+                        value={sortBy}
+                        options={sortOptions}
+                        onchange={handleSort}
+                    ></lightning-combobox>
+                    <lightning-button
+                        label={bulkLabel}
+                        disabled={disableBulk}
+                        onclick={handleBulkPush}
+                    ></lightning-button>
+                </div>
+            </div>
+
+            <template lwc:if={loading}>
+                <lightning-spinner alternative-text="Loading matches" size="medium"></lightning-spinner>
+            </template>
+
+            <template lwc:if={hasCards}>
+                <template for:each={cards} for:item="c">
+                    <article key={c.key} class="card">
+                        <div class="card-select">
+                            <lightning-input
+                                type="checkbox"
+                                label="Select for bulk push"
+                                variant="label-hidden"
+                                data-id={c.noticeId}
+                                checked={c.checked}
+                                onchange={handleCheck}
+                            ></lightning-input>
+                        </div>
+                        <c-nxp-fit-badge score={c.fit}></c-nxp-fit-badge>
+                        <div class="card-body">
+                            <div class="chips">
+                                <span class="chip">{c.type}</span>
+                                <template lwc:if={c.hasSetAside}
+                                    ><span class="chip chip_light">{c.setAside}</span></template
+                                >
+                                <template lwc:if={c.isChange}
+                                    ><span class="chip chip_warn">Changed: {c.changeType}</span></template
+                                >
+                                <template lwc:if={c.watching}><span class="chip chip_light">Watching</span></template>
+                            </div>
+                            <a href="#" class="title" data-id={c.noticeId} onclick={handleOpen}>{c.title}</a>
+                            <div class="meta">
+                                {c.agency} · {c.value} ·
+                                <template lwc:if={c.dueSoon}><strong class="due due_soon">{c.due}</strong></template>
+                                <template lwc:else><strong class="due">{c.due}</strong></template>
+                            </div>
+                            <template lwc:if={c.hasSummary}><p class="summary">{c.summary}</p></template>
+                            <div class="why">
+                                Matched <strong>{c.searchName}</strong
+                                ><template lwc:if={c.matchedTerms}> on {c.matchedTerms}</template>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <lightning-button
+                                variant="brand"
+                                label="Push to TechnoMile"
+                                data-id={c.noticeId}
+                                onclick={handlePush}
+                                stretch
+                            ></lightning-button>
+                            <div class="secondary">
+                                <lightning-button
+                                    label="Watch"
+                                    data-match={c.matchId}
+                                    onclick={handleWatch}
+                                ></lightning-button>
+                                <lightning-button
+                                    label="Dismiss"
+                                    data-match={c.matchId}
+                                    onclick={handleDismiss}
+                                ></lightning-button>
+                            </div>
+                        </div>
+                    </article>
+                </template>
+            </template>
+            <template lwc:elseif={loading}></template>
+            <template lwc:else>
+                <div class="empty">
+                    <h2 class="slds-text-heading_small">No new matches</h2>
+                    <p class="slds-text-color_weak">
+                        New notices that match your saved searches appear here. Build a search to get started.
+                    </p>
+                </div>
+            </template>
+        </section>
+    </div>
+</template>

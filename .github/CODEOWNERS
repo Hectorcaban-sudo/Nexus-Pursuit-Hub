@@ -1,0 +1,5 @@
+# Default reviewers; replace with your team's GitHub handles.
+*                         @Hectorcaban-sudo
+/packages/nxp-ingestion/  @Hectorcaban-sudo
+/packages/nxp-push/       @Hectorcaban-sudo
+/docs/                    @Hectorcaban-sudo

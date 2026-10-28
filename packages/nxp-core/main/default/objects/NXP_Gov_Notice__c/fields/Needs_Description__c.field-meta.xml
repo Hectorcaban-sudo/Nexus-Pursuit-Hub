@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Needs_Description__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description
+    >True while Description__c still holds the SAM.gov description link; the enrich batch replaces it with text.</description>
+    <label>Needs Description</label>
+    <type>Checkbox</type>
+</CustomField>

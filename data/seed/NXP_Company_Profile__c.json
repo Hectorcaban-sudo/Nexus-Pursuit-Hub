@@ -1,0 +1,19 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "NXP_Company_Profile__c",
+                "referenceId": "P1"
+            },
+            "Name": "Our company (sample)",
+            "Active__c": true,
+            "NAICS_Codes__c": "541512, 541519, 5415*",
+            "PSC_Codes__c": "DA01, DJ01",
+            "Set_Asides__c": "Small Business; 8(a)",
+            "Target_Agency_Codes__c": "Homeland Security; Army; Veterans",
+            "Keywords__c": "cyber, zero trust, identity, cloud, ICAM, SOC",
+            "Min_Value__c": 1000000,
+            "Max_Value__c": 100000000
+        }
+    ]
+}

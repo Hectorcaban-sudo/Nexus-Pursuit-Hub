@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Build, preview and save searches</description>
+    <label>My Searches</label>
+    <lwcComponent>nxpSearchBuilder</lwcComponent>
+    <motif>Custom39: Telescope</motif>
+</CustomTab>

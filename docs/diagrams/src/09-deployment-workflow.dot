@@ -1,0 +1,23 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Release path with sf commands\n";
+  rankdir=TB;
+  newrank=true;
+  tag [label="Tag release\nvX.Y.Z on main"];
+  int [label="INT\nrelease.sh int"];
+  qa  [label="QA\nrelease.sh qa\nregression · E2E"];
+  ap1 [label="Approval", shape=diamond, style="filled", fillcolor="#FFFFFF", margin="0.05,0.05"];
+  uat [label="UAT\nrelease.sh uat\nparallel run vs GovWin"];
+  ap2 [label="Approval +\nchange window", shape=diamond, style="filled", fillcolor="#FFFFFF", margin="0.05,0.05"];
+  prd [label="Production\nrelease.sh prod", fillcolor="#E3F0FF", color="#0B5CAB"];
+  tag -> int -> qa -> ap1 -> uat -> ap2 -> prd;
+  {rank=same; tag; int; qa; ap1; uat; ap2; prd}
+  subgraph cluster_steps { label="release.sh steps (source mode)"; style="rounded,dashed"; fontsize=12;
+    s1 [label="generate manifest"]; s2 [label="deploy validate\nRunLocalTests"]; s3 [label="deploy quick\njob id"]; s4 [label="env-config/<env>"]; s5 [label="schedule jobs\nchecklist"];
+    s1 -> s2 -> s3 -> s4 -> s5;
+    {rank=same; s1; s2; s3; s4; s5}
+  }
+  int -> s1 [style=dashed, label="each environment runs"];
+}

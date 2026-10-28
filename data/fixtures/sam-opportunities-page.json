@@ -1,0 +1,52 @@
+{
+    "totalRecords": 2,
+    "limit": 1000,
+    "offset": 0,
+    "opportunitiesData": [
+        {
+            "noticeId": "abc123",
+            "title": "Zero Trust Architecture Engineering Support",
+            "solicitationNumber": "70B03C27R00000012",
+            "fullParentPathName": "HOMELAND SECURITY, DEPARTMENT OF.US CUSTOMS AND BORDER PROTECTION",
+            "fullParentPathCode": "070.7014",
+            "postedDate": "2026-10-20",
+            "type": "Solicitation",
+            "archiveDate": "2026-12-31",
+            "typeOfSetAsideDescription": "Total Small Business Set-Aside (FAR 19.5)",
+            "responseDeadLine": "2026-11-09T14:00:00-05:00",
+            "naicsCode": "541512",
+            "classificationCode": "DA01",
+            "active": "Yes",
+            "pointOfContact": [
+                {
+                    "fullName": "Jane Doe",
+                    "email": "jane.doe@example.gov",
+                    "phone": "555-0100",
+                    "type": "primary"
+                }
+            ],
+            "description": "https://api.sam.gov/prod/opportunities/v1/noticedesc?noticeid=abc123",
+            "uiLink": "https://sam.gov/opp/abc123/view",
+            "placeOfPerformance": {
+                "city": {
+                    "name": "Washington"
+                },
+                "state": {
+                    "code": "DC"
+                }
+            }
+        },
+        {
+            "noticeId": "def456",
+            "title": "Cloud Migration and Managed Services",
+            "solicitationNumber": "W52P1J-27-R-0001",
+            "fullParentPathName": "DEPT OF DEFENSE.DEPT OF THE ARMY",
+            "fullParentPathCode": "097.2100",
+            "postedDate": "2026-10-21",
+            "type": "Sources Sought",
+            "typeOfSetAsideDescription": "8(a) Set-Aside",
+            "naicsCode": "541519",
+            "active": "Yes"
+        }
+    ]
+}

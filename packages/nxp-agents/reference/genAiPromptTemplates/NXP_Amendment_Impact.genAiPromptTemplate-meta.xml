@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Amendment Watch: plain-English impact of a notice amendment.</description>
+    <developerName>NXP_Amendment_Impact</developerName>
+    <masterLabel>NXP Amendment Impact</masterLabel>
+    <templateVersions>
+        <content>A government notice was amended. Explain the change to a capture team in at most 60 words.
+
+Change type: {!$Input:Version.Change_Type__c}
+Changed fields: {!$Input:Version.Changed_Fields__c}
+Field-level differences:
+{!$Input:Version.Diff_Summary__c}
+
+Say what changed and what the team should do (for example: update the proposal calendar, re-check eligibility).
+Use only the differences above. Do not speculate about reasons.</content>
+        <inputs>
+            <apiName>Version</apiName>
+            <definition>SOBJECT://NXP_Notice_Version__c</definition>
+            <masterLabel>Version</masterLabel>
+            <referenceName>Input:Version</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

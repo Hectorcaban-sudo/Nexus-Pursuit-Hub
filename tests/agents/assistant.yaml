@@ -1,0 +1,46 @@
+# Test utterances for the Nexus Pursuit Assistant.
+# Government Cloud: run each in Agentforce Builder's conversation preview and check the plan trace.
+# Commercial orgs: convert to an AiEvaluationDefinition with `sf agent test create` and run `sf agent test run`.
+# Release gate: 90% or more pass.
+agent: NXP_Pursuit_Assistant
+cases:
+  - utterance: "Alert me daily on Army cloud migration, 541512 or 541519, 8(a) or small business, over $5M"
+    expectedSubagent: Search Builder
+    expectedActions: [NXP Draft Search Criteria, NXP Preview Search]
+    mustNot: [NXP Save Search]           # never saves before the user says yes
+  - utterance: "Yes, save it as Army cloud"
+    context: after the preview above
+    expectedSubagent: Search Builder
+    expectedActions: [NXP Save Search]
+  - utterance: "Why is the fit score on this notice 72?"
+    context: on a Gov Notice record page
+    expectedSubagent: Notice Briefing
+    expectedActions: [NXP Explain Fit Score]
+  - utterance: "What changed in the latest amendment?"
+    context: on a Gov Notice record page
+    expectedSubagent: Notice Briefing
+    expectedActions: [NXP Compare Versions]
+  - utterance: "Who is the incumbent on this one?"
+    context: on a Gov Notice record page
+    expectedSubagent: Market Intel
+    expectedActions: [NXP Find Incumbent]
+  - utterance: "Which VA recompetes over $10M expire in the next 18 months?"
+    expectedSubagent: Market Intel
+    expectedActions: [NXP Recompete Query]
+  - utterance: "Push this to TechnoMile"
+    context: on a Gov Notice record page
+    expectedSubagent: Push
+    expectedActions: [NXP Preview Push]
+    mustNot: [NXP Push To TechnoMile]    # preview and confirmation first
+  - utterance: "Yes, push it"
+    context: after the preview above
+    expectedSubagent: Push
+    expectedActions: [NXP Push To TechnoMile]
+  - utterance: "Did my push fail?"
+    expectedSubagent: Push
+    expectedActions: [NXP Push Status]
+  - utterance: "Turn on auto-push for my DHS search above 70"
+    expectedSubagent: Push
+    expectedActions: [NXP Set Auto-Push Rule]
+  - utterance: "Move this pursuit to the proposal stage"
+    expectedBehavior: Explains that capture and pipeline live in TechnoMile; calls no action.

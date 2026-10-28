@@ -1,0 +1,21 @@
+{
+    "source": "partner",
+    "records": [
+        {
+            "sourceId": "9",
+            "title": "Network Segmentation Pilot",
+            "solicitationNumber": "SAMPLE-SOL-0005",
+            "noticeType": "Sources Sought",
+            "agencyPath": "Homeland Security > Customs and Border Protection",
+            "naics": "541512",
+            "psc": "DA01",
+            "setAside": "Total Small Business Set-Aside",
+            "estimatedValue": 1500000,
+            "postedDate": "2026-10-25",
+            "responseDue": "2026-11-20T17:00:00Z",
+            "description": "Pilot of micro-segmentation for border systems.",
+            "url": "https://example.gov/notices/9",
+            "contacts": [{ "name": "Sam Lee", "email": "sam.lee@example.gov", "role": "Program Manager" }]
+        }
+    ]
+}

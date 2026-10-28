@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMetadata
+    xmlns="http://soap.sforce.com/2006/04/metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>Forecast Estimated_Value__c</label>
+    <protected>false</protected>
+    <values>
+        <field>Default_Value__c</field>
+        <value xsi:nil="true" />
+    </values>
+    <values>
+        <field>Feed__c</field>
+        <value xsi:type="xsd:string">Agency_Forecasts</value>
+    </values>
+    <values>
+        <field>Source_Path__c</field>
+        <value xsi:type="xsd:string">estimatedValue</value>
+    </values>
+    <values>
+        <field>Target_Field__c</field>
+        <value xsi:type="xsd:string">Estimated_Value__c</value>
+    </values>
+    <values>
+        <field>Transform__c</field>
+        <value xsi:type="xsd:string">Number</value>
+    </values>
+</CustomMetadata>

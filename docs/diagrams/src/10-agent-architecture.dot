@@ -1,0 +1,25 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Agentforce design: one conversational agent, background prompt-template jobs\n";
+  rankdir=LR;
+  u [label="BD user\nLightning panel · record page"];
+  a [label="Nexus Pursuit Assistant\nNXP_Pursuit_Assistant\n(built manually in Government Cloud)", fillcolor="#E3F0FF", color="#0B5CAB"];
+  subgraph cluster_sub { label="Subagents → Apex actions"; style="rounded"; fontsize=12;
+    sb [label="Search Builder\nDraft · Preview · Save*"];
+    nb [label="Notice Briefing\nExplain Fit · Compare Versions"];
+    mi [label="Market Intel\nFind Incumbent · Recompete Query"];
+    pu [label="Push\nPreview · Push* · Status · Auto-push*"];
+  }
+  g [label="Guardrails in Apex\npreview tokens · Power User check\nuser mode · Require confirmation (*)", shape=note, fillcolor="#FFF8E6"];
+  subgraph cluster_bg { label="Background (no conversation)"; style="rounded"; fontsize=12;
+    na [label="Notice Analyst\nNXP_Solicitation_Summary"];
+    aw [label="Amendment Watch\nNXP_Amendment_Impact"];
+  }
+  job [label="NXP_NoticeAnalystJob\nbatch Apex, every 30 min"];
+  tl [label="Einstein Trust Layer", fillcolor="#EEF1F6"];
+  u -> a; a -> sb; a -> nb; a -> mi; a -> pu;
+  sb -> g [style=dashed, arrowhead=none]; pu -> g [style=dashed, arrowhead=none];
+  job -> na; job -> aw; na -> tl; aw -> tl; a -> tl [style=dashed];
+}

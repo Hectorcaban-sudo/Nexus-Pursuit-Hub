@@ -1,0 +1,65 @@
+<template>
+    <lightning-modal-header label="Push to TechnoMile">
+        <template lwc:if={preview}>
+            <p class="slds-text-color_weak">{preview.noticeTitle}</p>
+        </template>
+    </lightning-modal-header>
+    <lightning-modal-body>
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading preview" size="small"></lightning-spinner>
+        </template>
+        <template lwc:if={error}>
+            <div class="banner banner_error" role="alert">{error}</div>
+        </template>
+        <template lwc:if={preview}>
+            <div class={bannerClass} role="status">{bannerText}</div>
+            <h2 class="slds-text-heading_small slds-m-top_medium slds-m-bottom_x-small">Values that will be sent</h2>
+            <div class="table-wrap">
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <thead>
+                        <tr>
+                            <th scope="col">{preview.targetObject} field</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Kept in sync</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={fields} for:item="f">
+                            <tr key={f.field}>
+                                <td>
+                                    {f.label}
+                                    <template lwc:if={f.required}
+                                        ><abbr class="slds-required" title="required">*</abbr></template
+                                    >
+                                </td>
+                                <td class="value">{f.value}</td>
+                                <td>{f.sync}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div class="slds-m-top_medium">
+                <lightning-input
+                    type="checkbox"
+                    label={documentLabel}
+                    checked={includeDocuments}
+                    onchange={handleDocuments}
+                ></lightning-input>
+            </div>
+            <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                Logged to Push Log. Capture fields like stage and pWin are never overwritten by later amendments.
+            </p>
+        </template>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+        <lightning-button
+            class="slds-m-left_x-small"
+            variant="brand"
+            label={pushLabel}
+            disabled={disablePush}
+            onclick={handlePush}
+        ></lightning-button>
+    </lightning-modal-footer>
+</template>

@@ -1,0 +1,43 @@
+.badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    line-height: 1.1;
+}
+.size_medium {
+    width: 4rem;
+    height: 4rem;
+}
+.size_small {
+    width: 2.75rem;
+    height: 2.25rem;
+}
+.size_small .label {
+    display: none;
+}
+.value {
+    font-size: 1.375rem;
+    font-weight: 800;
+}
+.size_small .value {
+    font-size: 1rem;
+}
+.label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+}
+.tier_high {
+    background: #e3f0ff;
+    color: #0b3f7a;
+}
+.tier_medium {
+    background: #fff1e0;
+    color: #8a4b00;
+}
+.tier_low,
+.tier_none {
+    background: #eef1f6;
+    color: #2e3a4d;
+}

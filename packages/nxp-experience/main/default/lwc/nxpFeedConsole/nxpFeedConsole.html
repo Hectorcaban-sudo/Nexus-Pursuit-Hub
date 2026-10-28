@@ -1,0 +1,69 @@
+<template>
+    <div class="page">
+        <div class="toolbar">
+            <div>
+                <h1 class="slds-text-heading_large">Feed Console</h1>
+                <p class="slds-text-color_weak">Every feed and import channel: last run, counts and errors.</p>
+            </div>
+            <lightning-button label="Refresh" icon-name="utility:refresh" onclick={handleRefresh}></lightning-button>
+        </div>
+
+        <template lwc:if={schedulerWarning}>
+            <div class="banner" role="alert">
+                The feed scheduler is not running. Run <code>scripts/post-deploy/schedule-jobs.apex</code> (see the
+                deployment guide).
+            </div>
+        </template>
+
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading feeds" size="medium"></lightning-spinner>
+        </template>
+
+        <div class="grid">
+            <template for:each={tiles} for:item="t">
+                <article key={t.name} class="tile">
+                    <div class="tile-head">
+                        <div>
+                            <h2 class="slds-text-heading_small">{t.label}</h2>
+                            <span class="channel">{t.channel} · {t.every}</span>
+                        </div>
+                        <span class={t.statusClass}>{t.health}</span>
+                    </div>
+                    <div class="counts">
+                        <div><span class="n">{t.read}</span><span class="l">read</span></div>
+                        <div><span class="n">{t.created}</span><span class="l">new</span></div>
+                        <div><span class="n">{t.updated}</span><span class="l">updated</span></div>
+                        <div><span class="n">{t.rejected}</span><span class="l">rejected</span></div>
+                    </div>
+                    <div class="last">Last run {t.last}</div>
+                    <div class="tile-actions">
+                        <lightning-button
+                            variant="brand"
+                            label="Run now"
+                            data-feed={t.name}
+                            disabled={t.runDisabled}
+                            onclick={handleRun}
+                        ></lightning-button>
+                        <lightning-button
+                            label="Errors"
+                            data-run={t.lastRunId}
+                            disabled={t.noRun}
+                            onclick={handleErrors}
+                        ></lightning-button>
+                    </div>
+                </article>
+            </template>
+        </div>
+
+        <section class="runs" aria-label="Recent runs">
+            <h2 class="slds-text-heading_small slds-m-bottom_small">Recent runs</h2>
+            <lightning-datatable
+                key-field="id"
+                data={rows}
+                columns={columns}
+                hide-checkbox-column
+                onrowaction={handleRowAction}
+            ></lightning-datatable>
+        </section>
+    </div>
+</template>

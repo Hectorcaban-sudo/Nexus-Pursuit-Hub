@@ -1,0 +1,19 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Push to TechnoMile\n";
+  rankdir=LR;
+  start [label="Push requested\nmanual · bulk · auto-push · assistant"];
+  pv [label="Preview\nmapped values · sync rules\npreview token (assistant)"];
+  dup [label="Already pushed or\nmatching record exists?", shape=diamond, style="filled", fillcolor="#FFFFFF", margin="0.05,0.05"];
+  link [label="Link existing record"];
+  cr [label="Create target record\nNXP_Push_Mapping__mdt\n(Opportunity → TechnoMile object)", fillcolor="#E3F0FF", color="#0B5CAB"];
+  mark [label="Mark notice Pushed\nmatches → Pushed\nlink documents"];
+  log [label="NXP_Push_Log__c\nSuccess · Linked · Failed · Retry Pending", shape=note, fillcolor="#FFF8E6"];
+  sync [label="Post-push sync on amendment\nUpdate fields · alert owner\nChatter post"];
+  start -> pv -> dup;
+  dup -> link [label="yes"]; dup -> cr [label="no"];
+  link -> mark; cr -> mark; mark -> log;
+  log -> sync [style=dashed, label="later change event"];
+}

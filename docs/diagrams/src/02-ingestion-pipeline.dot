@@ -1,0 +1,17 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Ingestion pipeline: the same five steps for every feed and channel\n";
+  rankdir=LR;
+  f [label="1  Fetch\npaged callout via Named Credential\ncheckpoint after each page"];
+  n [label="2  Normalize\nNXP_Feed_Mapping__mdt\nsource path → field + transform"];
+  d [label="3  Match & version\nNotice ID → solicitation # → merge\nhash changed? → Notice Version"];
+  e [label="4  Enrich\nagency hierarchy · vehicle · forecast link\ncontacts · fit score (trigger)"];
+  p [label="5  Publish\nNXP_Gov_Notice_Changed__e", fillcolor="#E3F0FF", color="#0B5CAB"];
+  f -> n -> d -> e -> p;
+  run [label="NXP_Feed_Run__c\ncounts · checkpoint · errors", shape=note, fillcolor="#FFF8E6"];
+  f -> run [style=dashed, arrowhead=none]; d -> run [style=dashed, arrowhead=none];
+  enrich [label="NXP_NoticeEnrichBatch\nfetch SAM.gov description text", fillcolor="#EEF1F6"];
+  p -> enrich [label="after SAM runs", style=dashed];
+}

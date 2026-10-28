@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Notice Analyst: summary of a government notice for BD users.</description>
+    <developerName>NXP_Solicitation_Summary</developerName>
+    <masterLabel>NXP Solicitation Summary</masterLabel>
+    <templateVersions>
+        <content>You are a government contracts analyst writing for a business-development team.
+Summarize this notice in plain English for someone deciding whether to pursue it.
+
+Notice ID: {!$Input:Notice.Notice_Id__c}
+Title: {!$Input:Notice.Title__c}
+Type: {!$Input:Notice.Notice_Type__c}
+Buyer: {!$Input:Notice.Agency_Path__c}
+NAICS / PSC: {!$Input:Notice.NAICS_Code__c} / {!$Input:Notice.PSC_Code__c}
+Set-aside: {!$Input:Notice.Set_Aside__c}
+Response due: {!$Input:Notice.Response_Due__c}
+Description:
+{!$Input:Notice.Description__c}
+
+Write, using only the information above:
+1. One paragraph (max 70 words): what the government is buying and why.
+2. "Key requirements": up to 4 bullets.
+3. "Evaluation": up to 3 bullets, only if the text states evaluation factors; otherwise write "Not stated".
+4. "Watch-outs": up to 3 bullets (deadlines, clearances, incumbency, unusual terms).
+Do not invent values, dates, dollar amounts or names. End with "Source: notice {!$Input:Notice.Notice_Id__c}".</content>
+        <inputs>
+            <apiName>Notice</apiName>
+            <definition>SOBJECT://NXP_Gov_Notice__c</definition>
+            <masterLabel>Notice</masterLabel>
+            <referenceName>Input:Notice</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

@@ -1,0 +1,119 @@
+{
+    "packageDirectories": [
+        {
+            "path": "packages/nxp-core",
+            "package": "nxp-core",
+            "versionName": "Spring 2027",
+            "versionNumber": "1.0.0.NEXT",
+            "default": true,
+            "versionDescription": "Nexus Pursuit Hub core: NXP_ objects, metadata types, platform event, shared Apex"
+        },
+        {
+            "path": "packages/nxp-ingestion",
+            "package": "nxp-ingestion",
+            "versionName": "Spring 2027",
+            "versionNumber": "1.0.0.NEXT",
+            "default": false,
+            "versionDescription": "Feed connectors, ingestion pipeline, import batches, Apex REST ingestion API",
+            "dependencies": [
+                {
+                    "package": "nxp-core",
+                    "versionNumber": "1.0.0.LATEST"
+                }
+            ]
+        },
+        {
+            "path": "packages/nxp-search",
+            "package": "nxp-search",
+            "versionName": "Spring 2027",
+            "versionNumber": "1.0.0.NEXT",
+            "default": false,
+            "versionDescription": "Saved searches, matcher, alerts and digest",
+            "dependencies": [
+                {
+                    "package": "nxp-core",
+                    "versionNumber": "1.0.0.LATEST"
+                }
+            ]
+        },
+        {
+            "path": "packages/nxp-push",
+            "package": "nxp-push",
+            "versionName": "Spring 2027",
+            "versionNumber": "1.0.0.NEXT",
+            "default": false,
+            "versionDescription": "Push to TechnoMile: mapping-driven push target, push log, post-push sync",
+            "dependencies": [
+                {
+                    "package": "nxp-core",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-search",
+                    "versionNumber": "1.0.0.LATEST"
+                }
+            ]
+        },
+        {
+            "path": "packages/nxp-experience",
+            "package": "nxp-experience",
+            "versionName": "Spring 2027",
+            "versionNumber": "1.0.0.NEXT",
+            "default": false,
+            "versionDescription": "NXP_Pursuit_Hub app, tabs, record page and Lightning Web Components",
+            "dependencies": [
+                {
+                    "package": "nxp-core",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-ingestion",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-search",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-push",
+                    "versionNumber": "1.0.0.LATEST"
+                }
+            ]
+        },
+        {
+            "path": "packages/nxp-agents",
+            "package": "nxp-agents",
+            "versionName": "Spring 2027",
+            "versionNumber": "1.0.0.NEXT",
+            "default": false,
+            "versionDescription": "Agent actions, AI services, prompt-template references and the NXP_ permission sets (installs last)",
+            "dependencies": [
+                {
+                    "package": "nxp-core",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-ingestion",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-search",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-push",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-experience",
+                    "versionNumber": "1.0.0.LATEST"
+                }
+            ]
+        }
+    ],
+    "name": "nexus-pursuit-hub",
+    "namespace": "",
+    "sfdcLoginUrl": "https://login.salesforce.com",
+    "sourceApiVersion": "68.0",
+    "packageAliases": {}
+}

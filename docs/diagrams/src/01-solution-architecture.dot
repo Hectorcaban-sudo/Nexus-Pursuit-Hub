@@ -1,0 +1,38 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Nexus Pursuit Hub: solution architecture\n";
+  rankdir=LR;
+  subgraph cluster_src { label="Government sources"; style="rounded"; fontsize=13;
+    sam  [label="SAM.gov\nOpportunities + Entity API"];
+    usa  [label="USAspending / FPDS\nawards"];
+    fc   [label="Agency forecasts"];
+    oth  [label="Other systems\nvehicle e-mail relay, SLED vendor"];
+  }
+  subgraph cluster_sf { label="Salesforce org (Government Cloud)"; style="rounded"; fontsize=13;
+    subgraph cluster_ing { label="nxp-ingestion"; style="rounded,dashed";
+      pipe [label="Standard pipeline\nQueueable + callouts"];
+      batch [label="Scheduled Apex batch\n+ callouts"];
+      rest [label="Apex REST ingestion API\n/nxp/v1/notices, /task-orders"];
+      svc  [label="NXP_IngestionService\ndedupe · version · publish", fillcolor="#E3F0FF", color="#0B5CAB"];
+    }
+    core [label="nxp-core\nGov Notice, Version, Agency, Vendor,\nForecast, Award Summary, Feed Run\nfit score · NXP_Gov_Notice_Changed__e"];
+    srch [label="nxp-search\nsaved searches · matcher\nreal-time alerts · digests"];
+    push [label="nxp-push\npush mapping · push service\npost-push sync"];
+    ux   [label="nxp-experience\nMatch Inbox · My Searches\nNotice page · Feed Console"];
+    ag   [label="nxp-agents\nNexus Pursuit Assistant\nprompt-template jobs"];
+    tm   [label="TechnoMile\n(opportunities & capture)", fillcolor="#EEF1F6"];
+  }
+  dc [label="Data Cloud\nIngestion API (bulk awards)", fillcolor="#EEF1F6"];
+  users [label="BD users\nLightning · e-mail · mobile", shape=box];
+  sam -> pipe; sam -> batch; fc -> pipe; usa -> batch; usa -> dc [label="bulk CSV"]; oth -> rest;
+  pipe -> svc; batch -> svc; rest -> svc;
+  svc -> core [label="upsert"];
+  core -> srch [label="change event"];
+  core -> push [label="change event"];
+  srch -> push [label="auto-push"];
+  push -> tm [label="create / link / sync"];
+  srch -> users [label="alerts"];
+  ux -> users; ag -> users;
+}

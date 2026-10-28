@@ -1,0 +1,11 @@
+{
+    "comment": "Copy to versions.json for a package-mode release. Order matters: install top to bottom. Use promoted versions for UAT and production.",
+    "install": [
+        "nxp-core@1.0.0-1",
+        "nxp-ingestion@1.0.0-1",
+        "nxp-search@1.0.0-1",
+        "nxp-push@1.0.0-1",
+        "nxp-experience@1.0.0-1",
+        "nxp-agents@1.0.0-1"
+    ]
+}

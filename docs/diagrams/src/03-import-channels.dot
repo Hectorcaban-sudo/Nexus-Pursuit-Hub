@@ -1,0 +1,20 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Standard feeds plus four additional import channels, one processing path\n";
+  rankdir=TB;
+  std [label="Standard pipeline\nNXP_FeedScheduler → NXP_FeedFetchJob (Queueable chain)"];
+  b   [label="Scheduled Apex batch\nNXP_FeedFetchBatch (backfill, large windows)"];
+  c   [label="Apex callouts on demand\nentity lookup, targeted awards"];
+  r   [label="Apex REST ingestion API\nother systems push JSON"];
+  dc  [label="Data Cloud Ingestion API\nbulk award CSV from job host"];
+  svc [label="NXP_IngestionService\nsame dedupe, versioning, scoring, events", fillcolor="#E3F0FF", color="#0B5CAB"];
+  dlo [label="Award DLO → DMO\n(market analytics)", fillcolor="#EEF1F6"];
+  core [label="NXP_ objects in core"];
+  std -> svc; b -> svc; c -> svc; r -> svc;
+  dc -> dlo;
+  svc -> core;
+  dlo -> core [style=dashed, label="Award Summary copied\nwhen referenced"];
+  {rank=same; std; b; c; r; dc}
+}

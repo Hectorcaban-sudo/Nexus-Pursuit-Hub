@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Search Builder: plain English to saved-search criteria JSON.</description>
+    <developerName>NXP_Search_Criteria_Draft</developerName>
+    <masterLabel>NXP Search Criteria Draft</masterLabel>
+    <templateVersions>
+        <content
+        >Convert the request into JSON search criteria for Nexus Pursuit Hub. Return only a JSON object, no prose.
+Allowed keys: keywords (boolean expression with AND, OR, NOT, quotes, trailing *), agencies (array of agency names as in SAM.gov paths),
+naics (array, prefix with *), psc, setAsides (array of: Small Business, 8(a), HUBZone, Service-Disabled, Women-Owned),
+noticeTypes (array of: Pre-solicitation, Sources Sought, Solicitation, Combined Synopsis/Solicitation, Award Notice, Special Notice, RFI, Grant, Task Order),
+minValue, maxValue (numbers in dollars), dueWithinDays, postedWithinDays (integers), minFit (0-100).
+Omit any key the request does not mention.
+
+Request: {!$Input:Request}</content>
+        <inputs>
+            <apiName>Request</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Request</masterLabel>
+            <referenceName>Input:Request</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

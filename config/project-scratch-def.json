@@ -1,0 +1,10 @@
+{
+    "orgName": "Nexus Pursuit Hub Dev",
+    "edition": "Developer",
+    "features": ["EnableSetPasswordInApi", "PlatformEncryption"],
+    "settings": {
+        "lightningExperienceSettings": { "enableS1DesktopEnabled": true },
+        "mobileSettings": { "enableS1EncryptedStoragePref2": false },
+        "securitySettings": { "sessionSettings": { "forceRelogin": false } }
+    }
+}

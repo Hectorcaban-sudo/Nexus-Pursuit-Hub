@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Full Nexus Pursuit Hub manifest for retrieves and audits. Releases generate their own
+     manifest/release-<version>.xml with scripts/release.sh. -->
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types><members>NXP_*</members><name>ApexClass</name></types>
+    <types><members>NXP_*</members><name>ApexTrigger</name></types>
+    <types><members>NXP_*</members><name>CustomObject</name></types>
+    <types><members>NXP_*</members><name>CustomMetadata</name></types>
+    <types><members>NXP_*</members><name>CustomPermission</name></types>
+    <types><members>NXP_*</members><name>CustomTab</name></types>
+    <types><members>NXP_Pursuit_Hub</members><name>CustomApplication</name></types>
+    <types><members>NXP_Match_Alert</members><name>CustomNotificationType</name></types>
+    <types><members>NXP_*</members><name>ExternalCredential</name></types>
+    <types><members>NXP_*</members><name>FlexiPage</name></types>
+    <types><members>nxp*</members><name>LightningComponentBundle</name></types>
+    <types><members>NXP_*</members><name>NamedCredential</name></types>
+    <types><members>NXP_*</members><name>PermissionSet</name></types>
+    <types><members>NXP_*</members><name>PlatformEventSubscriberConfig</name></types>
+    <types><members>NXP_*</members><name>GenAiPromptTemplate</name></types>
+    <types><members>NXP_Pursuit_Assistant</members><name>AiAgentDefinition</name></types>
+    <version>68.0</version>
+</Package>

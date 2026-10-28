@@ -1,0 +1,16 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Development workflow in VS Code (no CI/CD pipeline)\n";
+  rankdir=LR;
+  s [label="Pick story\nNXP-123"];
+  b [label="Branch + org\nfeature/NXP-123\nscripts/dev-setup.sh"];
+  c [label="Build\nApex · LWC · metadata\ndeploy / retrieve (API 68.0)"];
+  t [label="Validate locally\nscripts/validate.sh --org\nPrettier · ESLint · Jest · Apex tests"];
+  p [label="Pull request\nvalidate output attached\none reviewer"];
+  m [label="Merge to main", fillcolor="#E3F0FF", color="#0B5CAB"];
+  r [label="Release lead\nscripts/release.sh int"];
+  s -> b -> c -> t -> p -> m -> r;
+  t -> c [label="fails", style=dashed, constraint=false];
+}

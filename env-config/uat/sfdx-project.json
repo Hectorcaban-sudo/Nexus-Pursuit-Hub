@@ -1,0 +1,5 @@
+{
+    "packageDirectories": [{ "path": "force-app", "default": true }],
+    "name": "nexus-pursuit-hub-env-uat",
+    "sourceApiVersion": "68.0"
+}

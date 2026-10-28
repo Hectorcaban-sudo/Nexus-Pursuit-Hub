@@ -1,0 +1,16 @@
+digraph G {
+  graph [fontname="DejaVu Sans", fontsize=20, labelloc=t, labeljust=l, pad=0.4, nodesep=0.45, ranksep=0.6, bgcolor="white", color="#C9CED6"];
+  node  [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#8A96A8", fontcolor="#181818", margin="0.18,0.10"];
+  edge  [fontname="DejaVu Sans", fontsize=10, color="#5C6B80", fontcolor="#3B4656", arrowsize=0.7];
+  label="Unlocked packages and dependencies (install top to bottom)\n";
+  rankdir=BT;
+  core [label="nxp-core\nobjects · metadata types · platform event\ntrigger framework · logger · HTTP client · fit score"];
+  ing  [label="nxp-ingestion\nconnectors · pipeline · batches\nREST API · Feed Console controller"];
+  srch [label="nxp-search\nsaved searches · matcher · alerts · digest"];
+  push [label="nxp-push\npush target · push service · sync", fillcolor="#E3F0FF", color="#0B5CAB"];
+  exp  [label="nxp-experience\napp · tabs · record page · LWCs"];
+  ag   [label="nxp-agents\nagent actions · AI jobs · permission sets"];
+  tm   [label="TechnoMile managed package\n(configured target, no code dependency)", style="rounded,dashed,filled", fillcolor="#EEF1F6"];
+  ing -> core; srch -> core; push -> core; push -> srch; exp -> ing; exp -> srch; exp -> push; ag -> exp; ag -> push; ag -> srch; ag -> ing;
+  push -> tm [style=dashed, label="via mapping"];
+}

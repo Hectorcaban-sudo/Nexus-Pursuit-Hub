@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Auto_Push__c</fullName>
+    <label>Auto-Push</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Off</fullName>
+                <default>false</default>
+                <label>Off</label>
+            </value>
+            <value>
+                <fullName>Fit Threshold</fullName>
+                <default>false</default>
+                <label>Fit Threshold</label>
+            </value>
+            <value>
+                <fullName>All Matches</fullName>
+                <default>false</default>
+                <label>All Matches</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

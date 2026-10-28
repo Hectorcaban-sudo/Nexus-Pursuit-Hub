@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>NXP_Power_User</name>
+    </customPermissions>
+    <description>BD leads: share searches with teams, bulk push, auto-push. Assign together with NXP User.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>NXP Power User</label>
+</PermissionSet>
