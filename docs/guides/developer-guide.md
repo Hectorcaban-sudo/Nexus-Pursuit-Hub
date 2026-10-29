@@ -23,7 +23,7 @@ sf org login web --alias nxp-devhub --set-default-dev-hub   # or log in to your 
 ![Development workflow](../diagrams/08-dev-workflow.jpg)
 
 1. Branch: `git switch -c feature/NXP-123-short-name`.
-2. Org: `scripts/dev-setup.sh` (scratch org with sample data), or `scripts/dev-setup.sh --org <sandbox>` where scratch orgs are not available, such as Government Cloud Dev Hubs.
+2. Org: `scripts/dev-setup.sh` (scratch org with sample data), or `scripts/dev-setup.sh --org <sandbox>` where scratch orgs are not available, such as Government Cloud Dev Hubs. On Windows use `.\scripts\dev-setup.ps1` (every script has a [PowerShell twin](../../scripts/README.md)).
 3. Build in VS Code. Deploy with _SFDX: Deploy This Source to Org_ or `sf project deploy start --source-dir packages/<pkg>`. Retrieve anything changed in Setup back into the branch.
 4. Validate: `scripts/validate.sh --org nxp-dev`. It runs Prettier, ESLint, Jest, Code Analyzer and a check-only deploy with local Apex tests.
 5. Commit (the pre-commit hook formats staged files), push and open a PR with the `validate.sh` output.
@@ -56,6 +56,8 @@ sf org login web --alias nxp-devhub --set-default-dev-hub   # or log in to your 
 sf apex run --file scripts/apex/run-feed-now.apex --target-org nxp-dev     # start a feed
 sf apex run --file scripts/apex/feed-health.apex --target-org nxp-dev      # last runs and jobs
 sf apex run --file scripts/apex/rescore-notices.apex --target-org nxp-dev  # after fit rule changes
+scripts/load-sample-data.sh --org nxp-dev --reset                         # fresh sample data
+scripts/test-functional.sh --org nxp-dev                                  # end-to-end checks
 sf apex run test --class-names NXP_IngestionTest --result-format human --target-org nxp-dev
 npm run test:unit                                                           # LWC Jest
 docs/diagrams/src/render.sh                                                 # rebuild JPG diagrams

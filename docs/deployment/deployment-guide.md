@@ -10,6 +10,18 @@ Nexus Pursuit Hub is released with scripted `sf` commands (no CI/CD pipeline). T
 | Tests    | `RunLocalTests` during validation                                                | Coverage checked at version creation; `RunLocalTests` recommended in UAT |
 | Best for | Change boards that approve metadata deployments; hotfixes                        | Long-term upgrades, clean uninstall                                      |
 
+Every script has a bash version (`.sh`, for macOS, Linux, WSL or Git Bash) and a PowerShell version (`.ps1`, for Windows PowerShell 5.1 or PowerShell 7). They run the same `sf` commands. See [scripts/README.md](../../scripts/README.md) for the full list.
+
+| Task                   | Bash                                            | PowerShell                                                          |
+| ---------------------- | ----------------------------------------------- | ------------------------------------------------------------------- |
+| Dev or sandbox install | `scripts/dev-setup.sh --org <alias>`            | `.\scripts\dev-setup.ps1 -Org <alias>`                              |
+| Release (source)       | `scripts/release.sh uat nxp-uat`                | `.\scripts\release.ps1 -Environment uat -Org nxp-uat`               |
+| Release (packages)     | `scripts/release.sh uat nxp-uat package`        | `.\scripts\release.ps1 -Environment uat -Org nxp-uat -Mode package` |
+| Package versions       | `scripts/create-package-versions.sh nxp-devhub` | `.\scripts\create-package-versions.ps1 -DevHub nxp-devhub`          |
+| Uninstall              | `scripts/uninstall.sh --org <alias>`            | `.\scripts\uninstall.ps1 -Org <alias>`                              |
+
+On Windows, if PowerShell refuses to run scripts, allow local scripts once for your user: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`. If you downloaded the repo as a ZIP instead of cloning it, also run `Get-ChildItem -Recurse scripts, datacloud -Filter *.ps1 | Unblock-File`.
+
 ![Release workflow](../diagrams/09-deployment-workflow.jpg)
 
 ## Prerequisites
@@ -82,3 +94,34 @@ Before a risky release, run `scripts/post-deploy/unschedule-jobs.apex` to pause 
 ## Agent release
 
 Retrieve the manually built agent into `packages/nxp-agents/main/default/` (see [agent manual build](../guides/agent-manual-build.md#step-by-step)) so it ships with the release. After deployment, activate it in the target org and assign access. Activation is never automatic.
+
+## Uninstall
+
+`scripts/uninstall.sh` (or `.\scripts\uninstall.ps1`) removes Nexus Pursuit Hub from an org. It deletes every `NXP_` component and, with the NXP objects, all Nexus records: notices, searches, matches, push logs and feed runs. For a scratch org, delete the org instead: `sf org delete scratch --target-org <alias>`.
+
+**1. Delete what was built by hand.** These refer to Nexus components and block the delete:
+
+- the **Nexus Pursuit Assistant** agent (deactivate, then delete) and its NXP agent actions;
+- the NXP prompt templates in Prompt Builder;
+- reports, dashboards, flows and list views people built on NXP objects.
+
+**2. Run the script.**
+
+| Installed with                     | Bash                                               | PowerShell                                          |
+| ---------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
+| `sf` deploys (`release.sh` source) | `scripts/uninstall.sh --org nxp-qa`                | `.\scripts\uninstall.ps1 -Org nxp-qa`               |
+| Unlocked packages                  | `scripts/uninstall.sh --org nxp-qa --mode package` | `.\scripts\uninstall.ps1 -Org nxp-qa -Mode package` |
+
+It asks you to type the org alias to confirm (`--yes` / `-Yes` skips that), then:
+
+1. Runs `scripts/uninstall/pre-uninstall.apex`: stops the NXP scheduled and queued jobs and removes the NXP permission set assignments.
+2. **Source mode:** for each package folder, dependents first (`nxp-agents` … `nxp-core`), generates a manifest of its components and deploys it as `destructiveChangesPost.xml`. **Package mode:** uninstalls each installed `nxp-*` package, dependents first.
+
+Options:
+
+- `--purge` / `-Purge` hard-deletes the objects. Without it, deleted objects stay under **Setup → Object Manager → Deleted Objects** for 15 days. Not allowed in production.
+- `--test-level` / `-TestLevel`: production may require `RunLocalTests` when Apex is deleted.
+
+If a step fails, the error names the component that is still in use. Remove that reference and run the script again; components that are already gone are skipped.
+
+**Kept on purpose:** records pushed to TechnoMile (Opportunity) and any Data Cloud data streams for `NXP_Awards`. The SAM.gov API key is removed with the NXP External Credential.

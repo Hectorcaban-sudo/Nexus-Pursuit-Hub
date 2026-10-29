@@ -1,0 +1,29 @@
+{
+    "comment": "Used by scripts/test-functional (.sh/.ps1). {{TODAY}} and {{DUE_30}} are replaced with real dates before sending.",
+    "source": "sample",
+    "records": [
+        {
+            "noticeId": "SAMPLE-REST-0001",
+            "sourceId": "REST-0001",
+            "title": "Network Segmentation Pilot (REST sample)",
+            "solicitationNumber": "SAMPLE-SOL-REST-0001",
+            "noticeType": "Sources Sought",
+            "agencyPath": "Homeland Security > Customs and Border Protection",
+            "naics": "541512",
+            "psc": "DA01",
+            "setAside": "Total Small Business Set-Aside",
+            "estimatedValue": 1500000,
+            "postedDate": "{{TODAY}}",
+            "responseDue": "{{DUE_30}}T17:00:00Z",
+            "description": "[SAMPLE DATA] Sent through the Apex REST ingestion API by scripts/test-functional. Pilot of micro-segmentation for border systems.",
+            "url": "https://example.gov/notices/sample-rest-0001",
+            "contacts": [
+                {
+                    "name": "Sample Contact",
+                    "email": "sample.contact@example.gov",
+                    "role": "Program Manager"
+                }
+            ]
+        }
+    ]
+}

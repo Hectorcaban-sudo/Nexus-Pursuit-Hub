@@ -45,7 +45,7 @@ packages/
 env-config/<env>/  per-environment settings (each a small DX project)
 datacloud/         Ingestion API schema and bulk upload script
 data/              seed data and API fixtures
-scripts/           dev-setup, validate, release, package versions, post-deploy Apex
+scripts/           install, sample data, functional test, validate, release, uninstall (.sh and .ps1)
 docs/              architecture, design, guides, deployment, ADRs, diagrams (JPG)
 ```
 
@@ -62,11 +62,22 @@ scripts/dev-setup.sh                 # scratch org "nxp-dev" with sample data
 # or: scripts/dev-setup.sh --org my-sandbox
 ```
 
+Windows PowerShell:
+
+```powershell
+.\scripts\dev-setup.ps1                    # or: .\scripts\dev-setup.ps1 -Org my-sandbox
+```
+
 Then add your SAM.gov API key. In **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**, add an authentication parameter named `ApiKey`.
 
+Test it with the sample data, then run the pre-PR checks:
+
 ```bash
-scripts/validate.sh --org nxp-dev    # Prettier, ESLint, Jest, check-only deploy with Apex tests
+scripts/test-functional.sh --org nxp-dev   # REST API + end-to-end checks   (.\scripts\test-functional.ps1 -Org nxp-dev)
+scripts/validate.sh --org nxp-dev          # Prettier, ESLint, Jest, check-only deploy with Apex tests
 ```
+
+Every script has a PowerShell twin; see [scripts/README.md](scripts/README.md). The [testing guide](docs/guides/testing-guide.md#test-with-sample-data) explains the sample data and has a walkthrough of every screen. To remove Nexus from an org: `scripts/uninstall.sh --org <alias>` ([uninstall](docs/deployment/deployment-guide.md#uninstall)).
 
 ## Documentation
 
@@ -89,5 +100,6 @@ Version 1.0.0, first build:
     - All Apex parses (prettier-plugin-apex).
     - All XML is well-formed.
     - 14 Jest tests pass and ESLint is clean.
+    - Every bash and PowerShell script parses, and each was run against a stand-in `sf` CLI and REST endpoint to check its commands and results.
 - **Not yet run:** the code has not been deployed to an org from this repository. Run `scripts/validate.sh --org <org>` first; it compiles everything and runs every Apex test.
 - **Org-specific settings:** the push target and the TechnoMile field mapping must be set per org. See the [admin guide](docs/guides/admin-guide.md#push-mapping).
