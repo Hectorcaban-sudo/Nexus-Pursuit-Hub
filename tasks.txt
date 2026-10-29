@@ -1,0 +1,3 @@
+git pull
+sf project deploy start --source-dir packages/nxp-search packages/nxp-experience packages/nxp-agents --target-org staging --api-version 68.0 --wait 30
+.\scripts\test-functional.ps1 -Org staging
