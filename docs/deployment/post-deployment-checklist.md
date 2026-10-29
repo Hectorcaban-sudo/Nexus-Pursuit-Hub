@@ -13,9 +13,11 @@ Copy into the release ticket and tick each item.
 - [ ] Smoke test: preview a saved search; save; a match appears after the next run
 - [ ] Smoke test (UAT/prod): push one sample notice to TechnoMile → record created, Push Log Success; delete the test record afterwards
 - [ ] No new ERROR rows in `NXP_Log__c` in the first hour
+- [ ] QA only: `load-sample-data --reset` and `test-functional --apex-tests` pass; screen walkthrough done ([testing guide](../guides/testing-guide.md#3-walk-through-the-app))
 
 ## First release in an org (also)
 
+- [ ] Setup → Deployment Settings: _Allow deployments of components when corresponding Apex jobs are pending or in progress_ on
 - [ ] Permission sets assigned: NXP_User, NXP_Power_User, NXP_Admin, NXP_Integration
 - [ ] SAM.gov `ApiKey` set on the NXP SAM.gov principal
 - [ ] Forecast Named Credential URL and `FC_*` mappings set
