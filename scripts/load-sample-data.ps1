@@ -54,7 +54,8 @@ $loads = @(
     @{ File = 'data/seed/4-NXP_Gov_Vendor__c.csv'; Object = 'NXP_Gov_Vendor__c'; ExternalId = 'UEI__c' },
     @{ File = 'data/seed/5-NXP_Award_Summary__c.csv'; Object = 'NXP_Award_Summary__c'; ExternalId = 'PIID__c' },
     @{ File = 'data/seed/6-NXP_Gov_Forecast__c.csv'; Object = 'NXP_Gov_Forecast__c'; ExternalId = 'Forecast_Id__c' },
-    @{ File = 'data/seed/7-NXP_Gov_Notice__c.csv'; Object = 'NXP_Gov_Notice__c'; ExternalId = 'Notice_Id__c' }
+    @{ File = 'data/seed/7-NXP_Gov_Notice__c.csv'; Object = 'NXP_Gov_Notice__c'; ExternalId = 'Notice_Id__c' },
+    @{ File = 'data/seed/8-NXP_Gov_Contact__c.csv'; Object = 'NXP_Gov_Contact__c'; ExternalId = 'Contact_Key__c' }
 )
 foreach ($load in $loads) {
     Write-Step "Upserting $(Split-Path $load.File -Leaf) into $($load.Object) (by $($load.ExternalId))"

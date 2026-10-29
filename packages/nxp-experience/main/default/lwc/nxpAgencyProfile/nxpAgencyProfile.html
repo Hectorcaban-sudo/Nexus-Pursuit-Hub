@@ -1,0 +1,194 @@
+<template>
+    <div class="page">
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading agency" size="medium"></lightning-spinner>
+        </template>
+        <template lwc:if={agency}>
+            <section class="header" aria-label="Agency">
+                <div class="header-main">
+                    <template lwc:if={parent}>
+                        <nav class="crumbs" aria-label="Agency hierarchy">
+                            <a href="#" data-id={parent.id} onclick={handleOpen}>{parent.name}</a>
+                            <span aria-hidden="true">›</span>
+                            <span>{agency.Name}</span>
+                        </nav>
+                    </template>
+                    <div class="chips">
+                        <template for:each={chips} for:item="c">
+                            <span key={c.key} class={c.className}>{c.label}</span>
+                        </template>
+                    </div>
+                    <h1 class="slds-text-heading_large">{agency.Name}</h1>
+                </div>
+                <div class="header-actions">
+                    <lightning-button label="Alert me on new notices here" onclick={handleNewSearch}></lightning-button>
+                    <lightning-button
+                        class="watch"
+                        label={watchLabel}
+                        variant={watchVariant}
+                        icon-name="utility:preview"
+                        onclick={handleWatch}
+                    ></lightning-button>
+                </div>
+            </section>
+
+            <section class="kpis" aria-label="Totals">
+                <template for:each={kpis} for:item="k">
+                    <div key={k.key} class="kpi">
+                        <span class="kpi-label">{k.label}</span>
+                        <span class="kpi-value">{k.value}</span>
+                        <span class="kpi-note">{k.note}</span>
+                    </div>
+                </template>
+            </section>
+
+            <div class="columns">
+                <div class="main">
+                    <section class="panel" aria-label="What's coming">
+                        <div class="panel-head">
+                            <h2 class="slds-text-heading_medium">What's coming</h2>
+                            <span class="note">Notices, forecasts and awards ending, in date order</span>
+                        </div>
+                        <template lwc:if={hasComing}>
+                            <ol class="coming">
+                                <template for:each={coming} for:item="c">
+                                    <li key={c.recordId} class="coming-item">
+                                        <span class={c.whenClass}>{c.when}</span>
+                                        <span class={c.kindClass}>{c.kindLabel}</span>
+                                        <span class="coming-text">
+                                            <a href="#" data-id={c.recordId} onclick={handleOpen}>{c.title}</a>
+                                            <span class="note">{c.detail}</span>
+                                        </span>
+                                        <span class="right">{c.right}</span>
+                                    </li>
+                                </template>
+                            </ol>
+                        </template>
+                        <template lwc:else>
+                            <p class="note">Nothing open, forecast or ending soon at this agency in Nexus.</p>
+                        </template>
+                    </section>
+
+                    <div class="pair">
+                        <section class="panel" aria-label="Incumbents">
+                            <h2 class="slds-text-heading_small">Incumbents here</h2>
+                            <template lwc:if={hasIncumbents}>
+                                <template for:each={incumbents} for:item="i">
+                                    <a
+                                        key={i.vendorId}
+                                        href="#"
+                                        class="incumbent"
+                                        data-id={i.vendorId}
+                                        onclick={handleOpen}
+                                    >
+                                        <span>
+                                            <span class="incumbent-name">{i.name}</span>
+                                            <span class="note">{i.note}</span>
+                                        </span>
+                                        <span class="strong">{i.totalLabel}</span>
+                                    </a>
+                                </template>
+                            </template>
+                            <template lwc:else>
+                                <p class="note">No award data for this agency yet.</p>
+                            </template>
+                        </section>
+
+                        <section class="panel" aria-label="Award dollars by NAICS">
+                            <h2 class="slds-text-heading_small">Award dollars by NAICS</h2>
+                            <template lwc:if={hasNaics}>
+                                <template for:each={naics} for:item="n">
+                                    <div key={n.code} class="naics">
+                                        <div class="naics-head">
+                                            <span>{n.code}</span>
+                                            <span class="strong">{n.totalLabel}</span>
+                                        </div>
+                                        <div class="naics-track"><div class="naics-bar" style={n.barStyle}></div></div>
+                                        <span class="note">{n.fitNote}</span>
+                                    </div>
+                                </template>
+                            </template>
+                            <template lwc:else>
+                                <p class="note">No award data for this agency yet.</p>
+                            </template>
+                        </section>
+                    </div>
+                </div>
+
+                <aside class="side">
+                    <section class="panel" aria-label="Your coverage">
+                        <h2 class="slds-text-heading_small">Your coverage</h2>
+                        <template lwc:if={covered}>
+                            <p class="coverage coverage_ok">{coverageText}</p>
+                        </template>
+                        <template lwc:else>
+                            <p class="coverage">{coverageText}</p>
+                            <lightning-button
+                                label="Create a search for this agency"
+                                onclick={handleNewSearch}
+                            ></lightning-button>
+                        </template>
+                        <dl class="facts">
+                            <div>
+                                <dt>Pushed to TechnoMile</dt>
+                                <dd>{data.pushed} notices</dd>
+                            </div>
+                            <div>
+                                <dt>You follow</dt>
+                                <dd>{data.followed} notices</dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <section class="panel" aria-label="Organization">
+                        <h2 class="slds-text-heading_small">Organization</h2>
+                        <template lwc:if={parent}>
+                            <div>
+                                <span class="note">Parent</span>
+                                <div><a href="#" data-id={parent.id} onclick={handleOpen}>{parent.name}</a></div>
+                            </div>
+                        </template>
+                        <template lwc:if={hasChildren}>
+                            <div>
+                                <span class="note">Sub-agencies (included in the totals)</span>
+                                <ul class="list">
+                                    <template for:each={data.children} for:item="c">
+                                        <li key={c.id}>
+                                            <a href="#" data-id={c.id} onclick={handleOpen}>{c.name}</a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                        <template lwc:if={hasOffices}>
+                            <div>
+                                <span class="note">Offices seen in notices</span>
+                                <ul class="list">
+                                    <template for:each={data.offices} for:item="o">
+                                        <li key={o}>{o}</li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                    </section>
+
+                    <section class="panel" aria-label="Contracting contacts">
+                        <h2 class="slds-text-heading_small">Contracting contacts</h2>
+                        <template lwc:if={hasContacts}>
+                            <template for:each={contacts} for:item="c">
+                                <div key={c.id} class="contact">
+                                    <span class="strong">{c.name}</span>
+                                    <span class="note">{c.meta}</span>
+                                </div>
+                            </template>
+                            <span class="note">From points of contact on this agency's notices.</span>
+                        </template>
+                        <template lwc:else>
+                            <p class="note">No contacts yet. They come from points of contact on notices.</p>
+                        </template>
+                    </section>
+                </aside>
+            </div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,251 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    min-height: 6rem;
+}
+.header {
+    background: #fff;
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    align-items: center;
+}
+.header-main {
+    flex: 1 1 30rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    color: #5c6b80;
+}
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+.chip {
+    background: #eef1f6;
+    color: #2e3a4d;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+}
+.chip_strong {
+    font-weight: 600;
+}
+.chip_target {
+    background: #e3f0ff;
+    color: #0b3f7a;
+    font-weight: 600;
+}
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 0.75rem;
+}
+.kpi {
+    background: #fff;
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem;
+    display: flex;
+    flex-direction: column;
+}
+.kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #5c6b80;
+}
+.kpi-value {
+    font-size: 1.625rem;
+    font-weight: 800;
+}
+.kpi-note,
+.note {
+    font-size: 0.75rem;
+    color: #5c6b80;
+}
+.columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+}
+.main {
+    flex: 999 1 36rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.side {
+    flex: 1 1 20rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.pair {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+}
+.pair > .panel {
+    flex: 1 1 18rem;
+}
+.panel {
+    background: #fff;
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+.panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+.coming {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.coming-item {
+    display: grid;
+    grid-template-columns: 7rem 6.5rem minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid #eef1f6;
+}
+.coming-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.coming-text a {
+    font-weight: 600;
+}
+.when {
+    font-weight: 700;
+    color: #2e3a4d;
+}
+.when_soon {
+    color: #8a4b00;
+}
+.kind {
+    justify-self: start;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.kind_notice {
+    background: #e3f0ff;
+    color: #0b3f7a;
+}
+.kind_forecast {
+    background: #eef1f6;
+    color: #2e3a4d;
+}
+.kind_award {
+    background: #fff1e0;
+    color: #8a4b00;
+}
+.right,
+.strong {
+    font-weight: 600;
+}
+.incumbent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    color: #181818;
+    text-decoration: none;
+}
+.incumbent:hover,
+.incumbent:focus {
+    border-color: #0b5cab;
+}
+.incumbent-name {
+    display: block;
+    font-weight: 700;
+    color: #0b5cab;
+}
+.naics-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+}
+.naics-track {
+    height: 0.5rem;
+    background: #eef1f6;
+    border-radius: 0.25rem;
+    margin-top: 0.25rem;
+}
+.naics-bar {
+    height: 0.5rem;
+    background: #0b5cab;
+    border-radius: 0.25rem;
+}
+.coverage {
+    background: #fff1e0;
+    color: #8a4b00;
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    line-height: 1.45;
+}
+.coverage_ok {
+    background: #e3f0ff;
+    color: #0b3f7a;
+}
+.facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 0.75rem;
+}
+.facts dt {
+    font-size: 0.75rem;
+    color: #5c6b80;
+}
+.facts dd {
+    margin: 0;
+    font-weight: 600;
+}
+.list {
+    margin: 0.25rem 0 0;
+    padding-left: 1.125rem;
+    list-style: disc;
+    line-height: 1.6;
+}
+.contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eef1f6;
+}

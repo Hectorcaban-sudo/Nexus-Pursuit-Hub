@@ -52,6 +52,7 @@ LOADS=(
   "data/seed/5-NXP_Award_Summary__c.csv|NXP_Award_Summary__c|PIID__c"
   "data/seed/6-NXP_Gov_Forecast__c.csv|NXP_Gov_Forecast__c|Forecast_Id__c"
   "data/seed/7-NXP_Gov_Notice__c.csv|NXP_Gov_Notice__c|Notice_Id__c"
+  "data/seed/8-NXP_Gov_Contact__c.csv|NXP_Gov_Contact__c|Contact_Key__c"
 )
 for load in "${LOADS[@]}"; do
   IFS='|' read -r file object extid <<<"$load"

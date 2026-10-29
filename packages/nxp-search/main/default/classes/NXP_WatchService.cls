@@ -1,10 +1,12 @@
 /**
- * Watching forecasts, awards and vendors (NXP_Follow__c rows with Forecast__c, Award__c or Vendor__c;
+ * Watching forecasts, awards, vendors and agencies (NXP_Follow__c rows with Forecast__c, Award__c,
+ * Vendor__c or Agency__c;
  * notices keep using Gov_Notice__c) and the alerts that watching produces:
  *   - a watched forecast is released: a new notice is linked to it (Notice.Forecast__c);
  *   - a possible follow-on to a watched award is posted: a new notice is linked to it as predecessor,
  *     or has the same agency and NAICS while the award ends within 18 months or ended in the last 12;
- *   - a watched vendor gets a new award.
+ *   - a watched vendor gets a new award;
+ *   - a watched agency (or one of its sub-agencies) posts a new notice.
  * The user-facing methods run in user mode. The alert methods run from the platform event subscriber
  * and the award trigger, so they read every watcher (without sharing) and never throw.
  */
@@ -39,10 +41,14 @@ public without sharing class NXP_WatchService {
                 f.Award__c = recordId;
             } else if (t == NXP_Gov_Vendor__c.SObjectType) {
                 f.Vendor__c = recordId;
+            } else if (t == NXP_Gov_Agency__c.SObjectType) {
+                f.Agency__c = recordId;
             } else if (t == NXP_Gov_Notice__c.SObjectType) {
                 f.Gov_Notice__c = recordId;
             } else {
-                throw new IllegalArgumentException('Only notices, forecasts, awards and vendors can be watched.');
+                throw new IllegalArgumentException(
+                    'Only notices, forecasts, awards, vendors and agencies can be watched.'
+                );
             }
             insert as user f;
         } else if (watch != true && !existing.isEmpty()) {
@@ -100,6 +106,8 @@ public without sharing class NXP_WatchService {
                     Title__c,
                     Notice_Id__c,
                     Agency__c,
+                    Agency__r.Name,
+                    Agency__r.Parent_Agency__c,
                     Agency_Path__c,
                     NAICS_Code__c,
                     Response_Due__c,
@@ -112,6 +120,7 @@ public without sharing class NXP_WatchService {
             ];
             alertForecastWatchers(notices);
             alertAwardWatchers(notices);
+            alertAgencyWatchers(notices);
         } catch (Exception e) {
             NXP_Logger.warn('NXP_WatchService', 'Notice watch alerts failed: ' + e.getMessage());
             NXP_Logger.flush();
@@ -193,6 +202,62 @@ public without sharing class NXP_WatchService {
                 NXP_AlertService.summaryLine(n),
                 n.Id
             );
+        }
+    }
+
+    private static void alertAgencyWatchers(List<NXP_Gov_Notice__c> notices) {
+        Set<Id> agencyIds = new Set<Id>();
+        for (NXP_Gov_Notice__c n : notices) {
+            if (n.Agency__c != null) {
+                agencyIds.add(n.Agency__c);
+                if (n.Agency__r != null && n.Agency__r.Parent_Agency__c != null) {
+                    agencyIds.add(n.Agency__r.Parent_Agency__c);
+                }
+            }
+        }
+        if (agencyIds.isEmpty()) {
+            return;
+        }
+        Map<Id, List<NXP_Follow__c>> watchersByAgency = new Map<Id, List<NXP_Follow__c>>();
+        for (NXP_Follow__c f : [
+            SELECT OwnerId, Agency__c, Agency__r.Name
+            FROM NXP_Follow__c
+            WHERE Agency__c IN :agencyIds
+            LIMIT 5000
+        ]) {
+            if (!watchersByAgency.containsKey(f.Agency__c)) {
+                watchersByAgency.put(f.Agency__c, new List<NXP_Follow__c>());
+            }
+            watchersByAgency.get(f.Agency__c).add(f);
+        }
+        if (watchersByAgency.isEmpty()) {
+            return;
+        }
+        for (NXP_Gov_Notice__c n : notices) {
+            if (n.Agency__c == null) {
+                continue;
+            }
+            // One alert per watcher per notice, even if they watch both the agency and its parent.
+            Set<Id> told = new Set<Id>();
+            List<Id> scope = new List<Id>{ n.Agency__c };
+            if (n.Agency__r != null && n.Agency__r.Parent_Agency__c != null) {
+                scope.add(n.Agency__r.Parent_Agency__c);
+            }
+            for (Id agencyId : scope) {
+                if (!watchersByAgency.containsKey(agencyId)) {
+                    continue;
+                }
+                for (NXP_Follow__c f : watchersByAgency.get(agencyId)) {
+                    if (told.add(f.OwnerId)) {
+                        NXP_AlertService.notify(
+                            f.OwnerId,
+                            'New notice at watched agency ' + (f.Agency__r == null ? '' : f.Agency__r.Name),
+                            NXP_AlertService.summaryLine(n),
+                            n.Id
+                        );
+                    }
+                }
+            }
         }
     }
 

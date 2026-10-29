@@ -1,6 +1,7 @@
 /**
  * Data for the market screens: Forecasts board (nxpForecastBoard), Recompetes timeline
- * (nxpRecompeteTimeline) and Vendor profile (nxpVendorProfile), plus Watch and Refresh from SAM.gov.
+ * (nxpRecompeteTimeline), Vendor profile (nxpVendorProfile) and Agency profile (nxpAgencyProfile),
+ * plus Watch and Refresh from SAM.gov.
  * Reads run in user mode; the company profile (configuration) is read in system mode.
  */
 public with sharing class NXP_MarketController {
@@ -170,6 +171,133 @@ public with sharing class NXP_MarketController {
 
     @TestVisible
     private static final Integer ENDING_SOON_MONTHS = 18;
+
+    public class ComingItem implements Comparable {
+        /** notice | forecast | award */
+        @AuraEnabled
+        public String kind;
+        @AuraEnabled
+        public Id recordId;
+        @AuraEnabled
+        public String title;
+        @AuraEnabled
+        public Date onDate;
+        @AuraEnabled
+        public String detail;
+        @AuraEnabled
+        public Decimal amount;
+        @AuraEnabled
+        public Decimal fitScore;
+
+        public Integer compareTo(Object other) {
+            Date mine = onDate;
+            Date theirs = ((ComingItem) other).onDate;
+            if (mine == theirs) {
+                return 0;
+            }
+            if (mine == null) {
+                return 1;
+            }
+            if (theirs == null) {
+                return -1;
+            }
+            return mine < theirs ? -1 : 1;
+        }
+    }
+
+    public class Incumbent {
+        @AuraEnabled
+        public Id vendorId;
+        @AuraEnabled
+        public String name;
+        @AuraEnabled
+        public Integer awards;
+        @AuraEnabled
+        public Decimal total;
+    }
+
+    public class NaicsSpend {
+        @AuraEnabled
+        public String code;
+        @AuraEnabled
+        public Decimal total;
+        @AuraEnabled
+        public Decimal pct;
+        @AuraEnabled
+        public Boolean inProfile = false;
+    }
+
+    public class AgencyContact {
+        @AuraEnabled
+        public Id id;
+        @AuraEnabled
+        public String name;
+        @AuraEnabled
+        public String role;
+        @AuraEnabled
+        public String email;
+        @AuraEnabled
+        public String phone;
+        @AuraEnabled
+        public Id noticeId;
+        @AuraEnabled
+        public String noticeKey;
+    }
+
+    public class AgencyRef {
+        @AuraEnabled
+        public Id id;
+        @AuraEnabled
+        public String name;
+        @AuraEnabled
+        public String code;
+        public AgencyRef(Id id, String name, String code) {
+            this.id = id;
+            this.name = name;
+            this.code = code;
+        }
+    }
+
+    public class AgencyProfile {
+        @AuraEnabled
+        public NXP_Gov_Agency__c agency;
+        @AuraEnabled
+        public Boolean targetAgency = false;
+        @AuraEnabled
+        public Boolean watching = false;
+        @AuraEnabled
+        public Integer openNotices = 0;
+        @AuraEnabled
+        public Integer dueIn30 = 0;
+        @AuraEnabled
+        public Integer forecasts = 0;
+        @AuraEnabled
+        public Decimal forecastValue = 0;
+        @AuraEnabled
+        public Integer endingSoon = 0;
+        @AuraEnabled
+        public Decimal endingSoonValue = 0;
+        @AuraEnabled
+        public List<ComingItem> coming = new List<ComingItem>();
+        @AuraEnabled
+        public List<Incumbent> incumbents = new List<Incumbent>();
+        @AuraEnabled
+        public List<NaicsSpend> naics = new List<NaicsSpend>();
+        @AuraEnabled
+        public List<AgencyContact> contacts = new List<AgencyContact>();
+        @AuraEnabled
+        public List<String> offices = new List<String>();
+        @AuraEnabled
+        public List<AgencyRef> children = new List<AgencyRef>();
+        @AuraEnabled
+        public List<String> coveringSearches = new List<String>();
+        @AuraEnabled
+        public Integer broadSearches = 0;
+        @AuraEnabled
+        public Integer pushed = 0;
+        @AuraEnabled
+        public Integer followed = 0;
+    }
 
     // ------------------------------------------------------------------------------- Forecasts
 
@@ -392,6 +520,267 @@ public with sharing class NXP_MarketController {
         } catch (Exception e) {
             throw handled(e);
         }
+    }
+
+    // ------------------------------------------------------------------------------- Agency profile
+
+    @TestVisible
+    private static final Integer COMING_LIMIT = 15;
+
+    /** Everything Nexus links to an agency and its direct sub-agencies, for nxpAgencyProfile. */
+    @AuraEnabled
+    public static AgencyProfile getAgencyProfile(Id agencyId) {
+        try {
+            List<NXP_Gov_Agency__c> agencies = [
+                SELECT
+                    Id,
+                    Name,
+                    Agency_Code__c,
+                    Level__c,
+                    Full_Path__c,
+                    Parent_Agency__c,
+                    Parent_Agency__r.Name,
+                    Parent_Agency__r.Agency_Code__c
+                FROM NXP_Gov_Agency__c
+                WHERE Id = :agencyId
+                WITH USER_MODE
+            ];
+            if (agencies.isEmpty()) {
+                throw new AuraHandledException('Agency not found or not visible to you.');
+            }
+            AgencyProfile p = new AgencyProfile();
+            p.agency = agencies[0];
+            String path = String.isBlank(p.agency.Full_Path__c) ? p.agency.Name : p.agency.Full_Path__c;
+            p.targetAgency = new ProfileMatcher().agencyMatches(path);
+            p.watching = NXP_WatchService.watchedByMe(new Set<Id>{ agencyId }).contains(agencyId);
+
+            Set<Id> scope = new Set<Id>{ agencyId };
+            for (NXP_Gov_Agency__c child : [
+                SELECT Id, Name, Agency_Code__c
+                FROM NXP_Gov_Agency__c
+                WHERE Parent_Agency__c = :agencyId
+                WITH USER_MODE
+                ORDER BY Name
+                LIMIT 200
+            ]) {
+                p.children.add(new AgencyRef(child.Id, child.Name, child.Agency_Code__c));
+                scope.add(child.Id);
+            }
+
+            Date today = Date.today();
+            Datetime now = Datetime.now();
+            Date forecastFrom = today.addDays(-30);
+            Date awardsTo = today.addMonths(ENDING_SOON_MONTHS);
+            List<ComingItem> coming = new List<ComingItem>();
+
+            for (NXP_Gov_Notice__c n : [
+                SELECT Id, Title__c, Name, Notice_Id__c, Notice_Type__c, NAICS_Code__c, Response_Due__c, Fit_Score__c
+                FROM NXP_Gov_Notice__c
+                WHERE
+                    Agency__c IN :scope
+                    AND Status__c = 'Active'
+                    AND (Response_Due__c >= :now
+                    OR Response_Due__c = NULL)
+                WITH USER_MODE
+                ORDER BY Response_Due__c ASC NULLS LAST
+                LIMIT 200
+            ]) {
+                p.openNotices++;
+                if (n.Response_Due__c != null && n.Response_Due__c <= now.addDays(30)) {
+                    p.dueIn30++;
+                }
+                ComingItem c = new ComingItem();
+                c.kind = 'notice';
+                c.recordId = n.Id;
+                c.title = n.Title__c == null ? n.Name : n.Title__c;
+                c.onDate = n.Response_Due__c == null ? null : n.Response_Due__c.date();
+                c.detail = joinParts(new List<String>{ n.Notice_Type__c, n.Notice_Id__c, naicsLabel(n.NAICS_Code__c) });
+                c.fitScore = n.Fit_Score__c;
+                coming.add(c);
+            }
+
+            for (NXP_Gov_Forecast__c f : [
+                SELECT Id, Name, NAICS_Code__c, Fiscal_Year__c, Estimated_Value__c, Estimated_Solicitation_Date__c
+                FROM NXP_Gov_Forecast__c
+                WHERE
+                    Agency__c IN :scope
+                    AND Matched_Notice__c = NULL
+                    AND (Estimated_Solicitation_Date__c >= :forecastFrom
+                    OR Estimated_Solicitation_Date__c = NULL)
+                WITH USER_MODE
+                ORDER BY Estimated_Solicitation_Date__c ASC NULLS LAST
+                LIMIT 200
+            ]) {
+                p.forecasts++;
+                p.forecastValue += f.Estimated_Value__c == null ? 0 : f.Estimated_Value__c;
+                ComingItem c = new ComingItem();
+                c.kind = 'forecast';
+                c.recordId = f.Id;
+                c.title = f.Name;
+                c.onDate = f.Estimated_Solicitation_Date__c;
+                c.detail = joinParts(
+                    new List<String>{ 'Expected solicitation', f.Fiscal_Year__c, naicsLabel(f.NAICS_Code__c) }
+                );
+                c.amount = f.Estimated_Value__c;
+                coming.add(c);
+            }
+
+            for (NXP_Award_Summary__c a : [
+                SELECT Id, Name, PIID__c, NAICS_Code__c, Vendor__r.Name, Obligated_Amount__c, Period_End__c
+                FROM NXP_Award_Summary__c
+                WHERE Agency__c IN :scope AND Period_End__c >= :today AND Period_End__c <= :awardsTo
+                WITH USER_MODE
+                ORDER BY Period_End__c ASC
+                LIMIT 200
+            ]) {
+                p.endingSoon++;
+                p.endingSoonValue += a.Obligated_Amount__c == null ? 0 : a.Obligated_Amount__c;
+                ComingItem c = new ComingItem();
+                c.kind = 'award';
+                c.recordId = a.Id;
+                c.title = a.Name;
+                c.onDate = a.Period_End__c;
+                c.detail = joinParts(
+                    new List<String>{
+                        a.Vendor__r == null ? null : a.Vendor__r.Name,
+                        a.PIID__c,
+                        naicsLabel(a.NAICS_Code__c)
+                    }
+                );
+                c.amount = a.Obligated_Amount__c;
+                coming.add(c);
+            }
+            coming.sort();
+            for (Integer i = 0; i < coming.size() && i < COMING_LIMIT; i++) {
+                p.coming.add(coming[i]);
+            }
+
+            for (AggregateResult ar : [
+                SELECT Vendor__c vendorId, Vendor__r.Name vendorName, COUNT(Id) awards, SUM(Obligated_Amount__c) total
+                FROM NXP_Award_Summary__c
+                WHERE Agency__c IN :scope AND Vendor__c != NULL
+                WITH USER_MODE
+                GROUP BY Vendor__c, Vendor__r.Name
+                ORDER BY SUM(Obligated_Amount__c) DESC NULLS LAST
+                LIMIT 5
+            ]) {
+                Incumbent inc = new Incumbent();
+                inc.vendorId = (Id) ar.get('vendorId');
+                inc.name = (String) ar.get('vendorName');
+                inc.awards = (Integer) ar.get('awards');
+                inc.total = (Decimal) ar.get('total');
+                p.incumbents.add(inc);
+            }
+
+            ProfileMatcher profile = new ProfileMatcher();
+            Decimal naicsTotal = 0;
+            for (AggregateResult ar : [
+                SELECT NAICS_Code__c code, SUM(Obligated_Amount__c) total
+                FROM NXP_Award_Summary__c
+                WHERE Agency__c IN :scope AND NAICS_Code__c != NULL
+                WITH USER_MODE
+                GROUP BY NAICS_Code__c
+                ORDER BY SUM(Obligated_Amount__c) DESC NULLS LAST
+                LIMIT 8
+            ]) {
+                NaicsSpend ns = new NaicsSpend();
+                ns.code = (String) ar.get('code');
+                ns.total = ar.get('total') == null ? 0 : (Decimal) ar.get('total');
+                ns.inProfile = profile.naicsMatches(ns.code);
+                naicsTotal += ns.total;
+                p.naics.add(ns);
+            }
+            for (NaicsSpend ns : p.naics) {
+                ns.pct = naicsTotal == 0 ? 0 : (ns.total * 100 / naicsTotal).setScale(0, RoundingMode.HALF_UP);
+            }
+
+            Set<String> seen = new Set<String>();
+            for (NXP_Gov_Contact__c c : [
+                SELECT Id, Name, Role__c, Email__c, Phone__c, Gov_Notice__c, Gov_Notice__r.Notice_Id__c
+                FROM NXP_Gov_Contact__c
+                WHERE Agency__c IN :scope OR Gov_Notice__r.Agency__c IN :scope
+                WITH USER_MODE
+                ORDER BY CreatedDate DESC
+                LIMIT 50
+            ]) {
+                String who = (String.isBlank(c.Email__c) ? c.Name : c.Email__c).toLowerCase();
+                if (!seen.add(who) || p.contacts.size() >= 8) {
+                    continue;
+                }
+                AgencyContact ac = new AgencyContact();
+                ac.id = c.Id;
+                ac.name = c.Name;
+                ac.role = c.Role__c;
+                ac.email = c.Email__c;
+                ac.phone = c.Phone__c;
+                ac.noticeId = c.Gov_Notice__c;
+                ac.noticeKey = c.Gov_Notice__r == null ? null : c.Gov_Notice__r.Notice_Id__c;
+                p.contacts.add(ac);
+            }
+
+            for (AggregateResult ar : [
+                SELECT Office__c office
+                FROM NXP_Gov_Notice__c
+                WHERE Agency__c IN :scope AND Office__c != NULL
+                WITH USER_MODE
+                GROUP BY Office__c
+                ORDER BY COUNT(Id) DESC
+                LIMIT 8
+            ]) {
+                p.offices.add((String) ar.get('office'));
+            }
+
+            Id me = UserInfo.getUserId();
+            for (NXP_Saved_Search__c s : [
+                SELECT Name, Criteria_JSON__c
+                FROM NXP_Saved_Search__c
+                WHERE OwnerId = :me AND Active__c = TRUE
+                WITH USER_MODE
+                ORDER BY Name
+                LIMIT 200
+            ]) {
+                NXP_SearchCriteria c;
+                try {
+                    c = NXP_SearchCriteria.parse(s.Criteria_JSON__c);
+                } catch (Exception e) {
+                    continue;
+                }
+                if (c.agencies == null || c.agencies.isEmpty()) {
+                    p.broadSearches++;
+                } else if (NXP_Text.containsAny(path, c.agencies)) {
+                    p.coveringSearches.add(s.Name);
+                }
+            }
+            p.pushed = [
+                SELECT COUNT()
+                FROM NXP_Gov_Notice__c
+                WHERE Agency__c IN :scope AND Pushed__c = TRUE
+                WITH USER_MODE
+            ];
+            p.followed = [
+                SELECT COUNT()
+                FROM NXP_Follow__c
+                WHERE OwnerId = :me AND Gov_Notice__r.Agency__c IN :scope
+                WITH USER_MODE
+            ];
+            return p;
+        } catch (Exception e) {
+            throw handled(e);
+        }
+    }
+
+    private static String naicsLabel(String code) {
+        return String.isBlank(code) ? null : 'NAICS ' + code;
+    }
+
+    private static String joinParts(List<String> parts) {
+        List<String> kept = new List<String>();
+        for (String part : parts) {
+            if (String.isNotBlank(part)) {
+                kept.add(part);
+            }
+        }
+        return String.join(kept, ' · ');
     }
 
     // ------------------------------------------------------------------------------- actions

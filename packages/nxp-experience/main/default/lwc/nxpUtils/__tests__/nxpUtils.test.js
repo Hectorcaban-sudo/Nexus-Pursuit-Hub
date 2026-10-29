@@ -1,4 +1,15 @@
-import { reduceErrors, formatMoney, daysUntil, dueLabel, fitTier, splitList, joinList, debounce } from 'c/nxpUtils';
+import {
+    reduceErrors,
+    formatMoney,
+    daysUntil,
+    dueLabel,
+    fitTier,
+    splitList,
+    joinList,
+    debounce,
+    formatDate,
+    toDate
+} from 'c/nxpUtils';
 
 describe('c-nxp-utils', () => {
     it('flattens Apex and JS errors', () => {
@@ -48,5 +59,25 @@ describe('c-nxp-utils', () => {
         expect(fn).toHaveBeenCalledTimes(1);
         expect(fn).toHaveBeenCalledWith(2);
         jest.useRealTimers();
+    });
+});
+
+describe('c/nxpUtils dates', () => {
+    it('reads Apex Date strings as local calendar dates', () => {
+        const d = toDate('2026-11-07');
+        expect([d.getFullYear(), d.getMonth(), d.getDate()]).toEqual([2026, 10, 7]);
+        expect(formatDate('2026-11-07')).toBe('Nov 7, 2026');
+    });
+
+    it('counts whole days to a date-only value in any time zone', () => {
+        const today = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const iso = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+        expect(daysUntil(iso)).toBe(0);
+        expect(daysUntil(null)).toBeNull();
+    });
+
+    it('still accepts full timestamps', () => {
+        expect(toDate('2026-11-07T18:00:00.000Z').toISOString()).toBe('2026-11-07T18:00:00.000Z');
     });
 });

@@ -41,6 +41,20 @@ export function formatMoney(value) {
     return value === null || value === undefined ? '' : currency.format(value);
 }
 
+const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+/**
+ * Apex Date values arrive as "YYYY-MM-DD". new Date() reads that as midnight UTC, which is the
+ * previous evening in US time zones, so read it as a local calendar date instead.
+ */
+export function toDate(value) {
+    if (value instanceof Date) {
+        return value;
+    }
+    const m = typeof value === 'string' ? DATE_ONLY.exec(value) : null;
+    return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(value);
+}
+
 export function formatDate(value, withTime = false) {
     if (!value) {
         return '';
@@ -48,7 +62,7 @@ export function formatDate(value, withTime = false) {
     const options = withTime
         ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }
         : { month: 'short', day: 'numeric', year: 'numeric' };
-    return new Intl.DateTimeFormat('en-US', options).format(new Date(value));
+    return new Intl.DateTimeFormat('en-US', options).format(toDate(value));
 }
 
 /** Whole days from today until the date; negative when past. */
@@ -56,7 +70,7 @@ export function daysUntil(value) {
     if (!value) {
         return null;
     }
-    const ms = new Date(value).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0);
+    const ms = toDate(value).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0);
     return Math.round(ms / 86400000);
 }
 

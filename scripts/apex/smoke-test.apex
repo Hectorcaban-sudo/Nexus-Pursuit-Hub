@@ -353,6 +353,28 @@ try {
     fails++;
 }
 
+// 7d. Agency profile ----------------------------------------------------------------------------
+try {
+    List<NXP_Gov_Agency__c> vha = [SELECT Id FROM NXP_Gov_Agency__c WHERE Agency_Code__c = '036.3600' LIMIT 1];
+    if (vha.isEmpty()) {
+        out.add('FAIL|Agency profile|sample agency 036.3600 not found; run load-sample-data again');
+        fails++;
+    } else {
+        NXP_MarketController.AgencyProfile ap = NXP_MarketController.getAgencyProfile(vha[0].Id);
+        Boolean agencyOk =
+            ap.openNotices >= 2 && ap.coming.size() >= 4 && !ap.incumbents.isEmpty() && !ap.contacts.isEmpty();
+        out.add(
+            (agencyOk ? 'PASS' : 'FAIL') + '|Agency profile|Veterans Health Administration: ' + ap.openNotices +
+            ' open notices, ' + ap.forecasts + ' forecasts, ' + ap.endingSoon + ' awards ending, ' +
+            ap.contacts.size() + ' contacts'
+        );
+        fails += agencyOk ? 0 : 1;
+    }
+} catch (Exception e) {
+    out.add('FAIL|Agency profile|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();

@@ -22,7 +22,14 @@ private class NXP_MarketTest {
             Target_Agency_Codes__c = 'Veterans; Homeland Security',
             Set_Asides__c = 'Small Business'
         );
+        NXP_Gov_Agency__c vaDept = new NXP_Gov_Agency__c(
+            Name = 'Veterans Affairs, Department of',
+            Agency_Code__c = 'T036',
+            Full_Path__c = 'Veterans Affairs, Department of'
+        );
+        insert vaDept;
         NXP_Gov_Agency__c va = new NXP_Gov_Agency__c(
+            Parent_Agency__c = vaDept.Id,
             Name = 'Veterans Health Administration',
             Agency_Code__c = 'T036.3600',
             Full_Path__c = 'Veterans Affairs, Department of › Veterans Health Administration'
@@ -117,6 +124,7 @@ private class NXP_MarketTest {
             Agency__c = va.Id,
             Agency_Path__c = va.Full_Path__c,
             NAICS_Code__c = '541512',
+            Office__c = 'VHA Program Contracting Activity',
             Posted_Date__c = today.addDays(-3),
             Response_Due__c = Datetime.now().addDays(9)
         );
@@ -133,6 +141,36 @@ private class NXP_MarketTest {
             Predecessor_Award__c = predecessor.Id
         );
         insert new List<NXP_Gov_Notice__c>{ rfi, helpDesk };
+        insert new NXP_Gov_Contact__c(
+            Name = 'Pat Jones',
+            Email__c = 'pat.jones@example.gov',
+            Role__c = 'Contracting Officer',
+            Gov_Notice__c = rfi.Id,
+            Contact_Key__c = 'T-NOTICE-1|pat'
+        );
+        insert new List<NXP_Saved_Search__c>{
+            new NXP_Saved_Search__c(
+                Name = 'VA cyber',
+                Criteria_JSON__c = '{"agencies":["Veterans"]}',
+                Active__c = true,
+                Alert_Frequency__c = 'Daily',
+                Visibility__c = 'Private'
+            ),
+            new NXP_Saved_Search__c(
+                Name = 'All 5415',
+                Criteria_JSON__c = '{"naics":["5415*"]}',
+                Active__c = true,
+                Alert_Frequency__c = 'Weekly',
+                Visibility__c = 'Private'
+            ),
+            new NXP_Saved_Search__c(
+                Name = 'Army only',
+                Criteria_JSON__c = '{"agencies":["Army"]}',
+                Active__c = true,
+                Alert_Frequency__c = 'Weekly',
+                Visibility__c = 'Private'
+            )
+        };
         NXP_Gov_Forecast__c releasedForecast = new NXP_Gov_Forecast__c(
             Name = 'Help Desk Recompete',
             Forecast_Id__c = 'T-FC-5',
@@ -314,6 +352,76 @@ private class NXP_MarketTest {
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Only notices'), e.getMessage());
         }
+    }
+
+    @IsTest
+    static void agencyProfileBringsTogetherNoticesForecastsAndAwards() {
+        Id vaId = [SELECT Id FROM NXP_Gov_Agency__c WHERE Agency_Code__c = 'T036.3600'].Id;
+        NXP_MarketController.AgencyProfile p = NXP_MarketController.getAgencyProfile(vaId);
+        System.assertEquals('Veterans Health Administration', p.agency.Name);
+        System.assertEquals('Veterans Affairs, Department of', p.agency.Parent_Agency__r.Name);
+        System.assert(p.targetAgency, 'Veterans is a target agency in the profile');
+        System.assertEquals(2, p.openNotices);
+        System.assertEquals(2, p.dueIn30);
+        System.assertEquals(3, p.forecasts, 'T-FC-5 is already released');
+        System.assertEquals(30000000, p.forecastValue);
+        System.assertEquals(3, p.endingSoon);
+        System.assertEquals(41200000, p.endingSoonValue);
+
+        System.assertEquals(8, p.coming.size());
+        System.assertEquals('notice', p.coming[0].kind);
+        System.assertEquals('Security Operations Center Support', p.coming[0].title);
+        System.assertEquals('forecast', p.coming[2].kind);
+        System.assertEquals('award', p.coming[3].kind);
+        System.assertEquals('Someday Project', p.coming[7].title, 'undated forecasts last');
+
+        System.assertEquals(1, p.incumbents.size());
+        System.assertEquals('Meridian Health IT', p.incumbents[0].name);
+        System.assertEquals(2, p.incumbents[0].awards);
+        System.assertEquals(39200000, p.incumbents[0].total);
+
+        System.assertEquals(3, p.naics.size());
+        System.assertEquals('541511', p.naics[0].code);
+        System.assertEquals(65, p.naics[0].pct);
+        System.assert(p.naics[0].inProfile);
+        System.assertEquals('541513', p.naics[2].code);
+        System.assertEquals(5, p.naics[2].pct);
+        System.assert(p.naics[2].inProfile, '541513 is covered by 5415* in the profile');
+    }
+
+    @IsTest
+    static void agencyProfileCoverageContactsAndSubAgencies() {
+        Id vaId = [SELECT Id FROM NXP_Gov_Agency__c WHERE Agency_Code__c = 'T036.3600'].Id;
+        NXP_MarketController.AgencyProfile p = NXP_MarketController.getAgencyProfile(vaId);
+        System.assertEquals(new List<String>{ 'VA cyber' }, p.coveringSearches);
+        System.assertEquals(1, p.broadSearches);
+        System.assertEquals(1, p.contacts.size());
+        System.assertEquals('Pat Jones', p.contacts[0].name);
+        System.assertEquals('T-NOTICE-1', p.contacts[0].noticeKey);
+        System.assertEquals(new List<String>{ 'VHA Program Contracting Activity' }, p.offices);
+        System.assertEquals(0, p.pushed);
+        System.assertEquals(0, p.followed);
+
+        Id deptId = [SELECT Id FROM NXP_Gov_Agency__c WHERE Agency_Code__c = 'T036'].Id;
+        NXP_MarketController.AgencyProfile dept = NXP_MarketController.getAgencyProfile(deptId);
+        System.assertEquals(1, dept.children.size());
+        System.assertEquals(2, dept.openNotices, 'includes notices of its sub-agencies');
+
+        NXP_MarketController.watch(deptId, true);
+        System.assert(NXP_MarketController.getAgencyProfile(deptId).watching);
+        System.assertEquals(1, NXP_WatchService.countMyWatches(NXP_Follow__c.Agency__c));
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Name = 'New VHA notice',
+            Title__c = 'New VHA notice',
+            Notice_Id__c = 'T-NOTICE-4',
+            Status__c = 'Active',
+            Agency__c = vaId
+        );
+        insert n;
+        Test.startTest();
+        NXP_WatchService.noticesCreated(new Set<Id>{ n.Id });
+        Test.stopTest();
+        System.assertEquals(0, [SELECT COUNT() FROM NXP_Log__c WHERE Source__c = 'NXP_WatchService']);
     }
 
     @IsTest

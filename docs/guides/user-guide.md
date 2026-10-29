@@ -44,6 +44,8 @@ Open a notice title to see:
 - **Recompetes** tab: contract awards in your market on a timeline, with today marked. Orange bars end within 6 months. The **Follow-on** column shows the notice that names the award as its predecessor, or a likely notice or forecast from the same agency with the same NAICS. Click an award's title for details; **Watch this recompete** alerts you when a likely follow-on is posted.
 - **Vendor profile**: click an incumbent's name (or open a Gov Vendor). You see their awards in Nexus, where they overlap with your company profile (NAICS, agencies, set-aside eligibility) and open notices where they are the likely incumbent. **Watch this vendor** alerts you when they win a new award. Admins can **Refresh from SAM.gov**.
 
+- **Agency profile**: open a Gov Agency (or click an agency link). _What's coming_ lists its open notices, forecasts and awards ending, in date order; you also see who holds its awards, where it spends by NAICS, its contracting contacts, and whether any of your saved searches covers it. A department includes its sub-agencies. **Watch this agency** alerts you on every new notice it posts.
+
 Watches show in the bell icon as **NXP Match Alert** notifications, like followed notices.
 
 ## 5. Ask the assistant

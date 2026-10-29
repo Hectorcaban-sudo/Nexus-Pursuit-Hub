@@ -1,0 +1,5 @@
+Name,Contact_Key__c,Role__c,Email__c,Phone__c,Gov_Notice__r.Notice_Id__c,Agency__r.Agency_Code__c
+Sample Contracting Officer (VHA),SAMPLE-0004|co,Contracting Officer,co.vha.sample@example.gov,555-0104,SAMPLE-0004,036.3600
+Sample Contract Specialist (VHA),SAMPLE-0008|cs,Contract Specialist,cs.vha.sample@example.gov,555-0108,SAMPLE-0008,036.3600
+Sample Contracting Officer (CBP),SAMPLE-0001|co,Contracting Officer,co.cbp.sample@example.gov,555-0101,SAMPLE-0001,070.7014
+Sample Program Manager (Army),SAMPLE-0003|pm,Program Manager,pm.army.sample@example.gov,555-0103,SAMPLE-0003,097.2100

@@ -312,6 +312,11 @@
     </externalCredentialPrincipalAccesses>
     <fieldPermissions>
         <editable>true</editable>
+        <field>NXP_Follow__c.Agency__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Follow__c.Award__c</field>
         <readable>true</readable>
     </fieldPermissions>

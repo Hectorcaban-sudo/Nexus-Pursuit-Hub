@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- **Agency profile:** Gov Agency record page with `nxpAgencyProfile` (`NXP_MarketController.getAgencyProfile`): what's coming, incumbents, NAICS mix, saved-search coverage, sub-agencies, offices, contacts. **Watch** an agency (`NXP_Follow__c.Agency__c`) for an alert on every new notice it or its sub-agencies post. Sample data adds contacts and offices.
+- **Fix:** date-only values (due dates, period ends, forecast dates) showed one day early in US time zones; `nxpUtils.toDate` now reads `YYYY-MM-DD` as a local date.
 - **Market screens:** Forecasts tab (`nxpForecastBoard`), Recompetes tab (`nxpRecompeteTimeline`) and a Gov Vendor record page with `nxpVendorProfile`, backed by `NXP_MarketController`.
 - **Watch** forecasts, awards and vendors (`NXP_Follow__c` gets `Forecast__c`, `Award__c`, `Vendor__c`); `NXP_WatchService` alerts when a forecast is released, a likely follow-on to an award is posted, or a vendor wins an award (`NXP_AwardSummaryTrigger`).
 - **Refresh from SAM.gov** on the vendor profile (admins).
