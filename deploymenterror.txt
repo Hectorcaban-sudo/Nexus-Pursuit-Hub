@@ -1,0 +1,133 @@
+
+┌───────────────────────────────┬───────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────────────┬─────────────┐
+│ Type                          │ Name                              │ Problem                                                                                    │ Line:Column │
+├───────────────────────────────┼───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────┼─────────────┤
+│ PermissionSet                 │ NXP_Admin                         │ In field: apexClass - no ApexClass named NXP_CriteriaDraftService found                    │             │
+│ ApexClass                     │ NXP_AgentsTest                    │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_DraftSearchCriteriaAction : Dependent class is invalid and needs recompilation:  │             │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ApexClass                     │ NXP_CoreTest                      │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_CriteriaDraftService          │ Identifier name is reserved: number (281:44)                                               │ 281:44      │
+│ ApexClass                     │ NXP_DraftSearchCriteriaAction     │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ApexClass                     │ NXP_FeedConsoleController         │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_FeedScheduler : Dependent class is invalid and needs recompilation:              │             │
+│                               │                                   │ Class NXP_NoticeEnrichBatch : Dependent class is invalid and needs recompilation:          │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_FeedFetchBatch                │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_FeedScheduler : Dependent class is invalid and needs recompilation:              │             │
+│                               │                                   │ Class NXP_NoticeEnrichBatch : Dependent class is invalid and needs recompilation:          │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_FeedFetchFinalizer            │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_FeedRunService : Dependent class is invalid and needs recompilation:             │             │
+│                               │                                   │ Class NXP_IngestionService : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_SamOpportunityConnector : Dependent class is invalid and needs recompilation:    │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_FeedFetchJob                  │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_FeedScheduler : Dependent class is invalid and needs recompilation:              │             │
+│                               │                                   │ Class NXP_NoticeEnrichBatch : Dependent class is invalid and needs recompilation:          │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_FeedRunService                │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_IngestionService : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_SamOpportunityConnector : Dependent class is invalid and needs recompilation:    │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_FeedScheduler                 │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_NoticeEnrichBatch : Dependent class is invalid and needs recompilation:          │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_ForecastConnector             │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexTrigger                   │ NXP_GovNoticeChangedTrigger       │ Variable does not exist: NXP_SearchMatchService (5:5)                                      │ 5:5         │
+│ PlatformEventSubscriberConfig │ NXP_GovNoticeChangedTriggerConfig │ In field: PlatformEventConsumer - no ApexTrigger named NXP_GovNoticeChangedTrigger found   │             │
+│ FlexiPage                     │ NXP_Gov_Notice_Record_Page        │ The 'sidebar' region (type Region) specifies mode 'REPLACE' but a parent region enabling   │             │
+│                               │                                   │ that mode doesn't exist.                                                                   │             │
+│ ApexClass                     │ NXP_HttpClient                    │ Classes extending Exception must have a name ending in Exception:                          │ 7:18        │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_HttpClient                    │ Constructor not defined: [NXP_HttpClient.CalloutFailure].<Constructor>(String) (71:34)     │ 71:34       │
+│ ApexClass                     │ NXP_IngestionService              │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_SamOpportunityConnector : Dependent class is invalid and needs recompilation:    │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_IngestionTest                 │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_FeedConsoleController : Dependent class is invalid and needs recompilation:      │             │
+│                               │                                   │ Class NXP_FeedScheduler : Dependent class is invalid and needs recompilation:              │             │
+│                               │                                   │ Class NXP_NoticeEnrichBatch : Dependent class is invalid and needs recompilation:          │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ PermissionSet                 │ NXP_Integration                   │ In field: apexClass - no ApexClass named NXP_NoticeIngestResource found                    │             │
+│ ApexClass                     │ NXP_KeywordExpression             │ Identifier name is reserved: any (70:25)                                                   │ 70:25       │
+│ ApexClass                     │ NXP_KeywordExpression             │ Identifier name is reserved: inner (129:18)                                                │ 129:18      │
+│ ApexClass                     │ NXP_KeywordExpression             │ Identifier name is reserved: end (171:25)                                                  │ 171:25      │
+│ ApexClass                     │ NXP_NoticeAnalystJob              │ field 'AI_Change_Summary__c' can not be filtered in a query call (35:17)                   │ 35:17       │
+│ ApexClass                     │ NXP_NoticeController              │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_SearchController : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ApexClass                     │ NXP_NoticeControllerTest          │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_NoticeController : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_SearchController : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ApexClass                     │ NXP_NoticeEnrichBatch             │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_NoticeIngestResource          │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_RestIngestSupport : Dependent class is invalid and needs recompilation:          │             │
+│                               │                                   │ Class NXP_FeedRunService : Dependent class is invalid and needs recompilation:             │             │
+│                               │                                   │ Class NXP_IngestionService : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_SamOpportunityConnector : Dependent class is invalid and needs recompilation:    │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_PreviewSearchAction           │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_SearchController : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ExternalCredential            │ NXP_Public_API                    │ External Credentials don't support the "NoAuthentication" authentication protocol.         │             │
+│ ApexClass                     │ NXP_RestIngestSupport             │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_FeedRunService : Dependent class is invalid and needs recompilation:             │             │
+│                               │                                   │ Class NXP_IngestionService : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_SamOpportunityConnector : Dependent class is invalid and needs recompilation:    │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_SamEntityConnector            │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_SamOpportunityConnector       │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_SaveSearchAction              │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_SearchController : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ApexClass                     │ NXP_SearchController              │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ApexClass                     │ NXP_SearchCriteria                │ Dependent class is invalid and needs recompilation:                                        │ 70:25       │
+│                               │                                   │ Class NXP_KeywordExpression : Identifier name is reserved: any (70:25)                     │             │
+│ ApexClass                     │ NXP_SearchMatchService            │ Dependent class is invalid and needs recompilation:                                        │ 70:25       │
+│                               │                                   │ Class NXP_SearchCriteria : Dependent class is invalid and needs recompilation:             │             │
+│                               │                                   │ Class NXP_KeywordExpression : Identifier name is reserved: any (70:25)                     │             │
+│ ApexClass                     │ NXP_SearchQueryBuilder            │ Dependent class is invalid and needs recompilation:                                        │ 70:25       │
+│                               │                                   │ Class NXP_SearchCriteria : Dependent class is invalid and needs recompilation:             │             │
+│                               │                                   │ Class NXP_KeywordExpression : Identifier name is reserved: any (70:25)                     │             │
+│ ApexClass                     │ NXP_SearchTest                    │ Dependent class is invalid and needs recompilation:                                        │ 281:44      │
+│                               │                                   │ Class NXP_SearchController : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_CriteriaDraftService : Identifier name is reserved: number (281:44)              │             │
+│ ApexClass                     │ NXP_TaskOrderIngestResource       │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_RestIngestSupport : Dependent class is invalid and needs recompilation:          │             │
+│                               │                                   │ Class NXP_FeedRunService : Dependent class is invalid and needs recompilation:             │             │
+│                               │                                   │ Class NXP_IngestionService : Dependent class is invalid and needs recompilation:           │             │
+│                               │                                   │ Class NXP_SamOpportunityConnector : Dependent class is invalid and needs recompilation:    │             │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ ApexClass                     │ NXP_UsaSpendingConnector          │ Dependent class is invalid and needs recompilation:                                        │ 7:18        │
+│                               │                                   │ Class NXP_HttpClient : Classes extending Exception must have a name ending in Exception:   │             │
+│                               │                                   │ NXP_HttpClient.CalloutFailure (7:18)                                                       │             │
+│ PermissionSet                 │ NXP_User                          │ Permission Delete NXP_Follow__c depends on permission(s): Edit NXP_Follow__c               │             │
+│ LightningComponentBundle      │ nxpFeedConsole                    │ Unable to find Apex action class referenced as 'NXP_FeedConsoleController'.                │             │
+│                               │                                   │ Unable to find Apex action class referenced as 'NXP_FeedConsoleController'.                │             │
+│                               │                                   │ Unable to find Apex action class referenced as 'NXP_FeedConsoleController'.                │             │
+└───────────────────────────────┴───────────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────────────┴─────────────┘
