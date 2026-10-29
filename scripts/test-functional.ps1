@@ -3,11 +3,12 @@
     Functional test of Nexus Pursuit Hub in a dev or QA org that has the sample data loaded.
 
 .DESCRIPTION
-    1. Apex REST ingestion API: posts data\fixtures\rest-sample-notice.json and checks idempotency.
-    2. End-to-end smoke test (scripts\apex\smoke-test.apex): configuration, fit scoring, search
-       drafting and preview, saved searches and matches, notice page data, push to TechnoMile
-       (preview, guardrail, push, push log), feed console and the digest batch.
-    3. Optional: every Apex unit test with code coverage (-ApexTests).
+    Runs scripts\apex\smoke-test.apex: the REST ingestion resource and its idempotency, configuration,
+    fit scoring, search drafting and preview, saved searches and matches, notice page data, push to
+    TechnoMile (preview, guardrail, push, push log), feed console and the digest batch.
+    The smoke test saves its results in an NXP_Log__c row (Source 'NXP-SMOKE'); this script reads
+    that row, so results don't depend on the size of the debug log.
+    Optional: every Apex unit test with code coverage (-ApexTests).
     Load the sample data first: .\scripts\load-sample-data.ps1 -Org <alias>
     Exits with code 0 when nothing failed, 1 otherwise. Bash version: scripts/test-functional.sh
 
@@ -15,13 +16,12 @@
     .\scripts\test-functional.ps1 -Org nxp-dev
 .EXAMPLE
     .\scripts\test-functional.ps1 -Org nxp-dev -ApexTests
-.EXAMPLE
-    .\scripts\test-functional.ps1 -Org nxp-dev -SkipRest
 #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$Org,
     [switch]$ApexTests,
+    # Kept so older commands still work; the REST check now runs inside the smoke test.
     [switch]$SkipRest
 )
 . (Join-Path $PSScriptRoot 'lib\common.ps1')
@@ -33,74 +33,29 @@ function Add-Result([string]$Status, [string]$Check, [string]$Detail) {
     $results.Add([pscustomobject]@{ Status = $Status; Check = $Check; Detail = $Detail })
 }
 
-function Send-RestNotice([string]$Endpoint, [string]$Token, [string]$Key, [string]$Body) {
-    $headers = @{ Authorization = "Bearer $Token"; 'Idempotency-Key' = $Key }
-    try {
-        $resp = Invoke-WebRequest -Uri $Endpoint -Method Post -Headers $headers -ContentType 'application/json' `
-            -Body ([Text.Encoding]::UTF8.GetBytes($Body)) -UseBasicParsing
-        $replay = (@($resp.Headers['Idempotent-Replay']) -join '') -eq 'true'
-        return @{ Code = [int]$resp.StatusCode; Body = [string]$resp.Content; Replay = $replay }
-    }
-    catch {
-        $code = 0
-        $text = $_.Exception.Message
-        if ($_.Exception.PSObject.Properties['Response'] -and $_.Exception.Response) { $code = [int]$_.Exception.Response.StatusCode }
-        if ($_.ErrorDetails -and $_.ErrorDetails.Message) { $text = $_.ErrorDetails.Message }
-        return @{ Code = $code; Body = $text; Replay = $false }
-    }
-}
-
-# 1. Apex REST ingestion API ------------------------------------------------------------------------
-if (-not $SkipRest) {
-    Write-Step 'Apex REST ingestion API (POST /services/apexrest/nxp/v1/notices)'
-    # Windows PowerShell 5.1 does not always offer TLS 1.2 by default; Salesforce requires it.
-    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-    $info = Invoke-SfJson @('org', 'display', '--target-org', $Org)
-    if ($info.status -ne 0 -or -not $info.result.accessToken) {
-        Add-Result 'WARN' 'REST ingestion' "could not read the access token from 'sf org display'; skipped"
-    }
-    else {
-        $today = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
-        $due = (Get-Date).ToUniversalTime().AddDays(30).ToString('yyyy-MM-dd')
-        $body = (Get-Content -Raw -Encoding UTF8 'data/fixtures/rest-sample-notice.json').Replace('{{TODAY}}', $today).Replace('{{DUE_30}}', $due)
-        $key = 'nxp-functional-test-' + [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-        $endpoint = $info.result.instanceUrl.TrimEnd('/') + '/services/apexrest/nxp/v1/notices'
-
-        $first = Send-RestNotice $endpoint $info.result.accessToken $key $body
-        $ok = $false
-        if ($first.Code -eq 200) {
-            $json = $first.Body | ConvertFrom-Json
-            $ok = ($json.rejected -eq 0) -and (($json.created + $json.updated + $json.unchanged) -eq 1)
-        }
-        if ($ok) {
-            Add-Result 'PASS' 'REST ingestion' "HTTP 200, SAMPLE-REST-0001 accepted: created=$($json.created) updated=$($json.updated) unchanged=$($json.unchanged)"
-        }
-        else {
-            Add-Result 'FAIL' 'REST ingestion' "HTTP $($first.Code) $($first.Body) (the user needs the NXP_Integration or NXP_Admin permission set)"
-        }
-
-        $second = Send-RestNotice $endpoint $info.result.accessToken $key $body
-        if ($second.Replay) {
-            Add-Result 'PASS' 'REST idempotency' 'same Idempotency-Key replayed the first response'
-        }
-        else {
-            Add-Result 'FAIL' 'REST idempotency' 'second call with the same Idempotency-Key was not a replay'
-        }
-    }
-}
-
-# 2. End-to-end smoke test ----------------------------------------------------------------------------
-Write-Step 'End-to-end smoke test (fit scoring, searches, matches, push, feeds, digest)'
+# 1. End-to-end smoke test ----------------------------------------------------------------------------
+Write-Step 'End-to-end smoke test (REST API, fit scoring, searches, matches, push, feeds, digest)'
+# Two minutes of slack for clock differences between this computer and the org.
+$since = (Get-Date).ToUniversalTime().AddMinutes(-2).ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")
+$lines = @()
 try {
     $log = Invoke-ApexFile 'scripts/apex/smoke-test.apex' $Org -PassThru
-    $lines = @(Get-DebugLines $log | Where-Object { $_ -like 'NXP-SMOKE|*' })
-    if (-not ($lines | Where-Object { $_ -like 'NXP-SMOKE|SUMMARY|*' })) {
-        Add-Result 'FAIL' 'Smoke test' "no results in the debug log (check the org's debug log levels)"
+    $query = "SELECT Message__c FROM NXP_Log__c WHERE Source__c = 'NXP-SMOKE' AND CreatedDate >= $since ORDER BY CreatedDate DESC LIMIT 1"
+    $saved = Invoke-SfJson @('data', 'query', '--query', $query, '--target-org', $Org)
+    if ($saved.status -eq 0 -and @($saved.result.records).Count -gt 0) {
+        $lines = @(([string]$saved.result.records[0].Message__c) -split "`r?`n")
+    }
+    else {
+        # Older smoke-test versions only wrote to the debug log.
+        $lines = @(Get-DebugLines $log | Where-Object { $_ -like 'NXP-SMOKE|*' } | ForEach-Object { $_.Substring(10) })
+    }
+    if (-not ($lines | Where-Object { $_ -like 'SUMMARY|*' })) {
+        Add-Result 'FAIL' 'Smoke test' 'ran, but no results were found in NXP Logs or the debug log'
     }
     foreach ($line in $lines) {
-        $parts = $line.Split([char]'|', 4)
-        if ($parts.Count -lt 4 -or $parts[1] -eq 'SUMMARY') { continue }
-        Add-Result $parts[1] $parts[2] $parts[3]
+        $parts = $line.Split([char]'|', 3)
+        if ($parts.Count -lt 3 -or $parts[0] -eq 'SUMMARY') { continue }
+        Add-Result $parts[0] $parts[1] $parts[2]
     }
 }
 catch {
@@ -108,7 +63,7 @@ catch {
     Add-Result 'FAIL' 'Smoke test' 'anonymous Apex did not run (compile or runtime error above)'
 }
 
-# 3. Apex unit tests (optional) -----------------------------------------------------------------------
+# 2. Apex unit tests (optional) -----------------------------------------------------------------------
 if ($ApexTests) {
     Write-Step 'Apex unit tests (RunLocalTests, with coverage)'
     & sf apex run test --test-level RunLocalTests --code-coverage --result-format human --wait 30 --target-org $Org

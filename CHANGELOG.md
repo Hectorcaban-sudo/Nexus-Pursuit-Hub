@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- **Functional test:** the REST check now calls the REST ingestion resource inside the smoke test (an access token from `sf org display` was rejected with `INVALID_AUTH_HEADER`), and the smoke test saves its results in an `NXP_Log__c` row (Source `NXP-SMOKE`) that the runners read, instead of relying on the end of a possibly truncated debug log.
+- **Notice Analyst schedule:** two jobs (`:15`, `:45`); Apex cron takes one minute value per job.
 - **Fixes from the first org deployment:**
     - `NXP_HttpClient.CalloutFailure` renamed `CalloutFailureException` (Apex exception classes must end in "Exception").
     - Reserved words no longer used as variable names: `number` (`NXP_CriteriaDraftService`); `any`, `inner`, `end` (`NXP_KeywordExpression`).

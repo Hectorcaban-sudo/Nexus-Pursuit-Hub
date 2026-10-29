@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Functional test of Nexus Pursuit Hub in a dev or QA org that has the sample data loaded.
 #
-#   scripts/test-functional.sh --org nxp-dev                 # REST API + end-to-end smoke test
+#   scripts/test-functional.sh --org nxp-dev                 # end-to-end smoke test (incl. REST API)
 #   scripts/test-functional.sh --org nxp-dev --apex-tests    # also run every Apex unit test
-#   scripts/test-functional.sh --org nxp-dev --skip-rest     # skip the REST ingestion API check
 #
+# Runs scripts/apex/smoke-test.apex, which saves its results in an NXP_Log__c row (Source NXP-SMOKE);
+# this script reads that row, so results don't depend on the size of the debug log.
 # Load the sample data first: scripts/load-sample-data.sh --org nxp-dev
 # Exit code 0 when nothing failed, 1 otherwise. Checks are listed in docs/guides/testing-guide.md.
 set -euo pipefail
@@ -13,13 +14,12 @@ cd "$(dirname "$0")/.."
 
 ORG=""
 APEX_TESTS=false
-SKIP_REST=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --org|-o) ORG="$2"; shift 2 ;;
     --apex-tests) APEX_TESTS=true; shift ;;
-    --skip-rest) SKIP_REST=true; shift ;;
-    -h|--help) sed -n '2,9p' "$0"; exit 0 ;;
+    --skip-rest) shift ;; # kept for compatibility; the REST check now runs inside the smoke test
+    -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
     *) die "Unknown option $1" ;;
   esac
 done
@@ -29,54 +29,33 @@ require_sf
 RESULTS=()
 add() { RESULTS+=("$1|$2|$3"); }
 
-# 1. Apex REST ingestion API -------------------------------------------------------------------
-if [[ "$SKIP_REST" != true ]]; then
-  step "Apex REST ingestion API (POST /services/apexrest/nxp/v1/notices)"
-  INFO=$(sf org display --target-org "$ORG" --json)
-  TOKEN=$(printf '%s\n' "$INFO" | json_value accessToken)
-  URL=$(printf '%s\n' "$INFO" | json_value instanceUrl)
-  TODAY=$(date -u +%F)
-  DUE=$(date -u -d '+30 days' +%F 2>/dev/null || date -u -v+30d +%F)
-  BODY=$(sed -e "s/{{TODAY}}/$TODAY/" -e "s/{{DUE_30}}/$DUE/" data/fixtures/rest-sample-notice.json)
-  KEY="nxp-functional-test-$(date +%s)"
-  ENDPOINT="$URL/services/apexrest/nxp/v1/notices"
-  if [[ -z "$TOKEN" || -z "$URL" ]]; then
-    add WARN "REST ingestion" "could not read the access token from 'sf org display'; skipped"
-  else
-    RESP=$(curl -sS -w $'\n%{http_code}' -X POST "$ENDPOINT" -H "Authorization: Bearer $TOKEN" \
-      -H "Content-Type: application/json" -H "Idempotency-Key: $KEY" --data "$BODY" || true)
-    CODE=${RESP##*$'\n'}
-    JSON=${RESP%$'\n'*}
-    if [[ "$CODE" == "200" ]] && grep -q '"rejected":0' <<<"$JSON" && grep -qE '"(created|updated|unchanged)":1' <<<"$JSON"; then
-      add PASS "REST ingestion" "HTTP 200, SAMPLE-REST-0001 accepted: $(grep -oE '"(created|updated|unchanged)":[0-9]+' <<<"$JSON" | tr '\n' ' ')"
-    else
-      add FAIL "REST ingestion" "HTTP $CODE $JSON (the user needs the NXP_Integration or NXP_Admin permission set)"
-    fi
-    HEADERS=$(curl -sS -D - -o /dev/null -X POST "$ENDPOINT" -H "Authorization: Bearer $TOKEN" \
-      -H "Content-Type: application/json" -H "Idempotency-Key: $KEY" --data "$BODY" || true)
-    if grep -qi '^Idempotent-Replay: *true' <<<"$HEADERS"; then
-      add PASS "REST idempotency" "same Idempotency-Key replayed the first response"
-    else
-      add FAIL "REST idempotency" "second call with the same Idempotency-Key was not a replay"
-    fi
-  fi
-fi
-
-# 2. End-to-end smoke test (scripts/apex/smoke-test.apex) ---------------------------------------
-step "End-to-end smoke test (fit scoring, searches, matches, push, feeds, digest)"
+# 1. End-to-end smoke test ----------------------------------------------------------------------
+step "End-to-end smoke test (REST API, fit scoring, searches, matches, push, feeds, digest)"
+# Two minutes of slack for clock differences between this computer and the org.
+SINCE=$(date -u -d '-2 minutes' +%FT%TZ 2>/dev/null || date -u -v-2M +%FT%TZ)
 if OUT=$(sf apex run --file scripts/apex/smoke-test.apex --target-org "$ORG" 2>&1); then
-  grep -q 'USER_DEBUG.*NXP-SMOKE|SUMMARY' <<<"$OUT" || add FAIL "Smoke test" "no results in the debug log (check the org's debug log levels)"
+  QUERY="SELECT Message__c FROM NXP_Log__c WHERE Source__c = 'NXP-SMOKE' AND CreatedDate >= $SINCE ORDER BY CreatedDate DESC LIMIT 1"
+  SAVED=$(sf data query --query "$QUERY" --target-org "$ORG" --json 2>/dev/null || true)
+  # Message__c is one JSON string; turn its \n escapes back into lines.
+  LINES=$(printf '%s\n' "$SAVED" | sed -n 's/^ *"Message__c": "\(.*\)",\{0,1\} *$/\1/p' | head -n 1 \
+    | sed -e 's/\\n/\n/g' -e 's/\\"/"/g' -e 's/\\\\/\\/g')
+  if [[ -z "$LINES" ]]; then
+    # Older smoke-test versions only wrote to the debug log.
+    LINES=$(printf '%s\n' "$OUT" | grep '|USER_DEBUG|' | grep -o 'NXP-SMOKE|.*' | sed 's/^NXP-SMOKE|//' || true)
+  fi
+  grep -q '^SUMMARY|' <<<"$LINES" || add FAIL "Smoke test" "ran, but no results were found in NXP Logs or the debug log"
   while IFS= read -r line; do
-    IFS='|' read -r _ status check detail <<<"$line"
+    [[ -z "$line" ]] && continue
+    IFS='|' read -r status check detail <<<"$line"
     [[ "$status" == "SUMMARY" ]] && continue
     add "$status" "$check" "$detail"
-  done < <(printf '%s\n' "$OUT" | grep '|USER_DEBUG|' | grep -o 'NXP-SMOKE|.*')
+  done <<<"$LINES"
 else
   printf '%s\n' "$OUT"
   add FAIL "Smoke test" "anonymous Apex did not run (compile or runtime error above)"
 fi
 
-# 3. Apex unit tests (optional) -----------------------------------------------------------------
+# 2. Apex unit tests (optional) -----------------------------------------------------------------
 if [[ "$APEX_TESTS" == true ]]; then
   step "Apex unit tests (RunLocalTests, with coverage)"
   if sf apex run test --test-level RunLocalTests --code-coverage --result-format human --wait 30 --target-org "$ORG"; then

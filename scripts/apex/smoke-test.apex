@@ -1,14 +1,91 @@
 // Nexus Pursuit Hub functional smoke test. Run against a dev or QA org that has the sample data
-// (scripts/load-sample-data.ps1 or .sh). Exercises the real services end to end and prints one
-// line per check:  NXP-SMOKE|PASS|<check>|<detail>   (or FAIL / WARN / SKIP)
-// The runner scripts (scripts/test-functional.ps1 / .sh) read those lines and set the exit code.
+// (scripts/load-sample-data.ps1 or .sh). Exercises the real services end to end and records one
+// line per check:  <PASS|FAIL|WARN|SKIP>|<check>|<detail>
+// Results are saved in an NXP_Log__c row (Source__c = 'NXP-SMOKE', Level__c = 'INFO') that the runner
+// scripts (scripts/test-functional.ps1 / .sh) read back, and are also written to the debug log.
 //
 // Side effects (by design, so you can look at the results in the app afterwards):
+//   - creates or updates the notice SAMPLE-REST-0001 through the REST ingestion resource;
 //   - pushes the highest-fit SAMPLE notice to the push target (Opportunity by default) once;
 //   - queues the daily digest batch (sends digest e-mail if deliverability is on).
 List<String> out = new List<String>();
 Integer fails = 0;
 Id me = UserInfo.getUserId();
+
+// 0. Apex REST ingestion API -----------------------------------------------------------------
+// Calls the REST resource class directly: the same code a POST to /services/apexrest/nxp/v1/notices
+// runs, without needing an access token. Sent twice with one Idempotency-Key to check the replay.
+try {
+    Date today = Date.today();
+    Map<String, Object> restRecord = new Map<String, Object>{
+        'noticeId' => 'SAMPLE-REST-0001',
+        'sourceId' => 'REST-0001',
+        'title' => 'Network Segmentation Pilot (REST sample)',
+        'solicitationNumber' => 'SAMPLE-SOL-REST-0001',
+        'noticeType' => 'Sources Sought',
+        'agencyPath' => 'Homeland Security > Customs and Border Protection',
+        'naics' => '541512',
+        'psc' => 'DA01',
+        'setAside' => 'Total Small Business Set-Aside',
+        'estimatedValue' => 1500000,
+        'postedDate' => String.valueOf(today),
+        'responseDue' => String.valueOf(today.addDays(30)) + 'T17:00:00Z',
+        'description' => '[SAMPLE DATA] Sent through the Apex REST ingestion resource by the functional test.',
+        'url' => 'https://example.gov/notices/sample-rest-0001',
+        'contacts' => new List<Object>{
+            new Map<String, Object>{
+                'name' => 'Sample Contact',
+                'email' => 'sample.contact@example.gov',
+                'role' => 'Program Manager'
+            }
+        }
+    };
+    String restBody = JSON.serialize(
+        new Map<String, Object>{ 'source' => 'sample', 'records' => new List<Object>{ restRecord } }
+    );
+    String restKey = 'nxp-smoke-' + Datetime.now().getTime();
+
+    RestRequest firstRequest = new RestRequest();
+    firstRequest.requestURI = '/services/apexrest/nxp/v1/notices';
+    firstRequest.httpMethod = 'POST';
+    firstRequest.addHeader('Idempotency-Key', restKey);
+    firstRequest.requestBody = Blob.valueOf(restBody);
+    RestContext.request = firstRequest;
+    RestContext.response = new RestResponse();
+    NXP_NoticeIngestResource.ingest();
+    RestResponse firstResponse = RestContext.response;
+    String firstText = firstResponse.responseBody == null ? '' : firstResponse.responseBody.toString();
+    Boolean accepted = false;
+    if (firstResponse.statusCode == 200) {
+        Map<String, Object> payload = (Map<String, Object>) JSON.deserializeUntyped(firstText);
+        Integer done =
+            (Integer) payload.get('created') + (Integer) payload.get('updated') + (Integer) payload.get('unchanged');
+        accepted = (Integer) payload.get('rejected') == 0 && done == 1;
+    }
+    out.add(
+        (accepted ? 'PASS' : 'FAIL') + '|REST ingestion|HTTP ' + firstResponse.statusCode + ' ' + firstText.left(200) +
+        (accepted ? '' : ' (the user needs the NXP_Integration or NXP_Admin permission set)')
+    );
+    fails += accepted ? 0 : 1;
+
+    RestRequest secondRequest = new RestRequest();
+    secondRequest.requestURI = '/services/apexrest/nxp/v1/notices';
+    secondRequest.httpMethod = 'POST';
+    secondRequest.addHeader('Idempotency-Key', restKey);
+    secondRequest.requestBody = Blob.valueOf(restBody);
+    RestContext.request = secondRequest;
+    RestContext.response = new RestResponse();
+    NXP_NoticeIngestResource.ingest();
+    Boolean replayed = RestContext.response.headers.get('Idempotent-Replay') == 'true';
+    out.add(
+        (replayed ? 'PASS' : 'FAIL') + '|REST idempotency|' +
+        (replayed ? 'same Idempotency-Key replayed the first response' : 'second call was not a replay')
+    );
+    fails += replayed ? 0 : 1;
+} catch (Exception e) {
+    out.add('FAIL|REST ingestion|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
 
 // 1. Configuration --------------------------------------------------------------------------
 try {
@@ -192,7 +269,15 @@ out.add(
 Integer errors = [SELECT COUNT() FROM NXP_Log__c WHERE Level__c = 'ERROR' AND CreatedDate = TODAY];
 out.add((errors == 0 ? 'PASS' : 'WARN') + '|Error log|' + errors + ' ERROR rows in NXP Logs today');
 
+out.add('SUMMARY|' + (fails == 0 ? 'PASS' : 'FAIL') + '|' + fails + ' failed of ' + (out.size()) + ' checks');
+
+// Save the results where the runner can read them, whatever the size of the debug log.
+insert new NXP_Log__c(
+    Level__c = 'INFO',
+    Source__c = 'NXP-SMOKE',
+    Transaction_Id__c = Request.getCurrent().getRequestId(),
+    Message__c = String.join(out, '\n')
+);
 for (String line : out) {
     System.debug(LoggingLevel.ERROR, 'NXP-SMOKE|' + line);
 }
-System.debug(LoggingLevel.ERROR, 'NXP-SMOKE|SUMMARY|' + (fails == 0 ? 'PASS' : 'FAIL') + '|' + fails + ' failed of ' + out.size() + ' checks');
