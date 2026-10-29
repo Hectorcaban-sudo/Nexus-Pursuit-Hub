@@ -49,7 +49,7 @@ TechnoMile is not a code dependency. The push target object and fields come from
 | `NXP_Gov_Notice_Changed__e`              | `NXP_PostPushSyncTrigger`                      | Sync records already pushed                            |
 | New auto-push matches                    | `NXP_AutoPushJob` (Queueable)                  | Push as search owner                                   |
 | `NXP Daily Digest` / `NXP Weekly Digest` | `NXP_DigestBatch`                              | Digest e-mails                                         |
-| `NXP Notice Analyst` (:15, :45)          | `NXP_NoticeAnalystJob`                         | AI summaries and amendment summaries                   |
+| `NXP Notice Analyst :15` and `:45`       | `NXP_NoticeAnalystJob`                         | AI summaries and amendment summaries                   |
 | `NXP Push Retry` (:20)                   | `NXP_PushRetryJob`                             | Retry failed auto-pushes                               |
 
 ## Governor-limit design

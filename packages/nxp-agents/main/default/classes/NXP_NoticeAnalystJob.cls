@@ -19,8 +19,12 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
         this.mode = mode == CHANGES ? CHANGES : SUMMARIES;
     }
 
-    public static Id scheduleDefaults() {
-        return System.schedule('NXP Notice Analyst', '0 15,45 * * * ?', new NXP_NoticeAnalystJob());
+    /** Runs at :15 and :45 every hour. Apex cron takes one minute value per job, so this is two jobs. */
+    public static List<Id> scheduleDefaults() {
+        return new List<Id>{
+            System.schedule('NXP Notice Analyst :15', '0 15 * * * ?', new NXP_NoticeAnalystJob()),
+            System.schedule('NXP Notice Analyst :45', '0 45 * * * ?', new NXP_NoticeAnalystJob())
+        };
     }
 
     public void execute(SchedulableContext context) {

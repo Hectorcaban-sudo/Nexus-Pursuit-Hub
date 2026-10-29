@@ -6,7 +6,7 @@ Copy into the release ticket and tick each item.
 
 - [ ] Deployment succeeded; job ID and manifest attached to the ticket
 - [ ] `env-config/<env>` deployed
-- [ ] `schedule-jobs.apex` ran; Setup → Scheduled Jobs shows _NXP Feed Scheduler_, _NXP Daily Digest_, _NXP Weekly Digest_, _NXP Notice Analyst_, _NXP Push Retry_
+- [ ] `schedule-jobs.apex` ran; Setup → Scheduled Jobs shows _NXP Feed Scheduler_, _NXP Daily Digest_, _NXP Weekly Digest_, _NXP Notice Analyst :15_, _NXP Notice Analyst :45_, _NXP Push Retry_
 - [ ] Platform event subscribers running (Setup → Platform Events → NXP Gov Notice Changed → Subscriptions)
 - [ ] Feed Console: _Run now_ on SAM_Opportunities → run Succeeded, records read > 0
 - [ ] Smoke test: open a new notice → summary card renders; follow / unfollow works

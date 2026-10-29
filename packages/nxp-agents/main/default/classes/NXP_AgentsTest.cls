@@ -237,8 +237,11 @@ private class NXP_AgentsTest {
         NXP_AiService.responsesForTest = new Map<String, String>{ 'NXP_Amendment_Impact' => 'Due date moved.' };
         Test.startTest();
         Database.executeBatch(new NXP_NoticeAnalystJob(NXP_NoticeAnalystJob.CHANGES), 5);
-        Id jobId = NXP_NoticeAnalystJob.scheduleDefaults();
-        System.abortJob(jobId);
+        List<Id> jobIds = NXP_NoticeAnalystJob.scheduleDefaults();
+        System.assertEquals(2, jobIds.size());
+        for (Id jobId : jobIds) {
+            System.abortJob(jobId);
+        }
         Test.stopTest();
         System.assertEquals(
             'Due date moved.',
