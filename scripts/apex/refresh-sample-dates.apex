@@ -1,8 +1,9 @@
 // Sets the SAMPLE dates relative to today, so the samples never look stale: notices posted 1-10 days
 // ago and due 9-45 days out; awards ending from 2 months ago to 20 months out (for Find Incumbent and
-// Recompete Query); forecasts due from 10 days ago to 5 months out. Also links each forecast to the
-// notice that points to it (the CSV load can't set both sides). Safe to run again: dates are set, not
-// shifted. The Gov Notice trigger does not create versions or change events for this update.
+// Recompete Query); forecasts due from 10 days ago to 5 months out; vehicles expiring in 11 months to
+// 4.5 years. Also links each forecast to the notice that points to it (the CSV load can't set both
+// sides). Safe to run again: dates are set, not shifted. The Gov Notice trigger does not create
+// versions or change events for this update.
 Map<String, List<Integer>> offsets = new Map<String, List<Integer>>{
     // Notice Id   => { posted N days ago, due in N days }
     'SAMPLE-0001' => new List<Integer>{ 1, 12 },
@@ -78,3 +79,16 @@ for (NXP_Gov_Notice__c n : [
 }
 update forecasts;
 System.debug('Dates refreshed on ' + awards.size() + ' SAMPLE awards and ' + forecasts.size() + ' SAMPLE forecasts.');
+
+// Contract vehicles: days until expiry (GSA MAS IT expires within 12 months, to show the warning).
+Map<String, Integer> vehicleDays = new Map<String, Integer>{ 'OASIS+' => 1650, 'GSA-MAS-IT' => 330, 'CIO-SP4' => 1100 };
+List<NXP_Contract_Vehicle__c> vehicles = [
+    SELECT Id, Vehicle_Code__c
+    FROM NXP_Contract_Vehicle__c
+    WHERE Vehicle_Code__c IN :vehicleDays.keySet() AND Name LIKE '%(sample)'
+];
+for (NXP_Contract_Vehicle__c v : vehicles) {
+    v.Expiry_Date__c = today.addDays(vehicleDays.get(v.Vehicle_Code__c));
+}
+update vehicles;
+System.debug('Expiry dates refreshed on ' + vehicles.size() + ' SAMPLE contract vehicles.');

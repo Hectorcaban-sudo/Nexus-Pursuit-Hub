@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+    >Contract vehicles we hold, the notices on them, expiry, and notices that need a vehicle we lack</description>
+    <label>Vehicle Portfolio</label>
+    <lwcComponent>nxpVehiclePortfolio</lwcComponent>
+    <motif>Custom98: Truck</motif>
+</CustomTab>

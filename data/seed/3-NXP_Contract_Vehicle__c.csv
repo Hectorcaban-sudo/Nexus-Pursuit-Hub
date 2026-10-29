@@ -1,3 +1,4 @@
-Name,Vehicle_Code__c,We_Hold__c
-OASIS+ (sample),OASIS+,true
-GSA MAS IT (sample),GSA-MAS-IT,true
+Name,Vehicle_Code__c,We_Hold__c,Inbox_Address__c,Description__c
+OASIS+ (sample),OASIS+,true,oasis-task-orders@example.com,[SAMPLE DATA] Multiple-award IDIQ we hold. Task orders arrive by e-mail at the inbox address.
+GSA MAS IT (sample),GSA-MAS-IT,true,,[SAMPLE DATA] GSA Multiple Award Schedule (IT) we hold. No task-order inbox set up yet.
+CIO-SP4 (sample),CIO-SP4,false,,[SAMPLE DATA] A vehicle we don't hold; one sample notice requires it.

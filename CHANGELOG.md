@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Vehicle Portfolio:** new tab (`nxpVehiclePortfolio`, `NXP_VehicleController`) replacing the Contract Vehicles object tab in the app nav: vehicles we hold with their open notices, expiry and task-order inbox status, and open notices that need a vehicle we don't hold (with Follow). Admins can mark a vehicle held or not held, which re-scores its open notices.
+- **Fix:** the Vehicle fit rule gave points whenever a notice had any vehicle and the profile listed any vehicle code; it now checks that we hold that vehicle (`NXP_FitScoreService.isHeld`). It still ships off.
+- **Sample data:** a third vehicle (CIO-SP4, not held), expiry dates and an inbox address; `SAMPLE-0005`…`0007` are linked to vehicles. The smoke test checks the vehicle portfolio.
 - **Agency profile:** Gov Agency record page with `nxpAgencyProfile` (`NXP_MarketController.getAgencyProfile`): what's coming, incumbents, NAICS mix, saved-search coverage, sub-agencies, offices, contacts. **Watch** an agency (`NXP_Follow__c.Agency__c`) for an alert on every new notice it or its sub-agencies post. Sample data adds contacts and offices.
 - **Fix:** date-only values (due dates, period ends, forecast dates) showed one day early in US time zones; `nxpUtils.toDate` now reads `YYYY-MM-DD` as a local date.
 - **Market screens:** Forecasts tab (`nxpForecastBoard`), Recompetes tab (`nxpRecompeteTimeline`) and a Gov Vendor record page with `nxpVendorProfile`, backed by `NXP_MarketController`.

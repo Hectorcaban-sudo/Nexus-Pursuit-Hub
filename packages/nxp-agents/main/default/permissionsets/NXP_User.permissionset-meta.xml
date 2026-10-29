@@ -9,6 +9,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NXP_VehicleController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_CompareVersionsAction</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -870,6 +874,10 @@
     </tabSettings>
     <tabSettings>
         <tab>NXP_Recompetes</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>NXP_Vehicle_Portfolio</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>

@@ -5,7 +5,7 @@
 #   scripts/load-sample-data.sh --org nxp-dev --reset    # delete the sample data first, then load it
 #   scripts/load-sample-data.sh --org nxp-dev --delete   # only delete the sample data
 #
-# Loads: a sample Company Profile, 7 agencies, 2 contract vehicles, 4 vendors, 6 award summaries,
+# Loads: a sample Company Profile, 7 agencies, 3 contract vehicles, 4 vendors, 6 award summaries,
 # 3 forecasts, 10 SAMPLE notices (scored on insert), 3 saved searches for you, and the search
 # matches and alerts they produce.
 # Refuses to run against a production org unless --allow-production is given.

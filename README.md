@@ -99,7 +99,7 @@ Version 1.0.0, first build:
 - **Checked here:**
     - All Apex parses (prettier-plugin-apex).
     - All XML is well-formed.
-    - 29 Jest tests pass (in several time zones) and ESLint is clean.
+    - 33 Jest tests pass (in several time zones) and ESLint is clean.
     - Every bash and PowerShell script parses, and each was run against a stand-in `sf` CLI and REST endpoint to check its commands and results.
 - **Not yet run:** the code has not been deployed to an org from this repository. Run `scripts/validate.sh --org <org>` first; it compiles everything and runs every Apex test.
 - **Org-specific settings:** the push target and the TechnoMile field mapping must be set per org. See the [admin guide](docs/guides/admin-guide.md#push-mapping).

@@ -3,7 +3,7 @@
     Load the Nexus Pursuit Hub sample data into a dev, QA or scratch org. Safe to run again.
 
 .DESCRIPTION
-    Loads a sample Company Profile, 7 agencies, 2 contract vehicles, 4 vendors, 6 award summaries,
+    Loads a sample Company Profile, 7 agencies, 3 contract vehicles, 4 vendors, 6 award summaries,
     3 forecasts, 10 SAMPLE notices (scored on insert), 3 saved searches for you, and the search
     matches and alerts they produce.
     Refuses to run against a production org unless -AllowProduction is given.

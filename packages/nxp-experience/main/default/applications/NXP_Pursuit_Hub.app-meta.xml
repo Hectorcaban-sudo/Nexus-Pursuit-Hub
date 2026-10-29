@@ -67,7 +67,7 @@
     <tabs>NXP_Recompetes</tabs>
     <tabs>NXP_Gov_Agency__c</tabs>
     <tabs>NXP_Gov_Vendor__c</tabs>
-    <tabs>NXP_Contract_Vehicle__c</tabs>
+    <tabs>NXP_Vehicle_Portfolio</tabs>
     <tabs>NXP_Feed_Console</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

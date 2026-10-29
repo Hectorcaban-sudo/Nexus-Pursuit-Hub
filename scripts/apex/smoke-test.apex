@@ -375,6 +375,32 @@ try {
     fails++;
 }
 
+// 7e. Vehicle portfolio (Vehicle Portfolio tab) ------------------------------------------------
+try {
+    NXP_VehicleController.Portfolio vp = NXP_VehicleController.getVehiclePortfolio();
+    Map<String, NXP_VehicleController.VehicleCard> byCode = new Map<String, NXP_VehicleController.VehicleCard>();
+    for (NXP_VehicleController.VehicleCard c : vp.held) {
+        byCode.put('held:' + c.code, c);
+    }
+    for (NXP_VehicleController.VehicleCard c : vp.notHeld) {
+        byCode.put('lack:' + c.code, c);
+    }
+    Boolean vehiclesOk =
+        byCode.containsKey('held:OASIS+') && byCode.get('held:OASIS+').open >= 1 &&
+        byCode.containsKey('held:GSA-MAS-IT') && byCode.get('held:GSA-MAS-IT').open >= 1 &&
+        byCode.containsKey('lack:CIO-SP4') && byCode.get('lack:CIO-SP4').open >= 1 &&
+        vp.expiringSoon >= 1;
+    out.add(
+        (vehiclesOk ? 'PASS' : 'FAIL') + '|Vehicle portfolio|' + vp.held.size() + ' held, ' + vp.openOnHeld +
+        ' open notices on them, ' + vp.blockedNotices + ' on vehicles not held, ' + vp.expiringSoon +
+        ' expiring within 12 months'
+    );
+    fails += vehiclesOk ? 0 : 1;
+} catch (Exception e) {
+    out.add('FAIL|Vehicle portfolio|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();

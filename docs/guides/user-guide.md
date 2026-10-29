@@ -46,6 +46,8 @@ Open a notice title to see:
 
 - **Agency profile**: open a Gov Agency (or click an agency link). _What's coming_ lists its open notices, forecasts and awards ending, in date order; you also see who holds its awards, where it spends by NAICS, its contracting contacts, and whether any of your saved searches covers it. A department includes its sub-agencies. **Watch this agency** alerts you on every new notice it posts.
 
+- **Vehicle Portfolio** tab: the contract vehicles you hold, each with its open notices (soonest due first), expiry date (amber within 12 months) and whether a task-order inbox address is set up. _Notices you can't bid alone_ lists open notices that require a vehicle you don't hold, so you can find a teaming partner; **Follow** a notice there to hear when it changes. Admins can record **We hold it** or **We no longer hold this**, which re-scores that vehicle's open notices. A vehicle counts as held when **We Hold** is ticked on it or its code is listed in the Company Profile's _Vehicles We Hold_.
+
 Watches show in the bell icon as **NXP Match Alert** notifications, like followed notices.
 
 ## 5. Ask the assistant

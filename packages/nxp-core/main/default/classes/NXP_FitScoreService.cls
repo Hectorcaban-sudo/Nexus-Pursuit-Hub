@@ -22,6 +22,8 @@ public inherited sharing class NXP_FitScoreService {
 
     private final NXP_Company_Profile__c profile;
     private final List<NXP_Fit_Rule__mdt> rules;
+    /** Contract vehicles of the notices being scored, loaded only when a Vehicle rule is active. */
+    private final Map<Id, NXP_Contract_Vehicle__c> vehicles = new Map<Id, NXP_Contract_Vehicle__c>();
 
     public NXP_FitScoreService() {
         this.profile = loadProfile();
@@ -37,6 +39,7 @@ public inherited sharing class NXP_FitScoreService {
         if (!isConfigured()) {
             return;
         }
+        loadVehicles(notices);
         for (NXP_Gov_Notice__c n : notices) {
             List<RuleResult> results = evaluate(n);
             Decimal total = 0;
@@ -49,6 +52,7 @@ public inherited sharing class NXP_FitScoreService {
     }
 
     public List<RuleResult> evaluate(NXP_Gov_Notice__c n) {
+        loadVehicles(new List<NXP_Gov_Notice__c>{ n });
         List<RuleResult> results = new List<RuleResult>();
         for (NXP_Fit_Rule__mdt rule : rules) {
             results.add(evaluateRule(rule, n));
@@ -140,14 +144,62 @@ public inherited sharing class NXP_FitScoreService {
                 }
             }
             when 'Vehicle' {
-                Boolean hit = n.Contract_Vehicle__c != null && profile.Vehicle_Codes__c != null;
-                award(r, hit ? 1 : 0, hit ? 'On a vehicle we hold' : 'No vehicle match');
+                NXP_Contract_Vehicle__c v = n.Contract_Vehicle__c == null ? null : vehicles.get(n.Contract_Vehicle__c);
+                if (v == null) {
+                    award(r, 0, 'Not released on a contract vehicle');
+                } else if (isHeld(v, profile)) {
+                    award(r, 1, 'On ' + v.Vehicle_Code__c + ', a vehicle we hold');
+                } else {
+                    award(r, 0, 'On ' + v.Vehicle_Code__c + ', which we do not hold');
+                }
             }
             when else {
                 award(r, 0, 'Unknown rule type');
             }
         }
         return r;
+    }
+
+    /**
+     * True when we hold the vehicle: We Hold is ticked on the vehicle, or its code is listed in the
+     * Company Profile's Vehicles We Hold.
+     */
+    public static Boolean isHeld(NXP_Contract_Vehicle__c v, NXP_Company_Profile__c p) {
+        if (v == null) {
+            return false;
+        }
+        if (v.We_Hold__c == true) {
+            return true;
+        }
+        return p != null &&
+            String.isNotBlank(v.Vehicle_Code__c) &&
+            NXP_Text.lowerSet(NXP_Text.splitList(p.Vehicle_Codes__c)).contains(v.Vehicle_Code__c.toLowerCase());
+    }
+
+    private void loadVehicles(List<NXP_Gov_Notice__c> notices) {
+        Boolean vehicleRule = false;
+        for (NXP_Fit_Rule__mdt rule : rules) {
+            vehicleRule = vehicleRule || rule.Rule_Type__c == 'Vehicle';
+        }
+        if (!vehicleRule) {
+            return;
+        }
+        Set<Id> missing = new Set<Id>();
+        for (NXP_Gov_Notice__c n : notices) {
+            if (n.Contract_Vehicle__c != null && !vehicles.containsKey(n.Contract_Vehicle__c)) {
+                missing.add(n.Contract_Vehicle__c);
+            }
+        }
+        if (missing.isEmpty()) {
+            return;
+        }
+        for (NXP_Contract_Vehicle__c v : [
+            SELECT Id, Vehicle_Code__c, We_Hold__c
+            FROM NXP_Contract_Vehicle__c
+            WHERE Id IN :missing
+        ]) {
+            vehicles.put(v.Id, v);
+        }
     }
 
     private static void award(RuleResult r, Decimal fraction, String reason) {

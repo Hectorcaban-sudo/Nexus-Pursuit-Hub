@@ -1,0 +1,194 @@
+<template>
+    <div class="page">
+        <div class="toolbar">
+            <div>
+                <h1 class="slds-text-heading_large">Contract vehicles</h1>
+                <p class="slds-text-color_weak">
+                    What is coming through the vehicles you hold, when they expire, and which open notices you can't bid
+                    without a vehicle you don't hold.
+                </p>
+            </div>
+            <div class="actions">
+                <lightning-button label="All vehicles" onclick={handleAllVehicles}></lightning-button>
+                <template lwc:if={canManage}>
+                    <lightning-button
+                        variant="brand"
+                        label="Add a vehicle"
+                        onclick={handleNewVehicle}
+                    ></lightning-button>
+                </template>
+            </div>
+        </div>
+
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading contract vehicles" size="medium"></lightning-spinner>
+        </template>
+
+        <section class="kpis" aria-label="Summary">
+            <template for:each={kpis} for:item="k">
+                <div key={k.key} class="kpi">
+                    <span class="kpi-label">{k.label}</span>
+                    <span class={k.valueClass}>{k.value}</span>
+                    <span class="kpi-note">{k.note}</span>
+                </div>
+            </template>
+        </section>
+
+        <div class="layout">
+            <section class="main" aria-label="Vehicles you hold">
+                <h2 class="slds-text-heading_medium">Vehicles you hold</h2>
+                <template lwc:if={noneHeld}>
+                    <div class="empty" role="status">
+                        No vehicles are recorded as held. Tick We Hold on a contract vehicle, or list its code in the
+                        Company Profile's Vehicles We Hold.
+                    </div>
+                </template>
+                <template for:each={held} for:item="v">
+                    <article key={v.id} class="vehicle">
+                        <div class="vehicle-head">
+                            <div class="vehicle-name">
+                                <a href="#" class="vehicle-title" data-id={v.id} onclick={handleOpen}>{v.name}</a>
+                                <span class="meta">{v.codeLine}</span>
+                                <template lwc:if={v.heldByProfile}>
+                                    <span class="meta">{v.heldNote}</span>
+                                </template>
+                            </div>
+                            <div class="chips">
+                                <span class={v.expiryClass}>{v.expiry}</span>
+                                <span class={v.inboxClass}>{v.inbox}</span>
+                            </div>
+                        </div>
+                        <dl class="stats">
+                            <div>
+                                <dt>Open notices on it</dt>
+                                <dd>{v.open}</dd>
+                            </div>
+                            <div>
+                                <dt>Due in 30 days</dt>
+                                <dd>{v.dueIn30}</dd>
+                            </div>
+                            <div>
+                                <dt>Pushed to TechnoMile</dt>
+                                <dd>{v.pushed}</dd>
+                            </div>
+                            <div>
+                                <dt>Task orders (30 days)</dt>
+                                <dd>{v.taskOrders30}</dd>
+                            </div>
+                        </dl>
+                        <template lwc:if={v.hasNotices}>
+                            <ul class="notices">
+                                <template for:each={v.notices} for:item="n">
+                                    <li key={n.id} class="notice">
+                                        <span class="notice-text">
+                                            <a href="#" class="notice-title" data-id={n.id} onclick={handleOpen}
+                                                >{n.title}</a
+                                            >
+                                            <span class="meta">{n.meta}</span>
+                                        </span>
+                                        <span class={n.dueClass}>{n.due}</span>
+                                        <c-nxp-fit-badge score={n.fitScore} size="small"></c-nxp-fit-badge>
+                                    </li>
+                                </template>
+                            </ul>
+                        </template>
+                        <template lwc:else>
+                            <p class="meta">No open notices on this vehicle.</p>
+                        </template>
+                        <template lwc:if={v.more}>
+                            <p class="meta">{v.more}</p>
+                        </template>
+                        <template lwc:if={v.canRelease}>
+                            <div class="vehicle-foot">
+                                <lightning-button
+                                    variant="base"
+                                    label="We no longer hold this"
+                                    data-id={v.id}
+                                    data-held="false"
+                                    disabled={busy}
+                                    onclick={handleHeld}
+                                ></lightning-button>
+                            </div>
+                        </template>
+                    </article>
+                </template>
+            </section>
+
+            <aside class="side">
+                <section class="panel" aria-label="Notices you can't bid alone">
+                    <h2 class="slds-text-heading_small">Notices you can't bid alone</h2>
+                    <p class="meta">
+                        Open notices that require a vehicle you don't hold. Team with a holder, or record that you hold
+                        it.
+                    </p>
+                    <template lwc:if={noGaps}>
+                        <p class="ok">None. Every open vehicle notice is on a vehicle you hold.</p>
+                    </template>
+                    <template for:each={gaps} for:item="g">
+                        <div key={g.id} class="gap">
+                            <div class="gap-head">
+                                <a href="#" class="gap-name" data-id={g.id} onclick={handleOpen}>{g.name}</a>
+                                <span class="count">{g.count}</span>
+                            </div>
+                            <template for:each={g.notices} for:item="n">
+                                <div key={n.id} class="gap-notice">
+                                    <span class="notice-text">
+                                        <a href="#" class="notice-title" data-id={n.id} onclick={handleOpen}
+                                            >{n.title}</a
+                                        >
+                                        <span class="meta">{n.meta} · {n.due}</span>
+                                    </span>
+                                    <lightning-button
+                                        class="follow"
+                                        label={n.followLabel}
+                                        variant={n.followVariant}
+                                        data-id={n.id}
+                                        data-following={n.followState}
+                                        onclick={handleFollow}
+                                    ></lightning-button>
+                                </div>
+                            </template>
+                            <template lwc:if={canManage}>
+                                <lightning-button
+                                    class="mark-held"
+                                    label="We hold it"
+                                    data-id={g.id}
+                                    data-held="true"
+                                    disabled={busy}
+                                    onclick={handleHeld}
+                                ></lightning-button>
+                            </template>
+                        </div>
+                    </template>
+                </section>
+
+                <section class="panel" aria-label="Task-order inbox">
+                    <h2 class="slds-text-heading_small">Task-order inbox</h2>
+                    <p class="body">
+                        Task orders on a vehicle often arrive by e-mail, not on SAM.gov. Forward them to the vehicle's
+                        inbox address; the mail relay posts them to <code>/nxp/v1/task-orders</code> and they appear
+                        here and in the Match Inbox.
+                    </p>
+                    <dl class="stats">
+                        <div>
+                            <dt>Received (30 days)</dt>
+                            <dd>{taskOrders30}</dd>
+                        </div>
+                        <div>
+                            <dt>Last received</dt>
+                            <dd class="dd_small">{lastTaskOrder}</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <template lwc:if={showRuleNote}>
+                    <section class="note" aria-label="Fit score">
+                        <strong>Fit score:</strong> the Vehicle fit rule is off, so holding a vehicle doesn't change a
+                        notice's score. An admin can turn it on in Setup › Custom Metadata Types › NXP Fit Rule ›
+                        Vehicle (give it a weight and lower another rule so the weights still add up to 100).
+                    </section>
+                </template>
+            </aside>
+        </div>
+    </div>
+</template>

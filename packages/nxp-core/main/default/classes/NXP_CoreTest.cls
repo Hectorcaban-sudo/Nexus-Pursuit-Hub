@@ -136,6 +136,41 @@ private class NXP_CoreTest {
     }
 
     @IsTest
+    static void vehicleRuleNeedsAVehicleWeHold() {
+        NXP_Company_Profile__c p = profile();
+        p.Vehicle_Codes__c = 'SEWP V';
+        NXP_FitScoreService.profileOverride = p;
+        NXP_FitScoreService.rulesOverride = new List<NXP_Fit_Rule__mdt>{
+            new NXP_Fit_Rule__mdt(Rule_Type__c = 'Vehicle', Weight__c = 10, Active__c = true)
+        };
+        NXP_Contract_Vehicle__c held = new NXP_Contract_Vehicle__c(
+            Name = 'Held',
+            Vehicle_Code__c = 'H-1',
+            We_Hold__c = true
+        );
+        NXP_Contract_Vehicle__c listed = new NXP_Contract_Vehicle__c(Name = 'Listed', Vehicle_Code__c = 'sewp v');
+        NXP_Contract_Vehicle__c other = new NXP_Contract_Vehicle__c(Name = 'Other', Vehicle_Code__c = 'O-1');
+        insert new List<NXP_Contract_Vehicle__c>{ held, listed, other };
+
+        List<NXP_Gov_Notice__c> notices = new List<NXP_Gov_Notice__c>();
+        for (Id vehicleId : new List<Id>{ held.Id, listed.Id, other.Id, null }) {
+            NXP_Gov_Notice__c n = notice();
+            n.Notice_Id__c = 'T-V' + notices.size();
+            n.Contract_Vehicle__c = vehicleId;
+            notices.add(n);
+        }
+        insert notices;
+        Map<Id, NXP_Gov_Notice__c> scored = new Map<Id, NXP_Gov_Notice__c>(
+            [SELECT Id, Fit_Score__c, Fit_Breakdown__c FROM NXP_Gov_Notice__c WHERE Id IN :notices]
+        );
+        System.assertEquals(10, scored.get(notices[0].Id).Fit_Score__c, 'We Hold ticked');
+        System.assertEquals(10, scored.get(notices[1].Id).Fit_Score__c, 'code listed on the profile');
+        System.assertEquals(0, scored.get(notices[2].Id).Fit_Score__c, 'vehicle we do not hold');
+        System.assert(scored.get(notices[2].Id).Fit_Breakdown__c.contains('do not hold'));
+        System.assertEquals(0, scored.get(notices[3].Id).Fit_Score__c, 'no vehicle');
+    }
+
+    @IsTest
     static void triggerBypassAndSelectors() {
         NXP_TriggerHandler.bypass('NXP_GovNoticeTriggerHandler');
         NXP_Gov_Notice__c n = notice();

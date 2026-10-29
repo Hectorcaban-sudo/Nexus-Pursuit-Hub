@@ -33,7 +33,7 @@ Feeds are `NXP_Feed_Config__mdt` records. Change them through `env-config/<env>`
 
 ## Fit rules
 
-`NXP_Fit_Rule__mdt`: active weights should sum to 100. Shipped weights are NAICS 30, Agency 20, Set-Aside 15, Keyword 20 (three keywords give full points) and Value Range 15. PSC and Vehicle ship off. After changes, run `rescore-notices.apex`.
+`NXP_Fit_Rule__mdt`: active weights should sum to 100. Shipped weights are NAICS 30, Agency 20, Set-Aside 15, Keyword 20 (three keywords give full points) and Value Range 15. PSC and Vehicle ship off. The Vehicle rule gives full points when the notice is on a contract vehicle we hold (**We Hold** ticked on the vehicle, or its code in the profile's _Vehicles We Hold_); to use it, give it a weight and lower another rule so the total stays 100. After changes, run `rescore-notices.apex`.
 
 ## Push mapping
 
