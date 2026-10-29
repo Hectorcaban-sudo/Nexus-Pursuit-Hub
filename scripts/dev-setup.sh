@@ -33,7 +33,15 @@ if [[ -n "$EXISTING" ]]; then
   step "Using existing org $ALIAS"
 else
   step "Creating scratch org $ALIAS ($DAYS days)"
-  sf org create scratch --definition-file config/project-scratch-def.json --alias "$ALIAS" --duration-days "$DAYS" --set-default --wait 20
+  if ! sf org create scratch --definition-file config/project-scratch-def.json --alias "$ALIAS" --duration-days "$DAYS" --set-default --wait 20; then
+    warn "Scratch org creation failed."
+    echo '  "AuthCodeExchangeError ... fetch failed" means the org was created but this computer could not'
+    echo '  reach its new address (*.scratch.my.salesforce.com): usually a firewall, proxy or VPN rule.'
+    echo '  - Use a sandbox instead:  scripts/dev-setup.sh --org <sandbox-alias>'
+    echo '  - Or ask your network team to allow *.scratch.my.salesforce.com, then try again.'
+    echo '  - Free the unused scratch org: Dev Hub > App Launcher > Active Scratch Orgs > delete it.'
+    exit 1
+  fi
 fi
 
 step "Deploying packages in dependency order (one deployment)"

@@ -34,8 +34,20 @@ if ($Org) {
 }
 else {
     Write-Step "Creating scratch org $Alias ($Days days)"
-    Invoke-Sf @('org', 'create', 'scratch', '--definition-file', 'config/project-scratch-def.json', '--alias', $Alias,
-        '--duration-days', "$Days", '--set-default', '--wait', '20')
+    try {
+        Invoke-Sf @('org', 'create', 'scratch', '--definition-file', 'config/project-scratch-def.json', '--alias', $Alias,
+            '--duration-days', "$Days", '--set-default', '--wait', '20')
+    }
+    catch {
+        Write-Host ''
+        Write-Host 'Scratch org creation failed.' -ForegroundColor Yellow
+        Write-Host '  "AuthCodeExchangeError ... fetch failed" means the org was created but this computer could not'
+        Write-Host '  reach its new address (*.scratch.my.salesforce.com): usually a firewall, proxy or VPN rule.'
+        Write-Host '  - Use a sandbox instead:  .\scripts\dev-setup.ps1 -Org <sandbox-alias>'
+        Write-Host '  - Or ask your network team to allow *.scratch.my.salesforce.com, then try again.'
+        Write-Host '  - Free the unused scratch org: Dev Hub > App Launcher > Active Scratch Orgs > delete it.'
+        throw
+    }
 }
 
 Write-Step 'Deploying packages in dependency order (one deployment)'
