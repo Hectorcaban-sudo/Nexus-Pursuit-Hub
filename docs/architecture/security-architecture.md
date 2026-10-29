@@ -33,7 +33,7 @@ Government notice data is public, so intel records are readable by every Nexus P
 ## Credentials
 
 - The SAM.gov API key is never in code or metadata. It lives on the `NXP_SAM_Gov` External Credential principal (parameter `ApiKey`) and is sent as the `X-Api-Key` header by the Named Credential.
-- USAspending and forecast endpoints use the `NXP_Public_API` External Credential (no authentication).
+- USAspending and forecast endpoints use the `NXP_Public_API` External Credential: Custom protocol with a `Default` named principal and no parameters, so no key is sent. The running user needs access to the `NXP_Public_API-Default` principal (in `NXP_Admin`), the same as for SAM.gov.
 - The REST integration uses OAuth 2.0 client credentials (External Client App or connected app) mapped to a dedicated integration user with only `NXP_Integration`.
 - Release automation authenticates with web login or JWT, with the certificate stored outside the repository (`.gitignore` blocks `*.key`, `*.pem`).
 

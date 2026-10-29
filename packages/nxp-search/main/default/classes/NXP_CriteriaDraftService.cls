@@ -278,8 +278,8 @@ public inherited sharing class NXP_CriteriaDraftService {
     }
 
     @TestVisible
-    private static Decimal toAmount(String number, String unit) {
-        Decimal n = NXP_Json.toDecimal(number.replace(',', ''));
+    private static Decimal toAmount(String amountText, String unit) {
+        Decimal n = NXP_Json.toDecimal(amountText.replace(',', ''));
         if (n == null) {
             return null;
         }

@@ -46,7 +46,10 @@ public without sharing class NXP_PushService {
     private static NXP_PushTarget targetOverride;
 
     public static NXP_PushTarget target() {
-        return targetOverride != null ? targetOverride : new NXP_TechnoMilePushTarget();
+        if (targetOverride != null) {
+            return targetOverride;
+        }
+        return new NXP_TechnoMilePushTarget();
     }
 
     public static PushPreview preview(Id noticeId) {

@@ -33,9 +33,9 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
         if (mode == CHANGES) {
             return Database.getQueryLocator(
                 [
-                    SELECT Id
+                    SELECT Id, AI_Change_Summary__c
                     FROM NXP_Notice_Version__c
-                    WHERE AI_Change_Summary__c = NULL AND Version_Number__c > 1 AND CreatedDate = LAST_N_DAYS:7
+                    WHERE Version_Number__c > 1 AND CreatedDate = LAST_N_DAYS:7
                     ORDER BY CreatedDate DESC
                     LIMIT 2000
                 ]
@@ -94,6 +94,10 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
         String template = NXP_Settings.getString('AI_Change_Template', 'NXP_Amendment_Impact');
         List<NXP_Notice_Version__c> updates = new List<NXP_Notice_Version__c>();
         for (NXP_Notice_Version__c v : scope) {
+            // Long text fields can't be filtered in SOQL, so versions already summarized are skipped here.
+            if (String.isNotBlank(v.AI_Change_Summary__c)) {
+                continue;
+            }
             try {
                 String text = NXP_AiService.generate(template, new Map<String, Object>{ 'Input:Version' => v.Id });
                 updates.add(

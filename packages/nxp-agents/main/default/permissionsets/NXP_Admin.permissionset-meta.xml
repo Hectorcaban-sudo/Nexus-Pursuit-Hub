@@ -300,6 +300,10 @@
     >Salesforce admins: feeds, mappings, fit rules, Feed Console, all records. Also assign to the user who schedules the jobs.</description>
     <externalCredentialPrincipalAccesses>
         <enabled>true</enabled>
+        <externalCredentialPrincipal>NXP_Public_API-Default</externalCredentialPrincipal>
+    </externalCredentialPrincipalAccesses>
+    <externalCredentialPrincipalAccesses>
+        <enabled>true</enabled>
         <externalCredentialPrincipal>NXP_SAM_Gov-Default</externalCredentialPrincipal>
     </externalCredentialPrincipalAccesses>
     <fieldPermissions>

@@ -171,7 +171,7 @@ private class NXP_CoreTest {
         try {
             new NXP_HttpClient().send(req);
             System.assert(false, 'Expected failure');
-        } catch (NXP_HttpClient.CalloutFailure e) {
+        } catch (NXP_HttpClient.CalloutFailureException e) {
             System.assertEquals(503, e.statusCode);
         }
         Test.stopTest();

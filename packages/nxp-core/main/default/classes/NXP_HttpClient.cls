@@ -4,7 +4,7 @@
  * makes a failed page resumable on the next run.
  */
 public inherited sharing class NXP_HttpClient {
-    public class CalloutFailure extends Exception {
+    public class CalloutFailureException extends Exception {
         public Integer statusCode;
     }
 
@@ -68,7 +68,7 @@ public inherited sharing class NXP_HttpClient {
                 break;
             }
         }
-        CalloutFailure failure = new CalloutFailure(
+        CalloutFailureException failure = new CalloutFailureException(
             'HTTP ' +
                 res.getStatusCode() +
                 ' from ' +

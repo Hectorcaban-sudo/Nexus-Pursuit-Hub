@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Fixes from the first org deployment:**
+    - `NXP_HttpClient.CalloutFailure` renamed `CalloutFailureException` (Apex exception classes must end in "Exception").
+    - Reserved words no longer used as variable names: `number` (`NXP_CriteriaDraftService`); `any`, `inner`, `end` (`NXP_KeywordExpression`).
+    - `NXP_NoticeAnalystJob` no longer filters on the long text field `AI_Change_Summary__c`; already-summarized versions are skipped in Apex.
+    - `NXP_Public_API` External Credential uses the Custom protocol with a `Default` principal (no parameters), because orgs reject `NoAuthentication`; `NXP_Admin` gets access to that principal.
+    - Gov Notice record page: removed `Replace` region modes.
+    - `NXP_User`: Edit on `NXP_Follow__c`, which Delete requires.
+    - `NXP_PushService.target()`: if/else instead of a ternary between an interface and a class.
 - **PowerShell scripts:** a `.ps1` version of every script (`dev-setup`, `validate`, `release`, `create-package-versions`, `datacloud/upload-awards`), sharing `scripts/lib/common.ps1`. Windows PowerShell 5.1 and PowerShell 7.
 - **Uninstall:** `scripts/uninstall.sh` and `.ps1`, for source-deployed orgs (destructive deploys, dependents first) and for package installs.
 - **Sample data:** CSV seed files upserted by external ID (re-runnable), dates set relative to today, three saved searches with matches, and `--reset` / `--delete`. `load-sample-data.sh` and `.ps1`.

@@ -67,11 +67,11 @@ public inherited sharing class NXP_KeywordExpression {
                 return all;
             }
             when else {
-                Boolean any = false;
+                Boolean anyMatched = false;
                 for (Node k : n.kids) {
-                    any = eval(k, text, matched) || any;
+                    anyMatched = eval(k, text, matched) || anyMatched;
                 }
-                return any;
+                return anyMatched;
             }
         }
     }
@@ -126,12 +126,12 @@ public inherited sharing class NXP_KeywordExpression {
         }
         String t = tokens[pos++];
         if (t == '(') {
-            Node inner = parseOr();
+            Node innerNode = parseOr();
             if (peek() != ')') {
                 throw new ParseException('Missing closing parenthesis in keywords.');
             }
             pos++;
-            return inner;
+            return innerNode;
         }
         if (t == ')' || t == 'AND' || t == 'OR') {
             throw new ParseException('Unexpected "' + t + '" in keywords.');
@@ -168,12 +168,12 @@ public inherited sharing class NXP_KeywordExpression {
                 out.add(c);
                 i++;
             } else if (c == '"') {
-                Integer end = s.indexOf('"', i + 1);
-                if (end < 0) {
+                Integer closeQuote = s.indexOf('"', i + 1);
+                if (closeQuote < 0) {
                     throw new ParseException('Missing closing quote in keywords.');
                 }
-                out.add(s.substring(i, end + 1));
-                i = end + 1;
+                out.add(s.substring(i, closeQuote + 1));
+                i = closeQuote + 1;
             } else {
                 Integer j = i;
                 while (j < s.length() && ' \t\n,()"'.indexOf(s.substring(j, j + 1)) < 0) {
