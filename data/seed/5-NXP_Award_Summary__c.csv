@@ -1,0 +1,7 @@
+Name,PIID__c,Agency__r.Agency_Code__c,Vendor__r.UEI__c,NAICS_Code__c,PSC_Code__c,Obligated_Amount__c,Ceiling__c,Period_Start__c,Period_End__c,Description__c,Source_Feed__c
+CBP Zero Trust Engineering (sample),SAMPLE-PIID-0001,070.7014,SMPLUEI00001,541512,DA01,18400000,25000000,2022-04-28,2027-02-28,[SAMPLE DATA] Predecessor of SAMPLE-0001: zero trust engineering and integration for CBP.,SAMPLE
+Army Cloud Hosting Services (sample),SAMPLE-PIID-0002,097.2100,SMPLUEI00003,541519,DJ01,9750000,12000000,2023-06-28,2027-05-28,[SAMPLE DATA] Cloud hosting and managed services for Army enterprise applications.,SAMPLE
+VHA Security Operations Support (sample),SAMPLE-PIID-0003,036.3600,SMPLUEI00004,541512,DA01,12300000,15000000,2022-10-28,2027-08-28,[SAMPLE DATA] Security operations center staffing and tooling for VHA.,SAMPLE
+VHA Clinical Data Warehouse (sample),SAMPLE-PIID-0004,036.3600,SMPLUEI00004,541511,DA01,26900000,40000000,2022-08-28,2028-01-28,[SAMPLE DATA] Clinical data warehouse development and operations.,SAMPLE
+USCIS Identity Services (sample),SAMPLE-PIID-0005,070.7003,SMPLUEI00002,541512,DA01,6200000,8000000,2023-10-28,2028-06-28,[SAMPLE DATA] Identity proofing and credential services for USCIS.,SAMPLE
+Army Cyber Range Support (sample),SAMPLE-PIID-0006,097.2100,SMPLUEI00002,541512,DA01,4100000,5000000,2021-10-28,2026-08-28,[SAMPLE DATA] Cyber range operations; ended recently (predecessor candidate for SAMPLE-0010).,SAMPLE

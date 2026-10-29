@@ -5,8 +5,9 @@
 #   scripts/load-sample-data.sh --org nxp-dev --reset    # delete the sample data first, then load it
 #   scripts/load-sample-data.sh --org nxp-dev --delete   # only delete the sample data
 #
-# Loads: a sample Company Profile, 7 agencies, 2 contract vehicles, 10 SAMPLE notices (scored on
-# insert), 3 saved searches for you, and the search matches and alerts they produce.
+# Loads: a sample Company Profile, 7 agencies, 2 contract vehicles, 4 vendors, 6 award summaries,
+# 3 forecasts, 10 SAMPLE notices (scored on insert), 3 saved searches for you, and the search
+# matches and alerts they produce.
 # Refuses to run against a production org unless --allow-production is given.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -42,12 +43,15 @@ fi
 step "Company Profile (before the notices, so they are scored as they load)"
 run_apex scripts/apex/seed-profile.apex "$ORG"
 
-# file | object | external ID field. Order matters: departments, then agencies, then notices.
+# file | object | external ID field. Order matters: agencies, vendors, awards and forecasts before the notices that point to them.
 LOADS=(
   "data/seed/1-NXP_Gov_Agency__c-departments.csv|NXP_Gov_Agency__c|Agency_Code__c"
   "data/seed/2-NXP_Gov_Agency__c-agencies.csv|NXP_Gov_Agency__c|Agency_Code__c"
   "data/seed/3-NXP_Contract_Vehicle__c.csv|NXP_Contract_Vehicle__c|Vehicle_Code__c"
-  "data/seed/4-NXP_Gov_Notice__c.csv|NXP_Gov_Notice__c|Notice_Id__c"
+  "data/seed/4-NXP_Gov_Vendor__c.csv|NXP_Gov_Vendor__c|UEI__c"
+  "data/seed/5-NXP_Award_Summary__c.csv|NXP_Award_Summary__c|PIID__c"
+  "data/seed/6-NXP_Gov_Forecast__c.csv|NXP_Gov_Forecast__c|Forecast_Id__c"
+  "data/seed/7-NXP_Gov_Notice__c.csv|NXP_Gov_Notice__c|Notice_Id__c"
 )
 for load in "${LOADS[@]}"; do
   IFS='|' read -r file object extid <<<"$load"
@@ -56,7 +60,7 @@ for load in "${LOADS[@]}"; do
     --line-ending LF --wait 10 --target-org "$ORG"
 done
 
-step "Setting sample dates relative to today"
+step "Setting sample dates relative to today and linking forecasts"
 run_apex scripts/apex/refresh-sample-dates.apex "$ORG"
 
 step "Saved searches and matching"

@@ -1,5 +1,5 @@
 // Removes the sample data so it can be loaded again (scripts/load-sample-data.ps1 -Reset / .sh --reset).
-// Deletes: SAMPLE notices and their children, records they were pushed to, SAMPLE saved searches
+// Deletes: SAMPLE notices and their children, SAMPLE vendors, awards and forecasts, records they were pushed to, SAMPLE saved searches
 // (matches go with them), the sample company profile and sample contract vehicles, and the sample
 // agencies when nothing else uses them. Real feed data is not touched.
 List<NXP_Gov_Notice__c> notices = [
@@ -30,6 +30,10 @@ delete [SELECT Id FROM NXP_Saved_Search__c WHERE Name LIKE 'SAMPLE - %'];
 delete [SELECT Id FROM NXP_Log__c WHERE Source__c = 'NXP-SMOKE'];
 delete [SELECT Id FROM NXP_Company_Profile__c WHERE Name = 'Our company (sample)'];
 delete [SELECT Id FROM NXP_Contract_Vehicle__c WHERE Name LIKE '%(sample)'];
+// Market data: awards before vendors (awards point to vendors).
+delete [SELECT Id FROM NXP_Gov_Forecast__c WHERE Forecast_Id__c LIKE 'SAMPLE-%'];
+delete [SELECT Id FROM NXP_Award_Summary__c WHERE PIID__c LIKE 'SAMPLE-%'];
+delete [SELECT Id FROM NXP_Gov_Vendor__c WHERE UEI__c LIKE 'SMPLUEI%'];
 
 // Sample agencies: only those no remaining notice points to. Children first, then departments.
 Set<String> agencyCodes = new Set<String>{ '070.7014', '070.7003', '097.2100', '036.3600' };

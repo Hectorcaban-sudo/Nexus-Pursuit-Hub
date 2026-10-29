@@ -1,0 +1,4 @@
+Name,Forecast_Id__c,Agency__r.Agency_Code__c,NAICS_Code__c,Set_Aside__c,Estimated_Value__c,Estimated_Solicitation_Date__c,Fiscal_Year__c,Description__c,Source_Feed__c
+"Identity, Credential and Access Management Modernization",SAMPLE-FC-0001,070.7003,541512,Total Small Business Set-Aside,9000000,2026-10-18,FY2027,[SAMPLE DATA] Forecast that became notice SAMPLE-0002.,SAMPLE
+Enterprise Data Platform Modernization,SAMPLE-FC-0002,036.3600,541511,,30000000,2027-01-26,FY2027,[SAMPLE DATA] Forecasted VHA data platform modernization; no notice yet.,SAMPLE
+Tactical Cloud Operations Support,SAMPLE-FC-0003,097.2100,541519,8(a) Set-Aside (FAR 19.8),15000000,2027-03-27,FY2027,[SAMPLE DATA] Forecasted Army cloud operations support; no notice yet.,SAMPLE

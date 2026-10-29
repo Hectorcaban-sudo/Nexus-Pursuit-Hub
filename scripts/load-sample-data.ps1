@@ -3,8 +3,9 @@
     Load the Nexus Pursuit Hub sample data into a dev, QA or scratch org. Safe to run again.
 
 .DESCRIPTION
-    Loads a sample Company Profile, 7 agencies, 2 contract vehicles, 10 SAMPLE notices (scored on
-    insert), 3 saved searches for you, and the search matches and alerts they produce.
+    Loads a sample Company Profile, 7 agencies, 2 contract vehicles, 4 vendors, 6 award summaries,
+    3 forecasts, 10 SAMPLE notices (scored on insert), 3 saved searches for you, and the search
+    matches and alerts they produce.
     Refuses to run against a production org unless -AllowProduction is given.
     Bash version: scripts/load-sample-data.sh
 
@@ -45,12 +46,15 @@ if ($Reset -or $Delete) {
 Write-Step 'Company Profile (before the notices, so they are scored as they load)'
 Invoke-ApexFile 'scripts/apex/seed-profile.apex' $Org
 
-# Order matters: departments, then agencies, then notices.
+# Order matters: agencies, vendors, awards and forecasts before the notices that point to them.
 $loads = @(
     @{ File = 'data/seed/1-NXP_Gov_Agency__c-departments.csv'; Object = 'NXP_Gov_Agency__c'; ExternalId = 'Agency_Code__c' },
     @{ File = 'data/seed/2-NXP_Gov_Agency__c-agencies.csv'; Object = 'NXP_Gov_Agency__c'; ExternalId = 'Agency_Code__c' },
     @{ File = 'data/seed/3-NXP_Contract_Vehicle__c.csv'; Object = 'NXP_Contract_Vehicle__c'; ExternalId = 'Vehicle_Code__c' },
-    @{ File = 'data/seed/4-NXP_Gov_Notice__c.csv'; Object = 'NXP_Gov_Notice__c'; ExternalId = 'Notice_Id__c' }
+    @{ File = 'data/seed/4-NXP_Gov_Vendor__c.csv'; Object = 'NXP_Gov_Vendor__c'; ExternalId = 'UEI__c' },
+    @{ File = 'data/seed/5-NXP_Award_Summary__c.csv'; Object = 'NXP_Award_Summary__c'; ExternalId = 'PIID__c' },
+    @{ File = 'data/seed/6-NXP_Gov_Forecast__c.csv'; Object = 'NXP_Gov_Forecast__c'; ExternalId = 'Forecast_Id__c' },
+    @{ File = 'data/seed/7-NXP_Gov_Notice__c.csv'; Object = 'NXP_Gov_Notice__c'; ExternalId = 'Notice_Id__c' }
 )
 foreach ($load in $loads) {
     Write-Step "Upserting $(Split-Path $load.File -Leaf) into $($load.Object) (by $($load.ExternalId))"
@@ -59,7 +63,7 @@ foreach ($load in $loads) {
         '--line-ending', 'LF', '--wait', '10', '--target-org', $Org)
 }
 
-Write-Step 'Setting sample dates relative to today'
+Write-Step 'Setting sample dates relative to today and linking forecasts'
 Invoke-ApexFile 'scripts/apex/refresh-sample-dates.apex' $Org
 
 Write-Step 'Saved searches and matching'

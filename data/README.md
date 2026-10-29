@@ -2,7 +2,7 @@
 
 | Folder      | Contents                                                                                                                                                                                                                 | Used by                                                                     |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| `seed/`     | Sample agencies, contract vehicles and 10 **sample** notices (`SAMPLE-0001`…`SAMPLE-0010`) as CSV files, loaded in file-name order with Bulk API upserts on external IDs                                                 | `scripts/load-sample-data.sh` / `.ps1` (called by `dev-setup`)              |
+| `seed/`     | Sample agencies, contract vehicles, vendors, award summaries, forecasts and 10 **sample** notices (`SAMPLE-0001`…`SAMPLE-0010`) as CSV files, loaded in file-name order with Bulk API upserts on external IDs            | `scripts/load-sample-data.sh` / `.ps1` (called by `dev-setup`)              |
 | `fixtures/` | Recorded API response shapes (SAM.gov opportunities, USAspending awards), an example REST request, and `rest-sample-notice.json` for testing the HTTP endpoint by hand (replace `{{TODAY}}` and `{{DUE_30}}` with dates) | Apex tests (inline copies), API docs, `scripts/test-functional.sh` / `.ps1` |
 
 The sample Company Profile and saved searches are created by Apex (`scripts/apex/seed-profile.apex`, `seed-searches.apex`) because they depend on the running user.

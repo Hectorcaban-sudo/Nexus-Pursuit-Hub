@@ -238,6 +238,70 @@ if (haveSamples) {
     }
 }
 
+// 7b. Market intel: award, vendor and forecast data (Find Incumbent, Recompete Query, forecasts) ----
+try {
+    Integer awardCount = [SELECT COUNT() FROM NXP_Award_Summary__c WHERE PIID__c LIKE 'SAMPLE-%'];
+    Integer vendorCount = [SELECT COUNT() FROM NXP_Gov_Vendor__c WHERE UEI__c LIKE 'SMPLUEI%'];
+    Integer forecastCount = [SELECT COUNT() FROM NXP_Gov_Forecast__c WHERE Forecast_Id__c LIKE 'SAMPLE-%'];
+    Boolean haveMarket = awardCount >= 6 && vendorCount >= 4 && forecastCount >= 3;
+    out.add(
+        (haveMarket ? 'PASS' : 'FAIL') + '|Market data|' + awardCount + ' awards, ' + vendorCount + ' vendors, ' +
+        forecastCount + ' forecasts (expected 6, 4, 3; run load-sample-data again)'
+    );
+    fails += haveMarket ? 0 : 1;
+    if (haveMarket) {
+        Map<String, Id> noticeIdByKey = new Map<String, Id>();
+        for (NXP_Gov_Notice__c n : [
+            SELECT Id, Notice_Id__c
+            FROM NXP_Gov_Notice__c
+            WHERE Notice_Id__c IN ('SAMPLE-0001', 'SAMPLE-0002', 'SAMPLE-0003')
+        ]) {
+            noticeIdByKey.put(n.Notice_Id__c, n.Id);
+        }
+        NXP_FindIncumbentAction.Request linked = new NXP_FindIncumbentAction.Request();
+        linked.noticeId = noticeIdByKey.get('SAMPLE-0001');
+        NXP_FindIncumbentAction.Request candidates = new NXP_FindIncumbentAction.Request();
+        candidates.noticeId = noticeIdByKey.get('SAMPLE-0003');
+        List<NXP_FindIncumbentAction.Response> answers = NXP_FindIncumbentAction.run(
+            new List<NXP_FindIncumbentAction.Request>{ linked, candidates }
+        );
+        Boolean incumbentOk =
+            answers[0].answer.contains('SAMPLE-PIID-0001') && answers[1].answer.contains('SAMPLE-PIID-0002');
+        out.add(
+            (incumbentOk ? 'PASS' : 'FAIL') + '|Find incumbent|SAMPLE-0001 -> predecessor SAMPLE-PIID-0001; ' +
+            'SAMPLE-0003 -> candidate SAMPLE-PIID-0002' + (incumbentOk ? '' : '. Got: ' + answers[0].answer.left(120))
+        );
+        fails += incumbentOk ? 0 : 1;
+
+        NXP_RecompeteQueryAction.Request rq = new NXP_RecompeteQueryAction.Request();
+        rq.agency = 'Veterans';
+        rq.monthsAhead = 18;
+        rq.minValue = 10000000;
+        String recompetes = NXP_RecompeteQueryAction.run(new List<NXP_RecompeteQueryAction.Request>{ rq })[0].recompetes;
+        Boolean recompeteOk = recompetes.contains('SAMPLE-PIID-0003') && recompetes.contains('SAMPLE-PIID-0004');
+        out.add(
+            (recompeteOk ? 'PASS' : 'FAIL') + '|Recompete query|VA awards over $10M ending within 18 months: ' +
+            (recompeteOk ? 'SAMPLE-PIID-0003, SAMPLE-PIID-0004' : recompetes.left(150))
+        );
+        fails += recompeteOk ? 0 : 1;
+
+        NXP_Gov_Forecast__c fc = [
+            SELECT Matched_Notice__c
+            FROM NXP_Gov_Forecast__c
+            WHERE Forecast_Id__c = 'SAMPLE-FC-0001'
+        ];
+        Boolean forecastOk = fc.Matched_Notice__c != null && fc.Matched_Notice__c == noticeIdByKey.get('SAMPLE-0002');
+        out.add(
+            (forecastOk ? 'PASS' : 'FAIL') + '|Forecast link|SAMPLE-FC-0001 ' +
+            (forecastOk ? 'is linked to notice SAMPLE-0002' : 'is not linked to SAMPLE-0002')
+        );
+        fails += forecastOk ? 0 : 1;
+    }
+} catch (Exception e) {
+    out.add('FAIL|Market data|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();
