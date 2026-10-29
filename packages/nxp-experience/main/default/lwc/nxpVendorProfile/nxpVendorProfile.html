@@ -1,0 +1,128 @@
+<template>
+    <div class="page">
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading vendor" size="medium"></lightning-spinner>
+        </template>
+        <template lwc:if={vendor}>
+            <section class="header" aria-label="Vendor">
+                <div class="header-main">
+                    <div class="chips">
+                        <template for:each={chips} for:item="c">
+                            <span key={c.key} class={c.className}>{c.label}</span>
+                        </template>
+                    </div>
+                    <h1 class="slds-text-heading_large">{vendor.Name}</h1>
+                    <div class="identity">{identity}</div>
+                </div>
+                <div class="header-actions">
+                    <template lwc:if={canRefresh}>
+                        <lightning-button
+                            class="refresh"
+                            label="Refresh from SAM.gov"
+                            icon-name="utility:refresh"
+                            disabled={refreshing}
+                            onclick={handleRefresh}
+                        ></lightning-button>
+                    </template>
+                    <lightning-button
+                        class="watch"
+                        label={watchLabel}
+                        variant={watchVariant}
+                        icon-name="utility:preview"
+                        onclick={handleWatch}
+                    ></lightning-button>
+                </div>
+            </section>
+
+            <section class="kpis" aria-label="Totals">
+                <template for:each={kpis} for:item="k">
+                    <div key={k.key} class="kpi">
+                        <span class="kpi-label">{k.label}</span>
+                        <span class="kpi-value">{k.value}</span>
+                        <span class="kpi-note">{k.note}</span>
+                    </div>
+                </template>
+            </section>
+
+            <div class="columns">
+                <section class="panel panel_wide" aria-label="Awards">
+                    <div class="panel-head">
+                        <h2 class="slds-text-heading_medium">Awards</h2>
+                        <span class="note">From USAspending award data in Nexus Pursuit Hub</span>
+                    </div>
+                    <template lwc:if={hasAwards}>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Award</th>
+                                        <th scope="col">Agency</th>
+                                        <th scope="col">NAICS</th>
+                                        <th scope="col" class="num">Obligated</th>
+                                        <th scope="col">Ends</th>
+                                        <th scope="col">Follow-on</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={awards} for:item="a">
+                                        <tr key={a.id} class="award-row">
+                                            <td>
+                                                <a href="#" data-id={a.id} onclick={handleOpen}>{a.title}</a>
+                                                <div class="note">{a.piid}</div>
+                                            </td>
+                                            <td>{a.agency}</td>
+                                            <td>{a.naics}</td>
+                                            <td class="num strong">{a.obligatedLabel}</td>
+                                            <td class="ends">{a.ends}</td>
+                                            <td>
+                                                <template lwc:if={a.hasFollowOn}>
+                                                    <a href="#" data-id={a.followOnId} onclick={handleOpen}
+                                                        >{a.followOnLabel}</a
+                                                    >
+                                                </template>
+                                                <template lwc:else>
+                                                    <span class="note">{a.followOnLabel}</span>
+                                                </template>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <p class="note">No awards for this vendor in Nexus yet.</p>
+                    </template>
+
+                    <h2 class="slds-text-heading_small subhead">Where they compete with you</h2>
+                    <div class="overlap">
+                        <template for:each={overlap} for:item="o">
+                            <div key={o.key} class="overlap-item">
+                                <span class="kpi-label">{o.label}</span>
+                                <span class="strong">{o.value}</span>
+                                <span class="note">{o.note}</span>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+
+                <section class="panel" aria-label="Open notices">
+                    <h2 class="slds-text-heading_small">Open notices where they're the likely incumbent</h2>
+                    <template lwc:if={hasOpenNotices}>
+                        <template for:each={openNotices} for:item="n">
+                            <a key={n.id} href="#" class="notice" data-id={n.id} onclick={handleOpen}>
+                                <span class="notice-title">{n.title}</span>
+                                <span class="note">{n.meta}</span>
+                                <span class="notice-due">{n.due}{n.fit}</span>
+                                <span class="note">{n.reason}</span>
+                            </a>
+                        </template>
+                    </template>
+                    <template lwc:else>
+                        <p class="note">No open notices at their agencies with their NAICS codes.</p>
+                    </template>
+                </section>
+            </div>
+        </template>
+    </div>
+</template>

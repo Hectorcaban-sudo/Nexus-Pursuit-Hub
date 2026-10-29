@@ -302,6 +302,57 @@ try {
     fails++;
 }
 
+// 7c. Market screens (Forecasts, Recompetes, Vendor profile) and Watch -----------------------------
+try {
+    NXP_MarketController.ForecastBoard board = NXP_MarketController.getForecastBoard(null, null, null, null, false);
+    Integer forecastCards = 0;
+    for (NXP_MarketController.ForecastColumn col : board.columns) {
+        forecastCards += col.cards.size();
+    }
+    Boolean boardOk = board.columns.size() == 5 && forecastCards >= 3 && board.released >= 1;
+    out.add(
+        (boardOk ? 'PASS' : 'FAIL') + '|Forecast board|' + forecastCards + ' forecasts on the board, ' +
+        board.released + ' released, ' + board.next90 + ' due in 90 days'
+    );
+    fails += boardOk ? 0 : 1;
+
+    List<NXP_MarketController.AwardRow> recompetes = NXP_MarketController.getRecompetes(null, null, 18, null);
+    Integer withFollowOn = 0;
+    for (NXP_MarketController.AwardRow r : recompetes) {
+        withFollowOn += r.followOnKind == 'none' ? 0 : 1;
+    }
+    Boolean timelineOk = recompetes.size() >= 4 && withFollowOn >= 3;
+    out.add(
+        (timelineOk ? 'PASS' : 'FAIL') + '|Recompete timeline|' + recompetes.size() +
+        ' awards in the 18-month window, ' + withFollowOn + ' with a follow-on'
+    );
+    fails += timelineOk ? 0 : 1;
+
+    List<NXP_Gov_Vendor__c> meridian = [SELECT Id FROM NXP_Gov_Vendor__c WHERE UEI__c = 'SMPLUEI00004' LIMIT 1];
+    if (meridian.isEmpty()) {
+        out.add('FAIL|Vendor profile|sample vendor SMPLUEI00004 not found; run load-sample-data again');
+        fails++;
+    } else {
+        NXP_MarketController.VendorProfile vp = NXP_MarketController.getVendorProfile(meridian[0].Id);
+        Boolean vendorOk = vp.awardCount == 2 && vp.overlap.size() == 3 && !vp.openNotices.isEmpty();
+        out.add(
+            (vendorOk ? 'PASS' : 'FAIL') + '|Vendor profile|Meridian Health IT: ' + vp.awardCount + ' awards, ' +
+            vp.openNotices.size() + ' open notices where they are the likely incumbent'
+        );
+        fails += vendorOk ? 0 : 1;
+
+        Boolean wasWatching = vp.watching;
+        NXP_MarketController.watch(meridian[0].Id, !wasWatching);
+        Boolean flipped = NXP_MarketController.getVendorProfile(meridian[0].Id).watching != wasWatching;
+        NXP_MarketController.watch(meridian[0].Id, wasWatching);
+        out.add((flipped ? 'PASS' : 'FAIL') + '|Watch|watch and unwatch a vendor (left as it was)');
+        fails += flipped ? 0 : 1;
+    }
+} catch (Exception e) {
+    out.add('FAIL|Market screens|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();

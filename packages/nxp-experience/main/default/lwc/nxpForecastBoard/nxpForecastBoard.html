@@ -1,0 +1,134 @@
+<template>
+    <div class="page">
+        <div class="toolbar">
+            <div>
+                <h1 class="slds-text-heading_large">Forecasts</h1>
+                <p class="slds-text-color_weak">
+                    Planned buys from agency procurement forecasts, before a notice exists. Grouped by expected
+                    solicitation date.
+                </p>
+            </div>
+            <lightning-button
+                variant="brand"
+                label="Alert me on new notices like these"
+                onclick={handleNewSearch}
+            ></lightning-button>
+        </div>
+
+        <section class="filters" aria-label="Filters">
+            <lightning-input
+                class="filter"
+                type="search"
+                label="Agency contains"
+                placeholder="e.g. Veterans"
+                value={agency}
+                data-filter="agency"
+                onchange={handleFilter}
+            ></lightning-input>
+            <lightning-input
+                class="filter filter_small"
+                label="NAICS"
+                placeholder="5415*"
+                value={naics}
+                data-filter="naics"
+                onchange={handleFilter}
+            ></lightning-input>
+            <lightning-combobox
+                class="filter"
+                label="Set-aside"
+                value={setAside}
+                options={setAsideOptions}
+                data-filter="setAside"
+                onchange={handleFilter}
+            ></lightning-combobox>
+            <lightning-combobox
+                class="filter filter_small"
+                label="Fiscal year"
+                value={fiscalYear}
+                options={fiscalYearOptions}
+                data-filter="fiscalYear"
+                onchange={handleFilter}
+            ></lightning-combobox>
+            <lightning-input
+                class="filter_check"
+                type="checkbox"
+                label="Fits our company profile"
+                checked={profileOnly}
+                data-filter="profileOnly"
+                onchange={handleFilter}
+            ></lightning-input>
+        </section>
+
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading forecasts" size="medium"></lightning-spinner>
+        </template>
+
+        <section class="kpis" aria-label="Summary">
+            <template for:each={kpis} for:item="k">
+                <div key={k.key} class="kpi">
+                    <span class="kpi-label">{k.label}</span>
+                    <span class="kpi-value">{k.value}</span>
+                    <span class="kpi-note">{k.note}</span>
+                </div>
+            </template>
+        </section>
+
+        <template lwc:if={nothingFound}>
+            <div class="empty" role="status">
+                No forecasts match. Clear a filter, or check that the Agency_Forecasts feed is on in the Feed Console.
+            </div>
+        </template>
+
+        <section class="board" aria-label="Forecast pipeline">
+            <template for:each={columns} for:item="col">
+                <div key={col.key} class="column">
+                    <div class="column-head">
+                        <h2 class="slds-text-heading_small">{col.label}</h2>
+                        <span class="count">{col.count}</span>
+                    </div>
+                    <template lwc:if={col.empty}>
+                        <p class="column-empty">None</p>
+                    </template>
+                    <template for:each={col.cards} for:item="c">
+                        <article key={c.id} class="card">
+                            <div class="chips">
+                                <template lwc:if={c.fiscalYear}>
+                                    <span class="chip chip_strong">{c.fiscalYear}</span>
+                                </template>
+                                <span class="chip">{c.setAsideLabel}</span>
+                            </div>
+                            <a href="#" class="card-title" data-id={c.id} onclick={handleOpen}>{c.title}</a>
+                            <div class="meta">{c.agencyLabel} · {c.naicsLabel}</div>
+                            <div class="row">
+                                <span>{c.valueLabel}</span>
+                                <span class={c.whenClass}>{c.when}</span>
+                            </div>
+                            <div class={c.fitClass}>{c.profileNote}</div>
+                            <template lwc:if={c.released}>
+                                <a href="#" class="released" data-id={c.noticeId} onclick={handleOpen}
+                                    >Became notice {c.noticeKey}</a
+                                >
+                            </template>
+                            <template lwc:else>
+                                <lightning-button
+                                    class="watch"
+                                    label={c.watchLabel}
+                                    variant={c.watchVariant}
+                                    icon-name="utility:preview"
+                                    data-id={c.id}
+                                    data-watching={c.watchState}
+                                    onclick={handleWatch}
+                                ></lightning-button>
+                            </template>
+                        </article>
+                    </template>
+                </div>
+            </template>
+        </section>
+
+        <p class="footnote">
+            Source: Agency_Forecasts feed. When a posted notice matches a forecast (same agency, NAICS and a similar
+            title), the forecast moves to Released and links to the notice, and people watching it get an alert.
+        </p>
+    </div>
+</template>

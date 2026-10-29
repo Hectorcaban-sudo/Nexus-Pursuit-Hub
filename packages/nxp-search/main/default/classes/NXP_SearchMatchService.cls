@@ -24,6 +24,8 @@ public without sharing class NXP_SearchMatchService {
         if (!changeTypes.isEmpty()) {
             process(changeTypes, newIds);
         }
+        // Watches on forecasts and awards (released forecast, possible follow-on). Never throws.
+        NXP_WatchService.noticesCreated(newIds);
     }
 
     public static List<NXP_Search_Match__c> process(Map<Id, String> changeTypes, Set<Id> newIds) {

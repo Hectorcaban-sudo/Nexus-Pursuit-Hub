@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Market screens:** Forecasts tab (`nxpForecastBoard`), Recompetes tab (`nxpRecompeteTimeline`) and a Gov Vendor record page with `nxpVendorProfile`, backed by `NXP_MarketController`.
+- **Watch** forecasts, awards and vendors (`NXP_Follow__c` gets `Forecast__c`, `Award__c`, `Vendor__c`); `NXP_WatchService` alerts when a forecast is released, a likely follow-on to an award is posted, or a vendor wins an award (`NXP_AwardSummaryTrigger`).
+- **Refresh from SAM.gov** on the vendor profile (admins).
+- **Fix:** `NXP_User` could not follow a notice (no edit access on `NXP_Follow__c.Gov_Notice__c` and `Follow_Key__c`).
 - **Sample market data:** 4 vendors, 6 award summaries and 3 forecasts (`data/seed/4-…6-…csv`; notices are now `7-…csv`), linked to the sample notices, with dates set relative to today. The smoke test checks Find Incumbent, Recompete Query and the forecast link.
 - **Functional test:** the REST check now calls the REST ingestion resource inside the smoke test (an access token from `sf org display` was rejected with `INVALID_AUTH_HEADER`), and the smoke test saves its results in an `NXP_Log__c` row (Source `NXP-SMOKE`) that the runners read, instead of relying on the end of a possibly truncated debug log.
 - **Notice Analyst schedule:** two jobs (`:15`, `:45`); Apex cron takes one minute value per job.

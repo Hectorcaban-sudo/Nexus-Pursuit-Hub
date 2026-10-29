@@ -30,6 +30,15 @@ delete [SELECT Id FROM NXP_Saved_Search__c WHERE Name LIKE 'SAMPLE - %'];
 delete [SELECT Id FROM NXP_Log__c WHERE Source__c = 'NXP-SMOKE'];
 delete [SELECT Id FROM NXP_Company_Profile__c WHERE Name = 'Our company (sample)'];
 delete [SELECT Id FROM NXP_Contract_Vehicle__c WHERE Name LIKE '%(sample)'];
+// Watches on sample forecasts, awards and vendors.
+delete [
+    SELECT Id
+    FROM NXP_Follow__c
+    WHERE
+        Forecast__r.Forecast_Id__c LIKE 'SAMPLE-%'
+        OR Award__r.PIID__c LIKE 'SAMPLE-%'
+        OR Vendor__r.UEI__c LIKE 'SMPLUEI%'
+];
 // Market data: awards before vendors (awards point to vendors).
 delete [SELECT Id FROM NXP_Gov_Forecast__c WHERE Forecast_Id__c LIKE 'SAMPLE-%'];
 delete [SELECT Id FROM NXP_Award_Summary__c WHERE PIID__c LIKE 'SAMPLE-%'];

@@ -16,6 +16,22 @@
         <type>Flexipage</type>
         <pageOrSobjectType>NXP_Gov_Notice__c</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>NXP_Gov_Vendor_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>NXP_Gov_Vendor__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>NXP_Gov_Vendor_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>NXP_Gov_Vendor__c</pageOrSobjectType>
+    </actionOverrides>
     <brand>
         <headerColor>#032D60</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
@@ -31,8 +47,8 @@
     <tabs>NXP_Match_Inbox</tabs>
     <tabs>NXP_Gov_Notice__c</tabs>
     <tabs>NXP_Search_Builder</tabs>
-    <tabs>NXP_Gov_Forecast__c</tabs>
-    <tabs>NXP_Award_Summary__c</tabs>
+    <tabs>NXP_Forecasts</tabs>
+    <tabs>NXP_Recompetes</tabs>
     <tabs>NXP_Gov_Agency__c</tabs>
     <tabs>NXP_Gov_Vendor__c</tabs>
     <tabs>NXP_Contract_Vehicle__c</tabs>

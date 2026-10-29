@@ -1,0 +1,168 @@
+<template>
+    <div class="page">
+        <div class="toolbar">
+            <div>
+                <h1 class="slds-text-heading_large">Recompetes</h1>
+                <p class="slds-text-color_weak">
+                    Contract awards in your market, by when they end. Each one is a likely follow-on opportunity.
+                </p>
+            </div>
+        </div>
+
+        <section class="filters" aria-label="Filters">
+            <lightning-input
+                class="filter"
+                type="search"
+                label="Agency contains"
+                placeholder="e.g. Veterans"
+                value={agency}
+                data-filter="agency"
+                onchange={handleFilter}
+            ></lightning-input>
+            <lightning-input
+                class="filter filter_small"
+                label="NAICS"
+                placeholder="5415*"
+                value={naics}
+                data-filter="naics"
+                onchange={handleFilter}
+            ></lightning-input>
+            <fieldset class="windows">
+                <legend class="slds-form-element__legend slds-form-element__label">Ending within</legend>
+                <div class="window-buttons">
+                    <template for:each={windows} for:item="w">
+                        <lightning-button
+                            key={w.months}
+                            class="window"
+                            label={w.label}
+                            variant={w.variant}
+                            data-months={w.months}
+                            onclick={handleWindow}
+                        ></lightning-button>
+                    </template>
+                </div>
+            </fieldset>
+            <lightning-input
+                class="filter filter_small"
+                type="number"
+                formatter="currency"
+                step="1"
+                label="Minimum obligated"
+                value={minValue}
+                data-filter="minValue"
+                onchange={handleFilter}
+            ></lightning-input>
+        </section>
+
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading awards" size="medium"></lightning-spinner>
+        </template>
+
+        <template lwc:if={empty}>
+            <div class="empty" role="status">
+                No awards end in this window. Widen the window or clear a filter, or check that the USAspending_Awards
+                feed is on in the Feed Console.
+            </div>
+        </template>
+
+        <section class="timeline" aria-label="Award timeline">
+            <div class="timeline-inner">
+                <div class="grid head">
+                    <span>Award</span>
+                    <span>Incumbent</span>
+                    <span>Obligated / ceiling</span>
+                    <span class="axis"
+                        ><span>2 years ago</span><span class="axis-today">Today</span><span>In 2 years</span></span
+                    >
+                    <span>Ends</span>
+                    <span>Follow-on</span>
+                </div>
+                <template for:each={view} for:item="r">
+                    <div key={r.id} class={r.rowClass}>
+                        <div class="award">
+                            <button class="select" type="button" data-id={r.id} onclick={handleSelect}>
+                                {r.title}
+                            </button>
+                            <div class="sub">{r.piid} · {r.agency} · {r.naics}</div>
+                        </div>
+                        <template lwc:if={r.hasVendor}>
+                            <a href="#" data-id={r.vendorId} onclick={handleOpen}>{r.vendorLabel}</a>
+                        </template>
+                        <template lwc:else>
+                            <span class="sub">{r.vendorLabel}</span>
+                        </template>
+                        <div><strong>{r.obligatedLabel}</strong> <span class="sub">/ {r.ceilingLabel}</span></div>
+                        <div class="track" aria-hidden="true">
+                            <div class="track-line"></div>
+                            <div class="track-today"></div>
+                            <div class={r.barClass} style={r.barStyle}></div>
+                        </div>
+                        <span class={r.endsClass}>{r.ends}</span>
+                        <template lwc:if={r.hasFollowOn}>
+                            <a href="#" class="follow-on" data-id={r.followOnId} onclick={handleOpen}
+                                >{r.followOnLabel}</a
+                            >
+                        </template>
+                        <template lwc:else>
+                            <span class="sub">{r.followOnLabel}</span>
+                        </template>
+                    </div>
+                </template>
+                <div class="legend">
+                    <span><span class="swatch bar_soon"></span>Ends within 6 months</span>
+                    <span><span class="swatch"></span>Ends later</span>
+                    <span><span class="swatch bar_ended"></span>Ended</span>
+                </div>
+            </div>
+        </section>
+
+        <template lwc:if={selected}>
+            <section class="detail" aria-label="Selected award">
+                <div class="detail-head">
+                    <h2 class="slds-text-heading_medium">{selected.title}</h2>
+                    <span class={selected.endsClass}>{selected.ends}</span>
+                </div>
+                <dl class="details">
+                    <template for:each={selected.details} for:item="d">
+                        <div key={d.k}>
+                            <dt>{d.k}</dt>
+                            <dd>{d.v}</dd>
+                        </div>
+                    </template>
+                </dl>
+                <div class="signal"><strong>Follow-on:</strong> {selected.followOnLabel}. {selected.followOnText}</div>
+                <div class="actions">
+                    <template lwc:if={selected.hasVendor}>
+                        <lightning-button
+                            label="Incumbent profile"
+                            data-id={selected.vendorId}
+                            onclick={handleOpen}
+                        ></lightning-button>
+                    </template>
+                    <lightning-button
+                        class="watch"
+                        label={selected.watchLabel}
+                        variant={selected.watchVariant}
+                        icon-name="utility:preview"
+                        data-id={selected.id}
+                        data-watching={selected.watchState}
+                        onclick={handleWatch}
+                    ></lightning-button>
+                    <template lwc:if={selected.hasFollowOn}>
+                        <lightning-button
+                            variant="brand"
+                            label="Open the follow-on"
+                            data-id={selected.followOnId}
+                            onclick={handleOpen}
+                        ></lightning-button>
+                    </template>
+                    <lightning-button
+                        label="Open the award"
+                        data-id={selected.id}
+                        onclick={handleOpen}
+                    ></lightning-button>
+                </div>
+            </section>
+        </template>
+    </div>
+</template>

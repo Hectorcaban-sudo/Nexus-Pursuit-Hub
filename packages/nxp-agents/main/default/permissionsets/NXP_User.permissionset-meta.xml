@@ -5,6 +5,10 @@
         <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
+        <apexClass>NXP_MarketController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_CompareVersionsAction</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -81,6 +85,21 @@
         <name>NXP_Setting__mdt</name>
     </customMetadataTypeAccesses>
     <description>Everyone in BD: search, save own searches, follow, push manually, use the assistant.</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Follow__c.Award__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Follow__c.Forecast__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Follow__c.Vendor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>NXP_Award_Summary__c.PIID__c</field>
@@ -212,12 +231,12 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>NXP_Follow__c.Gov_Notice__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>NXP_Follow__c.Follow_Key__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -840,6 +859,14 @@
         <object>NXP_Search_Match__c</object>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
+    <tabSettings>
+        <tab>NXP_Forecasts</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>NXP_Recompetes</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
     <tabSettings>
         <tab>NXP_Award_Summary__c</tab>
         <visibility>Visible</visibility>

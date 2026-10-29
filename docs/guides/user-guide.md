@@ -38,7 +38,15 @@ Open a notice title to see:
 - Version history: every amendment and what changed.
 - Push history, plus **Open on SAM.gov** and **Follow**.
 
-## 4. Ask the assistant
+## 4. Look ahead: forecasts, recompetes and competitors
+
+- **Forecasts** tab: planned buys before a notice exists, grouped by when the agency expects to solicit (next 90 days, 3–6 months, 6–12 months, released). _Fits our company profile_ is on by default. Click **Watch** on a forecast to get an alert when it is released as a notice; released forecasts link to their notice.
+- **Recompetes** tab: contract awards in your market on a timeline, with today marked. Orange bars end within 6 months. The **Follow-on** column shows the notice that names the award as its predecessor, or a likely notice or forecast from the same agency with the same NAICS. Click an award's title for details; **Watch this recompete** alerts you when a likely follow-on is posted.
+- **Vendor profile**: click an incumbent's name (or open a Gov Vendor). You see their awards in Nexus, where they overlap with your company profile (NAICS, agencies, set-aside eligibility) and open notices where they are the likely incumbent. **Watch this vendor** alerts you when they win a new award. Admins can **Refresh from SAM.gov**.
+
+Watches show in the bell icon as **NXP Match Alert** notifications, like followed notices.
+
+## 5. Ask the assistant
 
 Open the Agentforce panel and ask, for example:
 
