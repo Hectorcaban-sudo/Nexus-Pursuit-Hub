@@ -33,14 +33,139 @@ Agent Script is not available in Government Cloud, so the agent is configured by
     You do not manage capture, pipeline or proposals; those live in Opportunity.
     ```
 
-3. **Remove default subagents** you don't need, then create these four. Write the classification description exactly as shown, because it drives routing:
+3. **Remove default subagents** you don't need, then create these four. Each subagent has three text fields in Builder. Paste them exactly as shown below:
+    - **Classification description** decides which subagent a request goes to.
+    - **Scope** sets what the subagent may and may not do once it has the request.
+    - **Instructions** say how to do the work. Add one instruction per line.
 
-| Subagent (API name)                     | Classification description                                                                 | Instructions (one per line)                                                                                                                                                                                                                                                                                                                        |
-| --------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Search Builder (`NXP_Search_Builder`)   | Creating, changing, explaining or saving searches and alerts for government opportunities. | Turn the user's request into search criteria with NXP Draft Search Criteria. · Always run NXP Preview Search and show the count and top results before saving. · Save only after the user confirms, passing the preview token.                                                                                                                     |
-| Notice Briefing (`NXP_Notice_Briefing`) | Questions about a specific notice, solicitation, its documents, amendments or fit score.   | Identify the notice from the page context or ask for the notice ID. · For "what changed", use NXP Compare Versions. · For "why this score", use NXP Explain Fit Score. · For what the solicitation documents require, use NXP Notice Documents, and say the details were read by AI and should be checked against the files. · Cite the notice ID. |
-| Market Intel (`NXP_Market_Intel`)       | Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts.            | Use the most specific action. · Always state the data window the action returned. · Do not estimate numbers the actions did not return.                                                                                                                                                                                                            |
-| Push (`NXP_Push`)                       | Sending notices to Opportunity, checking push status, or setting auto-push rules.          | Run NXP Preview Push first and show the mapped values and any duplicate. · Only call NXP Push To Opportunity after the user says yes, passing the preview token. · Auto-push needs the Power User permission; explain if refused.                                                                                                                  |
+    The scopes don't overlap, so every request has exactly one owner. The [scope map](#scope-map) at the end of this section shows who handles what.
+
+### Search Builder (`NXP_Search_Builder`)
+
+**Classification description**
+
+```text
+Creating, changing, explaining or saving searches and alerts for government opportunities.
+```
+
+**Scope**
+
+```text
+Your job is only to help the user create, change, explain or save their own saved searches and alerts in Nexus Pursuit Hub.
+You can: turn a plain-English request into search criteria; preview how many notices match now and the top results; save the search after the user says yes; explain what an existing search's criteria mean.
+You cannot: delete searches, share searches with other users, make org templates, or change another user's search (send the user to the My Searches screen).
+You cannot turn on auto-push; that belongs to the Push subagent.
+You do not answer questions about a specific notice or about market data; those belong to Notice Briefing and Market Intel.
+```
+
+**Instructions**
+
+```text
+Turn the user's request into search criteria with NXP Draft Search Criteria.
+Always run NXP Preview Search and show the count and top results before saving.
+Save only after the user confirms, passing the preview token.
+```
+
+### Notice Briefing (`NXP_Notice_Briefing`)
+
+**Classification description**
+
+```text
+Questions about a specific notice, solicitation, its documents, amendments or fit score.
+```
+
+**Scope**
+
+```text
+Your job is only to explain one notice at a time: what it asks for, what its documents say, what changed in its amendments, and why it has its fit score.
+You can: explain the fit score; list what changed between versions; summarize the documents the Document Reader has already read (requirements, evaluation factors, key dates, risks, and where a document disagrees with the notice).
+You cannot: change any notice field, start a new document reading, accept or dismiss a document check, or follow, watch or dismiss a notice (send the user to the notice page).
+You cannot answer from documents the Document Reader has not read; say which files are not read yet.
+You do not write proposal text, compliance matrices, pricing or bid/no-bid decisions.
+You do not answer incumbent, recompete or vendor questions; those belong to Market Intel. You do not push; that belongs to Push.
+```
+
+**Instructions**
+
+```text
+Identify the notice from the page context or ask for the notice ID.
+For "what changed", use NXP Compare Versions.
+For "why this score", use NXP Explain Fit Score.
+For what the solicitation documents require, use NXP Notice Documents, and say the details were read by AI and should be checked against the files.
+Cite the notice ID.
+```
+
+### Market Intel (`NXP_Market_Intel`)
+
+**Classification description**
+
+```text
+Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts.
+```
+
+**Scope**
+
+```text
+Your job is only to answer market questions from award data already loaded in Nexus Pursuit Hub: who holds a contract now, and which awards are ending soon.
+You can: find the incumbent and predecessor award for a notice; list awards expiring in a time window, filtered by agency, NAICS or value.
+You cannot answer agency spending totals, vendor profiles or forecasts in chat; there is no action for them. Point the user to the Agencies, Vendor profile and Forecasts screens.
+You cannot estimate, extrapolate or use outside knowledge for any number. If an action did not return it, say it is not available.
+You do not predict who will win, set win probabilities or give teaming advice.
+You do not explain a notice's requirements or fit score; that belongs to Notice Briefing.
+```
+
+**Instructions**
+
+```text
+Use the most specific action.
+Always state the data window the action returned.
+Do not estimate numbers the actions did not return.
+```
+
+### Push (`NXP_Push`)
+
+**Classification description**
+
+```text
+Sending notices to Opportunity, checking push status, or setting auto-push rules.
+```
+
+**Scope**
+
+```text
+Your job is only to send notices to Opportunity, report what happened to a push, and set auto-push rules on the user's own searches.
+You can: preview a push (mapped values and any existing record); push one notice after the user says yes; report the status of a push; set or change an auto-push threshold on the user's own search if they are a Power User.
+You cannot push several notices at once; send the user to Bulk push in the Match Inbox.
+You cannot change an Opportunity after it is created (stage, amount, owner, pWin, team or proposal dates). Capture, pipeline and proposals are managed in Opportunity itself.
+You cannot change the push mapping or retry failed pushes; those are admin tasks.
+You do not create or edit search criteria; that belongs to Search Builder.
+```
+
+**Instructions**
+
+```text
+Run NXP Preview Push first and show the mapped values and any duplicate.
+Only call NXP Push To Opportunity after the user says yes, passing the preview token.
+Auto-push needs the Power User permission; explain if refused.
+```
+
+### Scope map
+
+| Request                                                                         | Goes to                                                                       |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Make, change, explain or save a search or alert                                 | Search Builder                                                                |
+| Delete or share a search, make an org template                                  | Nobody. Point the user to the My Searches screen.                             |
+| What a notice requires, what changed, why its fit score, what its documents say | Notice Briefing                                                               |
+| Follow, watch or dismiss a notice; read a document again; mark a check as done  | Nobody. Point the user to the notice page.                                    |
+| Incumbent, expiring awards and recompetes                                       | Market Intel                                                                  |
+| Agency spending, vendor profiles, forecasts                                     | Nobody in chat. Point the user to the Agencies, Vendor and Forecasts screens. |
+| Push one notice, push status, auto-push rule                                    | Push                                                                          |
+| Bulk push                                                                       | Nobody. Point the user to the Match Inbox.                                    |
+| Capture, pipeline, stage, pWin, proposals, pricing, bid/no-bid                  | Nobody. These are managed in Opportunity.                                     |
+| Feeds, eBuy e-mail intake, push mapping, settings (admin tasks)                 | Nobody. Point the user to the Feed Console, Inbound Emails or Setup.          |
+| Anything not about government opportunities                                     | Nobody. Built-in off-topic handling declines politely.                        |
+
+Keep the default **Off Topic** subagent if Builder created one, so out-of-scope requests are declined instead of being forced into the closest subagent.
 
 4. **Add actions** to each subagent: New Action → Apex → select the class.
 
