@@ -4,22 +4,32 @@
  */
 public with sharing class NXP_SetAutoPushRuleAction {
     public class Request {
-        @InvocableVariable(label='Saved search Id' required=true)
+        @InvocableVariable(
+            label='Saved search Id'
+            description='Id of a saved search the user owns. Take it from the Saved search Id output of NXP Save Search in this conversation, or from the saved search record page the user has open. Never guess.'
+            required=true
+        )
         public Id searchId;
-        @InvocableVariable(label='Mode' description='Off, Fit Threshold or All Matches' required=true)
+        @InvocableVariable(label='Mode' description='Exactly one of: Off, Fit Threshold, All Matches.' required=true)
         public String mode;
-        @InvocableVariable(label='Minimum fit score' description='Required for Fit Threshold')
+        @InvocableVariable(
+            label='Minimum fit score'
+            description='Lowest fit score, 0 to 100, that is pushed automatically. Required when Mode is Fit Threshold; leave empty otherwise.'
+        )
         public Decimal minFit;
     }
 
     public class Response {
-        @InvocableVariable(label='Message')
+        @InvocableVariable(
+            label='Message'
+            description='The result, or why it was refused (for example, the user is not a Power User or does not own the search).'
+        )
         public String message;
     }
 
     @InvocableMethod(
         label='NXP Set Auto-Push Rule'
-        description='Sets auto-push on a saved search the user owns. Power Users only; confirm with the user first.'
+        description='Use when the user asks to turn auto-push on, off or change its threshold on one of their saved searches. Power Users only. Confirm the search and the setting with the user first.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

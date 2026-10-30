@@ -4,25 +4,35 @@
  */
 public with sharing class NXP_PreviewPushAction {
     public class Request {
-        @InvocableVariable(label='Gov Notice record Id' required=true)
+        @InvocableVariable(
+            label='Gov Notice record Id'
+            description='Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.'
+            required=true
+        )
         public Id noticeId;
     }
 
     public class Response {
-        @InvocableVariable(label='Preview' description='Mapped values and duplicate check, to show the user')
+        @InvocableVariable(
+            label='Preview'
+            description='The values that will be sent to Opportunity and whether a matching record already exists. Show it in full before asking for a yes.'
+        )
         public String preview;
-        @InvocableVariable(label='Preview token')
+        @InvocableVariable(
+            label='Preview token'
+            description='Proof the user saw this preview. Do not show it. Pass it to NXP Push To Opportunity for this same notice.'
+        )
         public String previewToken;
         @InvocableVariable(
             label='Existing record Id'
-            description='Set when a matching Opportunity record already exists'
+            description='Set when a matching Opportunity already exists. The push will link to it instead of creating a new one; tell the user that.'
         )
         public Id existingRecordId;
     }
 
     @InvocableMethod(
         label='NXP Preview Push'
-        description='Shows the values a push to Opportunity would send and checks for an existing record.'
+        description='Use first whenever the user wants to send a notice to Opportunity. Shows the values that would be sent and whether a matching Opportunity already exists. Sends nothing.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

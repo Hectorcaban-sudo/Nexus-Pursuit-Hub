@@ -3,24 +3,39 @@
  */
 public with sharing class NXP_RecompeteQueryAction {
     public class Request {
-        @InvocableVariable(label='Agency' description='Agency name or part of it, e.g. Veterans Affairs')
+        @InvocableVariable(
+            label='Agency'
+            description='Agency name or part of it, for example Veterans Affairs. Leave empty for all agencies.'
+        )
         public String agency;
-        @InvocableVariable(label='NAICS' description='NAICS code or prefix ending in *')
+        @InvocableVariable(
+            label='NAICS'
+            description='A NAICS code, or a prefix ending in * such as 5415*. Leave empty for all codes.'
+        )
         public String naics;
-        @InvocableVariable(label='Months ahead' description='Default 18')
+        @InvocableVariable(
+            label='Months ahead'
+            description='How many months ahead to look for awards ending. Use the user\'s number; otherwise leave empty for 18.'
+        )
         public Integer monthsAhead;
-        @InvocableVariable(label='Minimum value')
+        @InvocableVariable(
+            label='Minimum value'
+            description='Lowest award value in dollars, as a plain number (10000000 for $10M). Leave empty for any value.'
+        )
         public Decimal minValue;
     }
 
     public class Response {
-        @InvocableVariable(label='Recompetes')
+        @InvocableVariable(
+            label='Recompetes'
+            description='Awards ending in the window, one per line, and the data window used. Always repeat the data window to the user.'
+        )
         public String recompetes;
     }
 
     @InvocableMethod(
         label='NXP Recompete Query'
-        description='Lists contract awards expiring soon (recompete candidates) from award data.'
+        description='Use when the user asks which contracts are ending soon or which recompetes are coming, optionally by agency, NAICS or size.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {
