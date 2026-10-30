@@ -72,5 +72,6 @@
     <tabs>standard-report</tabs>
     <tabs>NXP_Feed_Console</tabs>
     <tabs>NXP_Inbound_Emails</tabs>
+    <tabs>NXP_Settings</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

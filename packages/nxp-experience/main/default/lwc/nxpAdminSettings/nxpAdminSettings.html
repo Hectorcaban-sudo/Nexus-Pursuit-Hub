@@ -1,0 +1,183 @@
+<template>
+    <div class="page">
+        <div class="toolbar">
+            <div>
+                <h1 class="slds-text-heading_large">Settings</h1>
+                <p class="slds-text-color_weak">Everything Nexus admins change, in one place.</p>
+            </div>
+            <lightning-input
+                class="filter"
+                type="search"
+                label="Find a setting"
+                variant="label-hidden"
+                placeholder="Find a setting"
+                value={filter}
+                onchange={handleFilter}
+            ></lightning-input>
+        </div>
+
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading settings" size="medium"></lightning-spinner>
+        </template>
+        <template lwc:if={error}>
+            <div class="error" role="alert">{error}</div>
+        </template>
+
+        <template lwc:if={model}>
+            <div class="layout">
+                <nav class="panel nav" aria-label="Settings sections">
+                    <template for:each={sections} for:item="s">
+                        <button key={s.key} class={s.navClass} data-key={s.key} onclick={handleSection}>
+                            <span>{s.label}</span>
+                            <span class="badge">{s.badge}</span>
+                        </button>
+                    </template>
+                </nav>
+
+                <section class="panel main" aria-label={sectionTitle}>
+                    <div class="main-head">
+                        <h2 class="slds-text-heading_medium">{sectionTitle}</h2>
+                        <span class="help">{sectionHelp}</span>
+                    </div>
+                    <template lwc:if={isAi}>
+                        <p class="usage">{aiUsage}</p>
+                    </template>
+                    <template for:each={groups} for:item="g">
+                        <div key={g.key} class="group">
+                            <template lwc:if={g.hasName}><h3 class="group-name">{g.name}</h3></template>
+                            <template for:each={g.items} for:item="i">
+                                <div key={i.key} class={i.rowClass}>
+                                    <div class="row-text">
+                                        <span class="row-label">
+                                            {i.label}
+                                            <template lwc:if={i.changed}
+                                                ><span class="tag tag_changed">Changed</span></template
+                                            >
+                                            <template lwc:if={i.releaseManaged}
+                                                ><span
+                                                    class="tag tag_release"
+                                                    title="Set in env-config: the next release puts the env-config value back"
+                                                    >Reset by each release</span
+                                                ></template
+                                            >
+                                        </span>
+                                        <span class="help">{i.help}</span>
+                                    </div>
+                                    <div class="row-control">
+                                        <template lwc:if={i.isBoolean}>
+                                            <lightning-input
+                                                type="toggle"
+                                                label={i.label}
+                                                variant="label-hidden"
+                                                checked={i.checked}
+                                                data-id={i.id}
+                                                message-toggle-active="On"
+                                                message-toggle-inactive="Off"
+                                                onchange={handleValue}
+                                            ></lightning-input>
+                                        </template>
+                                        <template lwc:if={i.isInteger}>
+                                            <lightning-input
+                                                type="number"
+                                                min="0"
+                                                label={i.label}
+                                                variant="label-hidden"
+                                                value={i.current}
+                                                data-id={i.id}
+                                                onchange={handleValue}
+                                            ></lightning-input>
+                                        </template>
+                                        <template lwc:if={i.isText}>
+                                            <lightning-input
+                                                label={i.label}
+                                                variant="label-hidden"
+                                                value={i.current}
+                                                data-id={i.id}
+                                                onchange={handleValue}
+                                            ></lightning-input>
+                                        </template>
+                                        <template lwc:if={i.isPicklist}>
+                                            <lightning-combobox
+                                                label={i.label}
+                                                variant="label-hidden"
+                                                options={i.options}
+                                                value={i.current}
+                                                data-id={i.id}
+                                                onchange={handleValue}
+                                            ></lightning-combobox>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </section>
+
+                <aside class="side">
+                    <section class="panel" aria-label="Health checks">
+                        <h2 class="slds-text-heading_small">Health checks</h2>
+                        <template for:each={checks} for:item="c">
+                            <div key={c.key} class="check">
+                                <span class={c.markClass}>{c.mark}</span>
+                                <div class="check-text">
+                                    <span class="check-title">{c.title}</span>
+                                    <span class="help">{c.detail}</span>
+                                    <template lwc:if={c.hasAction}>
+                                        <lightning-button
+                                            class="check-action"
+                                            variant="base"
+                                            label={c.actionLabel}
+                                            data-action={c.action}
+                                            onclick={handleCheckAction}
+                                        ></lightning-button>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </section>
+                    <section class="panel" aria-label="Recent changes">
+                        <h2 class="slds-text-heading_small">Recent changes</h2>
+                        <template lwc:if={hasHistory}>
+                            <template for:each={history} for:item="h">
+                                <div key={h.key} class="history">
+                                    <span class="history-text">{h.text}</span>
+                                    <span class="help">{h.meta}</span>
+                                    <template lwc:if={h.failed}><span class="error">{h.detail}</span></template>
+                                </div>
+                            </template>
+                        </template>
+                        <template lwc:else><p class="help">No changes made here yet.</p></template>
+                    </section>
+                    <section class="panel" aria-label="Still in Setup">
+                        <h2 class="slds-text-heading_small">Still in Setup</h2>
+                        <p class="help">
+                            The SAM.gov API key, permission sets, push mapping rows, prompt templates, Remote Site
+                            Settings and Deliverability are changed in Setup. The admin guide says where.
+                        </p>
+                    </section>
+                </aside>
+            </div>
+        </template>
+
+        <template lwc:if={hasChanges}>
+            <div class="save-bar" role="region" aria-label="Unsaved changes">
+                <span><strong>{changeSummary}</strong> {savingNote}</span>
+                <div class="save-buttons">
+                    <lightning-button
+                        class="discard"
+                        label="Discard"
+                        disabled={saving}
+                        onclick={handleDiscard}
+                    ></lightning-button>
+                    <lightning-button
+                        class="save"
+                        variant="brand"
+                        label="Save changes"
+                        disabled={saving}
+                        onclick={handleSave}
+                    ></lightning-button>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>
