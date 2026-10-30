@@ -1,0 +1,178 @@
+<template>
+    <div class="page">
+        <div class="toolbar">
+            <div>
+                <h1 class="slds-text-heading_large">Inbound emails</h1>
+                <p class="slds-text-color_weak">
+                    Every e-mail the eBuy inbox received, what was read from it and the notice it became. Accepted
+                    senders: <strong>{allowedSenders}</strong> (setting Ebuy_Allowed_Senders). {aiNote}
+                </p>
+            </div>
+            <lightning-button label="Refresh" icon-name="utility:refresh" onclick={handleRefresh}></lightning-button>
+        </div>
+
+        <section class="kpis" aria-label="Last 30 days">
+            <template for:each={kpis} for:item="k">
+                <div key={k.key} class="kpi">
+                    <span class="kpi-label">{k.label}</span>
+                    <span class={k.valueClass}>{k.value}</span>
+                </div>
+            </template>
+        </section>
+
+        <section class="filters" aria-label="Filters">
+            <lightning-combobox
+                class="filter"
+                label="Status"
+                value={status}
+                options={statusOptions}
+                data-filter="status"
+                onchange={handleFilter}
+            ></lightning-combobox>
+            <lightning-input
+                class="filter filter_wide"
+                type="search"
+                label="Subject, sender or RFQ number"
+                value={search}
+                data-filter="search"
+                onchange={handleFilter}
+            ></lightning-input>
+        </section>
+
+        <div class="layout">
+            <section class="list" aria-label="E-mails">
+                <template lwc:if={loading}>
+                    <lightning-spinner alternative-text="Loading e-mail" size="small"></lightning-spinner>
+                </template>
+                <template lwc:if={nothingFound}>
+                    <p class="empty" role="status">
+                        No e-mail yet. Point eBuy's notification address (or a forwarding rule) at the NXP_Ebuy_Inbox
+                        e-mail service address; see the admin guide.
+                    </p>
+                </template>
+                <ul class="rows">
+                    <template for:each={rows} for:item="r">
+                        <li key={r.id}>
+                            <button
+                                type="button"
+                                class={r.rowClass}
+                                aria-pressed={r.selected}
+                                data-id={r.id}
+                                onclick={handleSelect}
+                            >
+                                <span class="row-top">
+                                    <span class="row-subject">{r.subjectLabel}</span>
+                                    <span class={r.statusClass}>{r.status}</span>
+                                </span>
+                                <span class="row-meta">{r.when} · {r.from}</span>
+                                <span class="row-meta">{r.name} · {r.rfqLabel} · {r.attachments} attachment(s)</span>
+                            </button>
+                        </li>
+                    </template>
+                </ul>
+            </section>
+
+            <section class="detail" aria-label="Selected e-mail">
+                <template lwc:if={detailLoading}>
+                    <lightning-spinner alternative-text="Opening e-mail" size="small"></lightning-spinner>
+                </template>
+                <template lwc:if={current}>
+                    <div class="detail-head">
+                        <div>
+                            <h2 class="slds-text-heading_medium">{current.subject}</h2>
+                            <p class="meta">From {current.fromName} &lt;{current.fromAddress}&gt; · {current.when}</p>
+                            <p class="meta">To {current.to} · {current.name}</p>
+                        </div>
+                        <span class={current.statusClass}>{current.status}</span>
+                    </div>
+
+                    <template for:each={current.detailLines} for:item="line">
+                        <p key={line.key} class="detail-line">{line.text}</p>
+                    </template>
+
+                    <div class="actions">
+                        <template lwc:if={current.needsRfq}>
+                            <lightning-input
+                                class="rfq"
+                                label="RFQ number"
+                                placeholder="RFQ1234567"
+                                value={rfqInput}
+                                onchange={handleRfq}
+                            ></lightning-input>
+                        </template>
+                        <template lwc:if={current.canReprocess}>
+                            <lightning-button
+                                class="reprocess"
+                                variant="brand"
+                                label="Reprocess"
+                                disabled={busy}
+                                onclick={handleReprocess}
+                            ></lightning-button>
+                        </template>
+                        <template lwc:if={current.canIgnore}>
+                            <lightning-button
+                                class="ignore"
+                                label="Ignore"
+                                disabled={busy}
+                                onclick={handleIgnore}
+                            ></lightning-button>
+                        </template>
+                    </div>
+
+                    <dl class="facts">
+                        <div>
+                            <dt>Notice</dt>
+                            <dd>
+                                <template lwc:if={current.hasNotice}>
+                                    <a href="#" class="notice-link" onclick={handleOpenNotice}>{current.noticeLabel}</a>
+                                </template>
+                                <template lwc:else>None yet</template>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Contract vehicle</dt>
+                            <dd>{current.vehicleName}</dd>
+                        </div>
+                        <div>
+                            <dt>Processed</dt>
+                            <dd>{current.processed}</dd>
+                        </div>
+                        <div>
+                            <dt>How it was read</dt>
+                            <dd>{current.methodLabel}</dd>
+                        </div>
+                    </dl>
+
+                    <template lwc:if={hasExtracted}>
+                        <h3 class="slds-text-heading_small">What was read</h3>
+                        <dl class="extracted">
+                            <template for:each={extracted} for:item="f">
+                                <div key={f.key} class="pair">
+                                    <dt>{f.label}</dt>
+                                    <dd>{f.value}</dd>
+                                </div>
+                            </template>
+                        </dl>
+                    </template>
+
+                    <template lwc:if={hasFiles}>
+                        <h3 class="slds-text-heading_small">Attachments</h3>
+                        <ul class="files">
+                            <template for:each={files} for:item="f">
+                                <li key={f.documentId}>
+                                    <a href="#" class="file" data-id={f.documentId} onclick={handleOpenFile}
+                                        >{f.label}</a
+                                    >
+                                    <span class="meta"> {f.size}</span>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+
+                    <h3 class="slds-text-heading_small">E-mail text</h3>
+                    <pre class="body">{body}</pre>
+                </template>
+            </section>
+        </div>
+    </div>
+</template>

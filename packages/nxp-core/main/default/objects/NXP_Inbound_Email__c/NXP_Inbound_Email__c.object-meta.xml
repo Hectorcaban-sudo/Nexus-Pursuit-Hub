@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description
+    >An e-mail received by a Nexus inbound e-mail service (GSA eBuy RFQ notifications): the raw message, its attachments (Files), what was extracted and the notice it created. Private: Nexus admins only.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>Private</externalSharingModel>
+    <label>Inbound Email</label>
+    <nameField>
+        <displayFormat>EM-{000000}</displayFormat>
+        <label>Email</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Inbound Emails</pluralLabel>
+    <sharingModel>Private</sharingModel>
+    <visibility>Public</visibility>
+</CustomObject>

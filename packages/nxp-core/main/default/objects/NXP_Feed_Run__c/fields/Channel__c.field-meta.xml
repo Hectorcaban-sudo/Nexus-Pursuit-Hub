@@ -29,6 +29,11 @@
                 <label>Data Cloud Ingestion API</label>
             </value>
             <value>
+                <fullName>Email</fullName>
+                <default>false</default>
+                <label>Email</label>
+            </value>
+            <value>
                 <fullName>Manual</fullName>
                 <default>false</default>
                 <label>Manual</label>

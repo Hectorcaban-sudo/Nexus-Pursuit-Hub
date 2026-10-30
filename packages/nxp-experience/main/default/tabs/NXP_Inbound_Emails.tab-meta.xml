@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+    >Admin log of e-mail received by the eBuy inbox: status, what was read, the notice it became</description>
+    <label>Inbound Emails</label>
+    <lwcComponent>nxpEmailLog</lwcComponent>
+    <motif>Custom53: Bell</motif>
+</CustomTab>

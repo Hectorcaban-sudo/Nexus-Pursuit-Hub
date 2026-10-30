@@ -11,6 +11,7 @@ Agent Script is not available in Government Cloud, so the agent is configured by
     - `NXP_Solicitation_Summary`: input _Notice_, an `NXP_Gov_Notice__c` record.
     - `NXP_Amendment_Impact`: input _Version_, an `NXP_Notice_Version__c` record.
     - `NXP_Search_Criteria_Draft`: input _Request_, text.
+    - `NXP_Ebuy_RFQ_Extract` (optional, eBuy e-mail): input _Email_, an `NXP_Inbound_Email__c` record; add a File input _Attachment_ only if you turn on `Ebuy_AI_Read_Attachments`.
 
     Activate them, then set `NXP_Setting.AI_Enabled = true`.
 

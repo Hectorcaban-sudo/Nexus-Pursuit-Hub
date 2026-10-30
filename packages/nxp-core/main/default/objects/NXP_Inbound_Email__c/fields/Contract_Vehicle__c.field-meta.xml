@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contract_Vehicle__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description
+    >Vehicle the RFQ was issued under (matched by Inbox Address, else the Ebuy_Default_Vehicle setting).</description>
+    <label>Contract Vehicle</label>
+    <referenceTo>NXP_Contract_Vehicle__c</referenceTo>
+    <relationshipLabel>Inbound Emails</relationshipLabel>
+    <relationshipName>Inbound_Emails</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

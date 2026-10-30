@@ -261,4 +261,16 @@ private class NXP_AgentsTest {
             System.assert(e.getMessage().contains('switched off'));
         }
     }
+
+    @IsTest
+    static void ebuyAiExtractCallsTheTemplate() {
+        NXP_Settings.setForTest('Ebuy_AI_Template', 'NXP_Ebuy_RFQ_Extract');
+        NXP_AiService.responsesForTest = new Map<String, String>{ 'NXP_Ebuy_RFQ_Extract' => '{"title":"X"}' };
+        NXP_EbuyAiExtract ai = new NXP_EbuyAiExtract();
+        System.assert(ai.isEnabled());
+        NXP_Inbound_Email__c em = new NXP_Inbound_Email__c(Subject__c = 'RFQ1234567', Status__c = 'Received');
+        insert em;
+        System.assertEquals('{"title":"X"}', ai.extract(em.Id, null));
+        System.assert(Type.forName('NXP_EbuyAiExtract').newInstance() instanceof NXP_EbuyAiExtractor);
+    }
 }

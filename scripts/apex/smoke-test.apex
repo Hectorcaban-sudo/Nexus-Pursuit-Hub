@@ -401,6 +401,40 @@ try {
     fails++;
 }
 
+// 7f. eBuy e-mail intake (NXP_Ebuy_Inbox handler, extraction job, Inbound Emails screen) ------
+try {
+    List<NXP_Inbound_Email__c> ebuy = [
+        SELECT Id, Status__c, Status_Detail__c, RFQ_Number__c, Attachment_Count__c, Gov_Notice__r.Notice_Id__c,
+            Gov_Notice__r.Contract_Vehicle__r.Vehicle_Code__c
+        FROM NXP_Inbound_Email__c
+        WHERE Message_Id__c = '<sample-ebuy-rfq9990001@nexus-sample.example>'
+        LIMIT 1
+    ];
+    if (ebuy.isEmpty()) {
+        out.add('FAIL|eBuy e-mail|sample e-mail not found; run load-sample-data again');
+        fails++;
+    } else if (ebuy[0].Status__c == 'Received') {
+        out.add('WARN|eBuy e-mail|still waiting for the extraction job; re-run in a minute');
+    } else {
+        NXP_Inbound_Email__c em = ebuy[0];
+        Boolean ebuyOk =
+            em.Status__c == 'Ingested' && em.Gov_Notice__r != null &&
+            em.Gov_Notice__r.Notice_Id__c == 'EBUY:RFQ9990001' &&
+            em.Gov_Notice__r.Contract_Vehicle__r.Vehicle_Code__c == 'GSA-MAS-IT' && em.Attachment_Count__c == 1;
+        NXP_EmailLogController.EmailLog log = NXP_EmailLogController.getEmails(null, 'RFQ9990001', 10);
+        ebuyOk = ebuyOk && !log.rows.isEmpty();
+        out.add(
+            (ebuyOk ? 'PASS' : 'FAIL') + '|eBuy e-mail|' + em.Status__c + ', ' + em.RFQ_Number__c + ' -> ' +
+            (em.Gov_Notice__r == null ? 'no notice' : em.Gov_Notice__r.Notice_Id__c) +
+            (ebuyOk ? '' : ' (' + String.valueOf(em.Status_Detail__c).left(200) + ')')
+        );
+        fails += ebuyOk ? 0 : 1;
+    }
+} catch (Exception e) {
+    out.add('FAIL|eBuy e-mail|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();

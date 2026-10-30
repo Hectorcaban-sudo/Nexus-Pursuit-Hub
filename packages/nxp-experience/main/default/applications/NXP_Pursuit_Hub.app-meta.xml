@@ -69,5 +69,6 @@
     <tabs>NXP_Gov_Vendor__c</tabs>
     <tabs>NXP_Vehicle_Portfolio</tabs>
     <tabs>NXP_Feed_Console</tabs>
+    <tabs>NXP_Inbound_Emails</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

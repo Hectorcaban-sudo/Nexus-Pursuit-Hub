@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Message_Id__c</fullName>
+    <caseSensitive>true</caseSensitive>
+    <description>Message-ID header; a resent e-mail with the same id is recorded once.</description>
+    <externalId>true</externalId>
+    <label>Message Id</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

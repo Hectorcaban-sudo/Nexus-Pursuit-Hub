@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gov_Notice__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The notice created or updated from this e-mail.</description>
+    <label>Gov Notice</label>
+    <referenceTo>NXP_Gov_Notice__c</referenceTo>
+    <relationshipLabel>Inbound Emails</relationshipLabel>
+    <relationshipName>Inbound_Emails</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

@@ -6,8 +6,8 @@
 #   scripts/load-sample-data.sh --org nxp-dev --delete   # only delete the sample data
 #
 # Loads: a sample Company Profile, 7 agencies, 3 contract vehicles, 4 vendors, 6 award summaries,
-# 3 forecasts, 10 SAMPLE notices (scored on insert), 3 saved searches for you, and the search
-# matches and alerts they produce.
+# 3 forecasts, 10 SAMPLE notices (scored on insert), 3 saved searches for you, the search matches
+# and alerts they produce, and one made-up eBuy RFQ e-mail (notice EBUY:RFQ9990001).
 # Refuses to run against a production org unless --allow-production is given.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -66,6 +66,9 @@ run_apex scripts/apex/refresh-sample-dates.apex "$ORG"
 
 step "Saved searches and matching"
 run_apex scripts/apex/seed-searches.apex "$ORG"
+
+step "Sample eBuy RFQ e-mail (Inbound Emails)"
+run_apex scripts/apex/seed-ebuy-email.apex "$ORG"
 
 cat <<MSG
 

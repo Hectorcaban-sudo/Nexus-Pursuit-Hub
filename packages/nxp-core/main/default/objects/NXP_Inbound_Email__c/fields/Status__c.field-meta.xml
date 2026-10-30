@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description
+    >Received: waiting for extraction. Ingested: notice created or updated. Needs Review: something could not be read. Rejected: sender not allowed. Failed: an error. Ignored: an admin set it aside.</description>
+    <label>Status</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Received</fullName>
+                <default>true</default>
+                <label>Received</label>
+            </value>
+            <value>
+                <fullName>Ingested</fullName>
+                <default>false</default>
+                <label>Ingested</label>
+            </value>
+            <value>
+                <fullName>Needs Review</fullName>
+                <default>false</default>
+                <label>Needs Review</label>
+            </value>
+            <value>
+                <fullName>Rejected</fullName>
+                <default>false</default>
+                <label>Rejected</label>
+            </value>
+            <value>
+                <fullName>Failed</fullName>
+                <default>false</default>
+                <label>Failed</label>
+            </value>
+            <value>
+                <fullName>Ignored</fullName>
+                <default>false</default>
+                <label>Ignored</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

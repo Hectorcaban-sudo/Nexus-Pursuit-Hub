@@ -1,0 +1,27 @@
+From: GSA eBuy (SAMPLE) <ebuy-sample@gsa.gov>
+To: ebuy@yourcompany.example
+Subject: [SAMPLE] eBuy RFQ9990001: Help Desk Modernization and Knowledge Base Support
+
+[SAMPLE DATA] A made-up eBuy notification for testing Nexus Pursuit Hub. It is not a real RFQ.
+Replace this file with a real eBuy e-mail (sensitive details removed) to tune the parser.
+
+You have been invited to submit a quote for the following Request for Quote (RFQ).
+
+RFQ ID: RFQ9990001
+Title: Help Desk Modernization and Knowledge Base Support
+Buyer Agency: Veterans Affairs, Department of
+Buyer Office: SAMPLE VA Technology Acquisition Center
+Category / SIN: 54151S - Information Technology Professional Services
+NAICS: 541513
+Set-Aside: None
+Issue Date: {{ISSUED}}
+Close Date: {{CLOSES}} 02:00 PM ET
+Place of Performance: Remote
+Buyer: Sample Buyer
+Buyer Email: sample.buyer@va.example
+
+Description:
+Tier 1 and tier 2 help desk support, migration of the current knowledge base to the agency ITSM
+tool, and monthly service-level reporting. See the attached statement of work.
+
+View the RFQ and submit your quote: https://www.ebuy.gsa.gov/ebuy/seller/prepare-quote/RFQ9990001

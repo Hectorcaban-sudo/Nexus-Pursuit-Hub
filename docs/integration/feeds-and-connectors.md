@@ -16,12 +16,13 @@ All shipped configs are **inactive**; `env-config/<env>` switches them on per en
 
 ## Additional import channels
 
-| Channel                  | Use it for                                                                            | How                                                                |
-| ------------------------ | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Apex REST ingestion API  | Systems that push notices (mail relay for vehicle task orders, SLED vendor, partners) | [REST ingestion API](rest-ingestion-api.md)                        |
-| Scheduled Apex batch     | Backfills, long windows, any feed with `Channel__c = Scheduled Batch`                 | `Database.executeBatch(new NXP_FeedFetchBatch('<feed>', null), 1)` |
-| Apex callouts on demand  | Single lookups (entity by UEI)                                                        | `NXP_SamEntityConnector.lookup(uei)`                               |
-| Data Cloud Ingestion API | Bulk award history                                                                    | [Data Cloud ingestion](data-cloud-ingestion.md)                    |
+| Channel                  | Use it for                                                                            | How                                                                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Apex REST ingestion API  | Systems that push notices (mail relay for vehicle task orders, SLED vendor, partners) | [REST ingestion API](rest-ingestion-api.md)                                                                                                     |
+| Scheduled Apex batch     | Backfills, long windows, any feed with `Channel__c = Scheduled Batch`                 | `Database.executeBatch(new NXP_FeedFetchBatch('<feed>', null), 1)`                                                                              |
+| Apex callouts on demand  | Single lookups (entity by UEI)                                                        | `NXP_SamEntityConnector.lookup(uei)`                                                                                                            |
+| Data Cloud Ingestion API | Bulk award history                                                                    | [Data Cloud ingestion](data-cloud-ingestion.md)                                                                                                 |
+| Inbound e-mail (eBuy)    | GSA eBuy RFQ notifications, which have no API                                         | Email Service `NXP_Ebuy_Inbox` → `NXP_EbuyEmailHandler` → `NXP_EbuyExtractJob`; see the [admin guide](../guides/admin-guide.md#gsa-ebuy-e-mail) |
 
 Every channel hands records to `NXP_IngestionService`, so dedupe, versioning, fit scoring, matching, alerts and auto-push behave the same whichever channel loaded the data.
 

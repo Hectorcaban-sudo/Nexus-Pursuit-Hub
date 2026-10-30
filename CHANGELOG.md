@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **GSA eBuy e-mail intake:** eBuy has no API, so RFQ notification e-mails go to the `NXP_Ebuy_Inbox` e-mail service (`NXP_EbuyEmailHandler`). Each message is kept as an `NXP_Inbound_Email__c` (private, admins only) with its attachments as Files; `NXP_EbuyExtractJob` reads it with rules (`NXP_EbuyEmailParser`), optionally fills gaps with AI (`NXP_EbuyAiExtract`, prompt template `NXP_Ebuy_RFQ_Extract`, values checked by code), and ingests a _Task Order_ notice `EBUY:<RFQ number>` on the vehicle with the attachments linked. Unknown senders are rejected; executable and HTML attachments are dropped.
+- **Inbound Emails** admin tab (`nxpEmailLog`, `NXP_EmailLogController`): every e-mail with status, what was read and the notice it became; Reprocess (with a typed RFQ number) and Ignore. Feed runs get an _Email_ channel.
+- New settings `Ebuy_Allowed_Senders`, `Ebuy_Default_Vehicle`, `Ebuy_AI_Template`, `Ebuy_AI_Read_Attachments`, `Ebuy_Share_Files_With_Notice`. Sample data adds a made-up eBuy e-mail (`scripts/apex/seed-ebuy-email.apex`); the smoke test checks it.
 - **Vehicle Portfolio:** new tab (`nxpVehiclePortfolio`, `NXP_VehicleController`) replacing the Contract Vehicles object tab in the app nav: vehicles we hold with their open notices, expiry and task-order inbox status, and open notices that need a vehicle we don't hold (with Follow). Admins can mark a vehicle held or not held, which re-scores its open notices.
 - **Fix:** the Vehicle fit rule gave points whenever a notice had any vehicle and the profile listed any vehicle code; it now checks that we hold that vehicle (`NXP_FitScoreService.isHeld`). It still ships off.
 - **Sample data:** a third vehicle (CIO-SP4, not held), expiry dates and an inbox address; `SAMPLE-0005`…`0007` are linked to vehicles. The smoke test checks the vehicle portfolio.

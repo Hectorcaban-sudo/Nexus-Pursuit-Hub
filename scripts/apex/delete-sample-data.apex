@@ -1,11 +1,29 @@
 // Removes the sample data so it can be loaded again (scripts/load-sample-data.ps1 -Reset / .sh --reset).
 // Deletes: SAMPLE notices and their children, SAMPLE vendors, awards and forecasts, records they were pushed to, SAMPLE saved searches
 // (matches go with them), the sample company profile and sample contract vehicles, and the sample
-// agencies when nothing else uses them. Real feed data is not touched.
+// agencies when nothing else uses them, and the sample eBuy e-mail (EBUY:RFQ9990001) with its files.
+// Real feed data is not touched.
+List<NXP_Inbound_Email__c> sampleEmails = [
+    SELECT Id
+    FROM NXP_Inbound_Email__c
+    WHERE Message_Id__c = '<sample-ebuy-rfq9990001@nexus-sample.example>'
+];
+if (!sampleEmails.isEmpty()) {
+    Set<Id> sampleDocs = new Set<Id>();
+    for (ContentDocumentLink l : [
+        SELECT ContentDocumentId
+        FROM ContentDocumentLink
+        WHERE LinkedEntityId IN :new Map<Id, NXP_Inbound_Email__c>(sampleEmails).keySet()
+    ]) {
+        sampleDocs.add(l.ContentDocumentId);
+    }
+    delete sampleEmails;
+    Database.delete(new List<Id>(sampleDocs), false);
+}
 List<NXP_Gov_Notice__c> notices = [
     SELECT Id, Pushed_Record_Id__c
     FROM NXP_Gov_Notice__c
-    WHERE Notice_Id__c LIKE 'SAMPLE-%'
+    WHERE Notice_Id__c LIKE 'SAMPLE-%' OR Notice_Id__c = 'EBUY:RFQ9990001'
 ];
 Set<Id> noticeIds = new Map<Id, NXP_Gov_Notice__c>(notices).keySet();
 List<Id> pushedTargets = new List<Id>();
