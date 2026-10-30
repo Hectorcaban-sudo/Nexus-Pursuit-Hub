@@ -19,10 +19,6 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>recordId</name>
-                    <value>{!recordId}</value>
-                </componentInstanceProperties>
                 <componentName>nxpNoticeDocuments</componentName>
                 <identifier>c_nxpNoticeDocuments</identifier>
             </componentInstance>
