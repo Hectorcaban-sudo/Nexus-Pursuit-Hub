@@ -69,6 +69,9 @@ run_apex scripts/apex/refresh-sample-dates.apex "$ORG"
 step "Saved searches and matching"
 run_apex scripts/apex/seed-searches.apex "$ORG"
 
+step "Search templates (Start from a template on My Searches)"
+run_apex scripts/apex/seed-search-templates.apex "$ORG"
+
 step "Sample eBuy RFQ e-mail (Inbound Emails)"
 run_apex scripts/apex/seed-ebuy-email.apex "$ORG"
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Template__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description
+    >The org template this search was copied from (Use template on My Searches). Later changes to the template don't touch the copy.</description>
+    <label>Copied From Template</label>
+    <referenceTo>NXP_Saved_Search__c</referenceTo>
+    <relationshipLabel>Copies</relationshipLabel>
+    <relationshipName>Copies</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

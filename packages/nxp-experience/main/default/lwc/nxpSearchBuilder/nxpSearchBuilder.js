@@ -2,6 +2,7 @@ import { LightningElement, track, wire } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import LightningConfirm from 'lightning/confirm';
 import getMySearches from '@salesforce/apex/NXP_SearchController.getMySearches';
+import getTemplates from '@salesforce/apex/NXP_SearchController.getTemplates';
 import getSearch from '@salesforce/apex/NXP_SearchController.getSearch';
 import previewSearch from '@salesforce/apex/NXP_SearchController.previewSearch';
 import saveSearch from '@salesforce/apex/NXP_SearchController.saveSearch';
@@ -58,13 +59,15 @@ function emptyForm() {
         alertOnChanges: true,
         autoPush: 'Off',
         autoPushMinFit: 70,
-        active: true
+        active: true,
+        templateId: null
     };
 }
 
 export default class NxpSearchBuilder extends NavigationMixin(LightningElement) {
     @track form = emptyForm();
     @track searches = [];
+    @track templates = [];
     preview;
     previewError;
     previewing = false;
@@ -96,7 +99,17 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
     connectedCallback() {
         logUsage('My Searches');
         this.loadSearches();
+        this.loadTemplates();
         this.runPreview();
+    }
+
+    async loadTemplates() {
+        try {
+            this.templates = await getTemplates();
+        } catch (e) {
+            // Templates are optional; the builder works without them.
+            this.templates = [];
+        }
     }
 
     async loadSearches() {
@@ -107,7 +120,7 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
         }
     }
 
-    async loadSearch(searchId) {
+    async loadSearch(searchId, asCopy = false) {
         try {
             const s = await getSearch({ searchId });
             const c = s.Criteria_JSON__c ? JSON.parse(s.Criteria_JSON__c) : {};
@@ -138,6 +151,20 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
                 autoPushMinFit: s.Auto_Push_Min_Fit__c || 70,
                 active: s.Active__c
             };
+            if (asCopy) {
+                // A private, active copy that alerts daily; the template itself never alerts.
+                this.form = {
+                    ...this.form,
+                    id: null,
+                    name: `${s.Name} (my copy)`,
+                    visibility: 'Private',
+                    teamGroup: '',
+                    frequency: 'Daily',
+                    autoPush: 'Off',
+                    active: true,
+                    templateId: s.Id
+                };
+            }
             this.runPreview();
         } catch (e) {
             toastError(this, e, 'Could not open the search');
@@ -242,12 +269,27 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
         return this.form.autoPush === 'Fit Threshold';
     }
 
-    get searchRows() {
-        return this.searches.map((s) => ({
-            ...s,
-            rowClass: s.id === this.form.id ? 'my-row my-row_active' : 'my-row',
-            canDelete: s.mine
+    get templateRows() {
+        return this.templates.map((t) => ({
+            ...t,
+            countLabel: `${t.matchCount}${t.capped ? '+' : ''} now`,
+            usedLabel: t.usedBy === 1 ? 'Used by 1 person' : `Used by ${t.usedBy} people`
         }));
+    }
+
+    get hasTemplates() {
+        return this.templates.length > 0;
+    }
+
+    get searchRows() {
+        // Other people's templates are listed under "Start from a template", not here.
+        return this.searches
+            .filter((s) => s.mine || s.visibility !== 'Org Template')
+            .map((s) => ({
+                ...s,
+                rowClass: s.id === this.form.id ? 'my-row my-row_active' : 'my-row',
+                canDelete: s.mine
+            }));
     }
 
     // ------------------------------------------------------------- handlers
@@ -303,6 +345,11 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
         this.runPreview();
     }
 
+    handleUseTemplate(event) {
+        this.loadSearch(event.currentTarget.dataset.id, true);
+        toast(this, 'Template copied', 'Change anything you like, then click Save search.', 'info');
+    }
+
     handleEdit(event) {
         this.loadSearch(event.currentTarget.dataset.id);
     }
@@ -344,16 +391,26 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
                     alertOnChanges: f.alertOnChanges,
                     autoPush: f.autoPush,
                     autoPushMinFit: f.autoPushMinFit,
-                    active: f.active
+                    active: f.active,
+                    templateId: f.templateId
                 }
             });
-            this.form = { ...this.form, id };
-            toast(
-                this,
-                'Search saved',
-                `"${f.name}" will alert you ${f.frequency === 'None' ? 'in the inbox only' : f.frequency.toLowerCase()}.`
-            );
+            this.form = { ...this.form, id, templateId: null };
+            if (f.visibility === 'Org Template') {
+                toast(
+                    this,
+                    'Template saved',
+                    `"${f.name}" is listed under Start from a template. Templates don't alert; people copy them.`
+                );
+            } else {
+                toast(
+                    this,
+                    'Search saved',
+                    `"${f.name}" will alert you ${f.frequency === 'None' ? 'in the inbox only' : f.frequency.toLowerCase()}. Open notices that match it appear in your Match Inbox in about a minute.`
+                );
+            }
             this.loadSearches();
+            this.loadTemplates();
         } catch (e) {
             toastError(this, e, 'Could not save');
         } finally {

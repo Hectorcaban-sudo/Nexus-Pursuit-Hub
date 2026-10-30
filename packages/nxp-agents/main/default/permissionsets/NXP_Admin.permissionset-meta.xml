@@ -1022,6 +1022,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>NXP_Saved_Search__c.Template__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Saved_Search__c.Visibility__c</field>
         <readable>true</readable>
     </fieldPermissions>

@@ -175,3 +175,42 @@
     padding: 0.5rem 0.75rem;
     margin-bottom: 0.5rem;
 }
+.templates {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dddbda;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+.template {
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.template-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+.template-name {
+    font-weight: 600;
+}
+.template-count {
+    flex: 0 0 auto;
+    background: #e3f0ff;
+    color: #0b3f7a;
+    border-radius: 0.625rem;
+    padding: 0.0625rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+.template-desc,
+.template-meta {
+    font-size: 0.75rem;
+    color: #5c6b80;
+}

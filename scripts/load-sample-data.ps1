@@ -72,6 +72,9 @@ Invoke-ApexFile 'scripts/apex/refresh-sample-dates.apex' $Org
 Write-Step 'Saved searches and matching'
 Invoke-ApexFile 'scripts/apex/seed-searches.apex' $Org
 
+Write-Step 'Search templates (Start from a template on My Searches)'
+Invoke-ApexFile 'scripts/apex/seed-search-templates.apex' $Org
+
 Write-Step 'Sample eBuy RFQ e-mail (Inbound Emails)'
 Invoke-ApexFile 'scripts/apex/seed-ebuy-email.apex' $Org
 

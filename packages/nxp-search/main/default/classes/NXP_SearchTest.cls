@@ -245,6 +245,32 @@ private class NXP_SearchTest {
     }
 
     @IsTest
+    static void templatesShowCountsAndCopiesRememberTheirTemplate() {
+        insert notice('T-1', 'Cyber zero trust support', '541512', 20);
+        NXP_Saved_Search__c t = new NXP_Saved_Search__c(
+            Name = 'Template A',
+            Criteria_JSON__c = criteria(),
+            Visibility__c = 'Org Template',
+            Alert_Frequency__c = 'None',
+            Active__c = false
+        );
+        insert t;
+        List<NXP_SearchController.TemplateSummary> templates = NXP_SearchController.getTemplates();
+        System.assertEquals(1, templates.size());
+        System.assertEquals(1, templates[0].matchCount);
+        System.assertEquals(0, templates[0].usedBy);
+        System.assertNotEquals(null, templates[0].description);
+
+        NXP_SearchController.SearchInput input = new NXP_SearchController.SearchInput();
+        input.name = 'Template A (my copy)';
+        input.criteriaJson = criteria();
+        input.templateId = t.Id;
+        Id copyId = NXP_SearchController.saveSearch(input);
+        System.assertEquals(t.Id, [SELECT Template__c FROM NXP_Saved_Search__c WHERE Id = :copyId].Template__c);
+        System.assertEquals(1, NXP_SearchController.getTemplates()[0].usedBy);
+    }
+
+    @IsTest
     static void savingASearchMatchesOpenNoticesQuietly() {
         insert new List<NXP_Gov_Notice__c>{
             notice('OPEN-1', 'Cyber zero trust support', '541512', 20),

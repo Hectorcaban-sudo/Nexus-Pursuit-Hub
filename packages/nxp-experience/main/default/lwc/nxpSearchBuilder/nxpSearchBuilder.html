@@ -30,6 +30,30 @@
                     </li>
                 </template>
             </ul>
+
+            <template lwc:if={hasTemplates}>
+                <section class="templates" aria-label="Templates">
+                    <h2 class="slds-text-heading_small">Start from a template</h2>
+                    <p class="hint">Shared by your admins. Using one makes a private copy you can change.</p>
+                    <template for:each={templateRows} for:item="t">
+                        <div key={t.id} class="template">
+                            <div class="template-head">
+                                <span class="template-name">{t.name}</span>
+                                <span class="template-count" title="Open notices that match now">{t.countLabel}</span>
+                            </div>
+                            <span class="template-desc">{t.description}</span>
+                            <span class="template-meta">{t.usedLabel}</span>
+                            <lightning-button
+                                class="use-template"
+                                label="Use template"
+                                data-id={t.id}
+                                onclick={handleUseTemplate}
+                                stretch
+                            ></lightning-button>
+                        </div>
+                    </template>
+                </section>
+            </template>
         </aside>
 
         <div class="main">

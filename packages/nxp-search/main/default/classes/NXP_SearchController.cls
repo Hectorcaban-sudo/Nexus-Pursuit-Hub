@@ -47,6 +47,27 @@ public with sharing class NXP_SearchController {
         public Decimal autoPushMinFit { get; set; }
         @AuraEnabled
         public Boolean active { get; set; }
+        /** Set when the search is created with Use template. */
+        @AuraEnabled
+        public Id templateId { get; set; }
+    }
+
+    /** An org template on My Searches: what it finds now and how many people copied it. */
+    public class TemplateSummary {
+        @AuraEnabled
+        public Id id;
+        @AuraEnabled
+        public String name;
+        @AuraEnabled
+        public String description;
+        @AuraEnabled
+        public String ownerName;
+        @AuraEnabled
+        public Integer matchCount = 0;
+        @AuraEnabled
+        public Boolean capped = false;
+        @AuraEnabled
+        public Integer usedBy = 0;
     }
 
     public class Preview {
@@ -222,6 +243,54 @@ public with sharing class NXP_SearchController {
         return p;
     }
 
+    /** Org templates anyone can copy, with today's match count. */
+    @AuraEnabled
+    public static List<TemplateSummary> getTemplates() {
+        List<NXP_Saved_Search__c> rows = [
+            SELECT Id, Name, Criteria_JSON__c, Owner.Name
+            FROM NXP_Saved_Search__c
+            WHERE Visibility__c = 'Org Template'
+            WITH USER_MODE
+            ORDER BY Name
+            LIMIT 12
+        ];
+        Map<Id, Integer> used = NXP_SearchSharingService.copyCounts(new Map<Id, NXP_Saved_Search__c>(rows).keySet());
+        List<TemplateSummary> out = new List<TemplateSummary>();
+        for (NXP_Saved_Search__c s : rows) {
+            TemplateSummary t = new TemplateSummary();
+            t.id = s.Id;
+            t.name = s.Name;
+            t.ownerName = s.Owner.Name;
+            t.usedBy = used.containsKey(s.Id) ? used.get(s.Id) : 0;
+            try {
+                NXP_SearchCriteria c = NXP_SearchCriteria.parse(s.Criteria_JSON__c);
+                t.description = c.describe();
+                Preview p = countNow(c);
+                t.matchCount = p.count;
+                t.capped = p.capped;
+            } catch (Exception e) {
+                t.description = 'Invalid criteria';
+            }
+            out.add(t);
+        }
+        return out;
+    }
+
+    /** Today's match count only (no back-test), for template cards. */
+    private static Preview countNow(NXP_SearchCriteria c) {
+        Preview p = new Preview();
+        NXP_SearchQueryBuilder q = new NXP_SearchQueryBuilder(c, false, null);
+        List<NXP_Gov_Notice__c> rows = new NXP_GovNoticeSelector(AccessLevel.USER_MODE)
+            .whereClause(q.whereClause, q.binds, 'Fit_Score__c DESC NULLS LAST', PREVIEW_ROWS);
+        p.capped = rows.size() >= PREVIEW_ROWS;
+        for (NXP_Gov_Notice__c n : rows) {
+            if (c.matches(n).matched) {
+                p.count++;
+            }
+        }
+        return p;
+    }
+
     @AuraEnabled
     public static Id saveSearch(SearchInput input) {
         try {
@@ -252,6 +321,8 @@ public with sharing class NXP_SearchController {
         String frequency = String.isBlank(input.frequency) ? 'Daily' : input.frequency;
         enforceLimits(input.id, frequency);
 
+        // A template is a starting point to copy: it never alerts, matches or auto-pushes by itself.
+        Boolean template = visibility == 'Org Template';
         NXP_Saved_Search__c s = new NXP_Saved_Search__c(
             Id = input.id,
             Name = NXP_Text.truncate(input.name, 80),
@@ -264,10 +335,16 @@ public with sharing class NXP_SearchController {
                 ? 'Email;Salesforce'
                 : String.join(input.channels, ';'),
             Alert_On_Changes__c = input.alertOnChanges != false,
-            Auto_Push__c = autoPush,
+            Auto_Push__c = template ? 'Off' : autoPush,
             Auto_Push_Min_Fit__c = input.autoPushMinFit,
-            Active__c = input.active != false
+            Active__c = template ? false : input.active != false
         );
+        if (template) {
+            s.Alert_Frequency__c = 'None';
+        }
+        if (input.id == null && input.templateId != null) {
+            s.Template__c = input.templateId;
+        }
         upsert as user s;
         NXP_SearchSharingService.apply(new List<NXP_Saved_Search__c>{ s });
         // Open notices already in Nexus that match go to the Match Inbox now, not only future ones.

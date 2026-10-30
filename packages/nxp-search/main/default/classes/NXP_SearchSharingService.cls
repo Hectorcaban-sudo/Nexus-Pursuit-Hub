@@ -46,4 +46,21 @@ public without sharing class NXP_SearchSharingService {
         }
         Database.insert(shares, false);
     }
+
+    /** Template Id -> how many searches were copied from it, counting everyone's (a number only). */
+    public static Map<Id, Integer> copyCounts(Set<Id> templateIds) {
+        Map<Id, Integer> counts = new Map<Id, Integer>();
+        if (templateIds == null || templateIds.isEmpty()) {
+            return counts;
+        }
+        for (AggregateResult r : [
+            SELECT Template__c t, COUNT(Id) c
+            FROM NXP_Saved_Search__c
+            WHERE Template__c IN :templateIds
+            GROUP BY Template__c
+        ]) {
+            counts.put((Id) r.get('t'), (Integer) r.get('c'));
+        }
+        return counts;
+    }
 }
