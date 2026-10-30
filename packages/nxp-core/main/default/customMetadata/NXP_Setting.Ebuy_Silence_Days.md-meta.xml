@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMetadata
+    xmlns="http://soap.sforce.com/2006/04/metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>Ebuy Silence Days</label>
+    <protected>false</protected>
+    <values>
+        <field>Description__c</field>
+        <value
+            xsi:type="xsd:string"
+        >The admin e-mail warns when no eBuy e-mail has arrived for this many days (once eBuy mail has arrived at least once). 0 turns the warning off.</value>
+    </values>
+    <values>
+        <field>Value__c</field>
+        <value xsi:type="xsd:string">3</value>
+    </values>
+</CustomMetadata>
