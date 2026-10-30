@@ -4,8 +4,8 @@
 
 | Persona                  | Uses Nexus Pursuit Hub to                                                                                        |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| BD / opportunity analyst | Build searches, triage the Match Inbox, push good notices to TechnoMile                                          |
-| Capture manager          | Follow notices, see amendments flow into pushed TechnoMile records                                               |
+| BD / opportunity analyst | Build searches, triage the Match Inbox, push good notices to Opportunity                                         |
+| Capture manager          | Follow notices, see amendments flow into pushed Opportunity records                                              |
 | BD lead (Power User)     | Share team searches, turn on auto-push, bulk push                                                                |
 | Admin                    | Configure feeds, credentials, fit rules, push mapping, eBuy inbox, AI; watch the Feed Console and Inbound Emails |
 | Integration (system)     | Push notices in through the REST API; owns eBuy e-mail records                                                   |
@@ -20,7 +20,7 @@
 | 4   | BD user         | choose real-time, daily, weekly or no alerts, and the channels                                                                                  | Alert settings                       |
 | 5   | BD user         | review new matches best-fit first and push, watch or dismiss each                                                                               | Match Inbox                          |
 | 6   | BD user         | see the countdown, fit breakdown, AI summary, versions and contacts of a notice                                                                 | Gov Notice page                      |
-| 7   | BD user         | push a notice to TechnoMile after seeing exactly what will be sent and whether it already exists                                                | Push dialog                          |
+| 7   | BD user         | push a notice to Opportunity after seeing exactly what will be sent and whether it already exists                                               | Push dialog                          |
 | 8   | BD user         | follow a notice and be alerted when it is amended                                                                                               | Follow / Watch                       |
 | 9   | Power User      | share a search with a team or as an org template                                                                                                | Visibility                           |
 | 10  | Power User      | auto-push matches above a fit threshold                                                                                                         | Auto-push                            |
@@ -35,7 +35,7 @@
 | 19  | Admin           | record that we hold or no longer hold a vehicle, and have its notices re-scored                                                                 | Vehicle Portfolio                    |
 | 20  | BD user         | get GSA eBuy RFQs as notices on the right vehicle, with their attachments, without re-typing them                                               | eBuy e-mail intake                   |
 | 21  | Admin           | see every e-mail the eBuy inbox received, why it was rejected or needs review, and reprocess it                                                 | Inbound Emails tab                   |
-| 22  | BD user         | have eBuy RFQs that fit us pushed to TechnoMile automatically                                                                                   | Auto-push saved search               |
+| 22  | BD user         | have eBuy RFQs that fit us pushed to Opportunity automatically                                                                                  | Auto-push saved search               |
 | 23  | BD user         | read what a solicitation document requires (requirements, evaluation, dates, clearance, risks) and where it disagrees with the notice           | Documents card, NXP Notice Documents |
 | 24  | BD lead         | see trends in new notices, matches and pushes, and the high-fit notices about to be missed                                                      | Market and activity dashboard        |
 | 25  | Admin           | see feed, push, eBuy inbox and Document Reader health in one place                                                                              | Operations dashboard                 |
@@ -51,7 +51,7 @@
 | Agency and vendor profiles                                        | Agency and vendor profile pages from SAM.gov and USAspending data, with Watch |
 | Contract vehicle intelligence                                     | Vehicle Portfolio; eBuy RFQs by e-mail                                        |
 | Document analysis                                                 | Document Reader on notice PDFs (AI, checked by code)                          |
-| Salesforce / TechnoMile connector                                 | Native push with dedupe and amendment sync                                    |
+| Salesforce Opportunity connector                                  | Native push with dedupe and amendment sync                                    |
 | GovWin analyst research (budget signals, contacts beyond notices) | **Not reproduced** from public data; decide whether the gap is acceptable     |
 
 ## Rules
@@ -61,5 +61,5 @@
 - Dismissed matches are never alerted again for that search. Other matches are alerted again on change when _Alert on changes_ is on.
 - Already-pushed notices drop out of the Match Inbox.
 - An eBuy RFQ is identified by `EBUY:<RFQ number>`; a later e-mail about the same RFQ updates it. The RFQ number is read by rules, never by AI.
-- AI output (summaries, document analysis, eBuy fill-in) is labelled and never decides anything: bid/no-bid stays in TechnoMile.
+- AI output (summaries, document analysis, eBuy fill-in) is labelled and never decides anything: bid/no-bid stays in Opportunity.
 - A push never overwrites capture fields. After a push, only fields mapped with _Update_ change automatically; _Alert only_ fields notify the record owner.

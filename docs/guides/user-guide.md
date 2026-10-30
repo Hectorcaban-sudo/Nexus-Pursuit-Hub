@@ -1,6 +1,6 @@
 # User guide
 
-Nexus Pursuit Hub finds government opportunities for you and sends the good ones to TechnoMile. Open the **Nexus Pursuit Hub** app from the App Launcher.
+Nexus Pursuit Hub finds government opportunities for you and sends the good ones to Opportunity. Open the **Nexus Pursuit Hub** app from the App Launcher.
 
 ## 1. Build a search
 
@@ -23,11 +23,11 @@ Every new match lands in **Match Inbox**, best fit first. Each card shows:
 - An AI summary when one is available.
 - Why the notice matched.
 
-| Button                 | Does                                                                                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Push to TechnoMile** | Shows exactly what will be sent and whether TechnoMile already has it, then creates or links the record |
-| **Watch**              | Follows the notice; you're alerted when it changes                                                      |
-| **Dismiss**            | Removes it from the inbox; your reason helps tune searches                                              |
+| Button                  | Does                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Push to Opportunity** | Shows exactly what will be sent and whether an Opportunity already exists for it, then creates or links the record |
+| **Watch**               | Follows the notice; you're alerted when it changes                                                                 |
+| **Dismiss**             | Removes it from the inbox; your reason helps tune searches                                                         |
 
 ## 3. Read a notice
 
@@ -54,7 +54,7 @@ Watches show in the bell icon as **NXP Match Alert** notifications, like followe
 
 ## 5. Dashboards
 
-Open **Dashboards → Nexus: Market and activity** for new notices by source, what happened to your matches, pushes to TechnoMile and the high-fit notices due soon that nobody has pushed. Click a chart to open its report. It shows what you can see, so your own searches and matches.
+Open **Dashboards → Nexus: Market and activity** for new notices by source, what happened to your matches, pushes to Opportunity and the high-fit notices due soon that nobody has pushed. Click a chart to open its report. It shows what you can see, so your own searches and matches.
 
 ## 6. Ask the assistant
 
@@ -65,7 +65,7 @@ Open the Agentforce panel and ask, for example:
 - "What changed in the latest amendment?"
 - "What does the statement of work require?"
 - "Which VA recompetes over $10M expire in the next 18 months?"
-- "Push this to TechnoMile"
+- "Push this to Opportunity"
 
 The assistant always shows a preview and waits for your **yes** before saving a search or pushing a notice.
 
@@ -78,5 +78,5 @@ The assistant always shows a preview and waits for your **yes** before saving a 
 ## FAQ
 
 - **Why don't I see a notice?** Searches only include _Active_ notices by default, and _Due within_ hides notices with no due date. Also check the minimum fit.
-- **Does a push overwrite TechnoMile?** No. After a push, only the fields your admin set to update (usually the due date) change. Capture fields such as stage and pWin are never touched.
+- **Does a push overwrite the Opportunity?** No. After a push, only the fields your admin set to update (usually the due date) change. Capture fields such as stage and pWin are never touched.
 - **Is the AI summary reliable?** It's a draft; always confirm against the solicitation documents.

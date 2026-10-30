@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 >
-    <label>TM Amount</label>
+    <label>Opportunity CloseDate</label>
     <protected>false</protected>
     <values>
         <field>Active__c</field>
@@ -16,23 +16,23 @@
     </values>
     <values>
         <field>Mapping_Set__c</field>
-        <value xsi:type="xsd:string">TechnoMile_Default</value>
+        <value xsi:type="xsd:string">Opportunity_Default</value>
     </values>
     <values>
         <field>Required__c</field>
-        <value xsi:type="xsd:boolean">false</value>
+        <value xsi:type="xsd:boolean">true</value>
     </values>
     <values>
         <field>Source_Field__c</field>
-        <value xsi:type="xsd:string">Estimated_Value__c</value>
+        <value xsi:type="xsd:string">Response_Due__c</value>
     </values>
     <values>
         <field>Sync_Behavior__c</field>
-        <value xsi:type="xsd:string">Alert Only</value>
+        <value xsi:type="xsd:string">Update</value>
     </values>
     <values>
         <field>Target_Field__c</field>
-        <value xsi:type="xsd:string">Amount</value>
+        <value xsi:type="xsd:string">CloseDate</value>
     </values>
     <values>
         <field>Target_Object__c</field>

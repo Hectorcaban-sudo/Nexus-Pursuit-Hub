@@ -1,5 +1,5 @@
 /**
- * Where pushed notices go. NXP_TechnoMilePushTarget is the only implementation that knows the
+ * Where pushed notices go. NXP_OpportunityPushTarget is the only implementation that knows the
  * target object (configured in NXP_Push_Mapping__mdt), so moving to another object or org
  * touches one class or only configuration.
  */

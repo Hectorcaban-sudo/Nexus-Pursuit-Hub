@@ -128,7 +128,7 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     }
 
     get pushLabel() {
-        return this.pushed ? 'Open TechnoMile record' : 'Push to TechnoMile';
+        return this.pushed ? 'Open Opportunity record' : 'Push to Opportunity';
     }
 
     get followLabel() {
@@ -150,10 +150,10 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
         const result = await NxpPushDialog.open({
             noticeId: this.recordId,
             size: 'medium',
-            label: 'Push to TechnoMile'
+            label: 'Push to Opportunity'
         });
         if (result) {
-            toast(this, 'Pushed to TechnoMile', result.message);
+            toast(this, 'Pushed to Opportunity', result.message);
             this.load();
         }
     }

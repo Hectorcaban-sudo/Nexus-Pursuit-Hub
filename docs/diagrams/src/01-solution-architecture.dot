@@ -22,7 +22,7 @@ digraph G {
     push [label="nxp-push\npush mapping · push service\npost-push sync"];
     ux   [label="nxp-experience\nMatch Inbox · My Searches\nNotice page · Feed Console"];
     ag   [label="nxp-agents\nNexus Pursuit Assistant\nprompt-template jobs"];
-    tm   [label="TechnoMile\n(opportunities & capture)", fillcolor="#EEF1F6"];
+    tm   [label="Opportunity\n(pursuits & capture)", fillcolor="#EEF1F6"];
   }
   dc [label="Data Cloud\nIngestion API (bulk awards)", fillcolor="#EEF1F6"];
   users [label="BD users\nLightning · e-mail · mobile", shape=box];

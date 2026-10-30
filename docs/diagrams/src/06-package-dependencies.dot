@@ -10,7 +10,7 @@ digraph G {
   push [label="nxp-push\npush target · push service · sync", fillcolor="#E3F0FF", color="#0B5CAB"];
   exp  [label="nxp-experience\napp · tabs · record page · LWCs"];
   ag   [label="nxp-agents\nagent actions · AI jobs · permission sets"];
-  tm   [label="TechnoMile managed package\n(configured target, no code dependency)", style="rounded,dashed,filled", fillcolor="#EEF1F6"];
+  tm   [label="Capture app on Opportunity\n(configured target, no code dependency)", style="rounded,dashed,filled", fillcolor="#EEF1F6"];
   ing -> core; srch -> core; push -> core; push -> srch; exp -> ing; exp -> srch; exp -> push; ag -> exp; ag -> push; ag -> srch; ag -> ing;
   push -> tm [style=dashed, label="via mapping"];
 }

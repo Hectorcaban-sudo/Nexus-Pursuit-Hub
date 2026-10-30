@@ -1,6 +1,6 @@
 /**
  * Agent action (Push subagent): shows what a push would create and returns the token that
- * NXP Push To TechnoMile requires.
+ * NXP Push To Opportunity requires.
  */
 public with sharing class NXP_PreviewPushAction {
     public class Request {
@@ -15,14 +15,14 @@ public with sharing class NXP_PreviewPushAction {
         public String previewToken;
         @InvocableVariable(
             label='Existing record Id'
-            description='Set when a matching TechnoMile record already exists'
+            description='Set when a matching Opportunity record already exists'
         )
         public Id existingRecordId;
     }
 
     @InvocableMethod(
         label='NXP Preview Push'
-        description='Shows the values a push to TechnoMile would send and checks for an existing record.'
+        description='Shows the values a push to Opportunity would send and checks for an existing record.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

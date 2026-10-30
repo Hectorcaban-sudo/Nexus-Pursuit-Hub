@@ -9,7 +9,7 @@ private class NXP_PushTest {
             ORDER BY SortOrder
             LIMIT 1
         ];
-        NXP_TechnoMilePushTarget.mappingOverride = new List<NXP_Push_Mapping__mdt>{
+        NXP_OpportunityPushTarget.mappingOverride = new List<NXP_Push_Mapping__mdt>{
             row('Title__c', 'Name', true, 'Never', null),
             row('Response_Due__c', 'CloseDate', true, 'Update', null),
             row(null, 'StageName', true, 'Never', stage.ApiName),
@@ -27,7 +27,7 @@ private class NXP_PushTest {
     ) {
         return new NXP_Push_Mapping__mdt(
             Active__c = true,
-            Mapping_Set__c = 'TechnoMile_Default',
+            Mapping_Set__c = 'Opportunity_Default',
             Target_Object__c = 'Opportunity',
             Source_Field__c = source,
             Target_Field__c = target,
@@ -140,7 +140,7 @@ private class NXP_PushTest {
         System.assertEquals('Failed', r.status);
         System.assertEquals('Retry Pending', [SELECT Status__c FROM NXP_Push_Log__c].Status__c);
 
-        NXP_TechnoMilePushTarget.mappingOverride = new List<NXP_Push_Mapping__mdt>();
+        NXP_OpportunityPushTarget.mappingOverride = new List<NXP_Push_Mapping__mdt>();
         r = NXP_PushService.push(new List<Id>{ n.Id }, null, NXP_PushService.MODE_MANUAL, false)[0];
         System.assertEquals('Failed', r.status);
         System.assert(r.message.contains('No active'), r.message);

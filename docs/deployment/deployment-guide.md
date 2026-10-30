@@ -119,7 +119,7 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
 3. **SAM.gov API key:** **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**: add an authentication parameter named `ApiKey` with the key from your SAM.gov account (a System Account key for production; personal keys expire every 90 days). Only `NXP_Admin` users can call SAM.gov.
 4. **Forecasts endpoint:** set the URL on the `NXP_Forecasts` Named Credential and check the `FC_*` Feed Mapping records against your forecast source.
 5. **Company Profile:** create one active **Company Profile** (NAICS, PSC, set-asides, target agencies, keywords, value range), then score existing notices: `sf apex run --file scripts/apex/rescore-notices.apex --target-org <alias>`.
-6. **Push mapping:** point the `NXP_Push_Mapping` records at the TechnoMile object and fields ([admin guide](../guides/admin-guide.md#push-mapping)).
+6. **Push mapping:** point the `NXP_Push_Mapping` records at the Opportunity object and fields ([admin guide](../guides/admin-guide.md#push-mapping)).
 7. **Jobs:** already scheduled by `release` / `dev-setup`. To run it alone: `sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org <alias>`, as an `NXP_Admin` user.
 8. **Contract vehicles:** create the vehicles you hold (tick **We Hold**, set expiry, ceiling and the address eBuy mail is sent to in **Inbox Address**), or list their codes in the Company Profile's _Vehicles We Hold_.
 9. **Optional channels:**
@@ -299,7 +299,7 @@ Options:
 
 If a step fails, the error names the component that is still in use. Remove that reference and run the script again; components that are already gone are skipped.
 
-**Kept on purpose:** records pushed to TechnoMile (Opportunity) and any Data Cloud data streams for `NXP_Awards`. The SAM.gov API key is removed with the NXP External Credential.
+**Kept on purpose:** Opportunity records created by pushes and any Data Cloud data streams for `NXP_Awards`. The SAM.gov API key is removed with the NXP External Credential.
 
 ## Troubleshooting
 

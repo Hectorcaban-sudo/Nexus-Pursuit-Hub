@@ -1,7 +1,7 @@
 # Reports and dashboards
 
 Nexus ships standard Salesforce reports and dashboards in the `nxp-analytics` package, so admins can filter, schedule,
-subscribe to and change them without code. Pipeline and win-rate reporting stays in TechnoMile.
+subscribe to and change them without code. Pipeline and win-rate reporting stays in Opportunity.
 
 ## Dashboards
 
@@ -28,7 +28,7 @@ dashboard component links to its report. The main ones:
 | ------------------------------------------------ | ----------------------------------------------------------------------- |
 | NXP - High-fit, due soon, not pushed             | Daily check for notices worth a look before they close                  |
 | NXP Admin - Matches by saved search              | See which searches produce matches that get pushed, and which are noise |
-| NXP - Pushes by month and source                 | Track how much work flows to TechnoMile, and from where                 |
+| NXP - Pushes by month and source                 | Track how much work flows to Opportunity, and from where                |
 | NXP Admin - Feed runs by feed / Failed feed runs | Feed health                                                             |
 | NXP Admin - Emails needing review                | eBuy e-mails to fix and reprocess                                       |
 | NXP Admin - GovWin parallel run                  | GovWin alerts Nexus missed (In Nexus, no search matched; Not in Nexus)  |

@@ -5,8 +5,8 @@ import pushNoticeFrom from '@salesforce/apex/NXP_PushController.pushNoticeFrom';
 import { reduceErrors } from 'c/nxpUtils';
 
 /**
- * Push to TechnoMile dialog. Open with:
- *   const result = await NxpPushDialog.open({ noticeId, size: 'medium', label: 'Push to TechnoMile' });
+ * Push to Opportunity dialog. Open with:
+ *   const result = await NxpPushDialog.open({ noticeId, size: 'medium', label: 'Push to Opportunity' });
  * Resolves to the push result, or undefined when cancelled.
  */
 export default class NxpPushDialog extends LightningModal {

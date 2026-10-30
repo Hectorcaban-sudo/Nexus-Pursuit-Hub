@@ -8,12 +8,12 @@ The Agent Script blueprint (`packages/nxp-agents/reference/aiAuthoringBundles/`)
 
 ## Subagents and actions
 
-| Subagent        | Handles                                                      | Actions (Apex invocable)                                                               |
-| --------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| Search Builder  | Creating, changing, explaining or saving searches and alerts | NXP Draft Search Criteria · NXP Preview Search · NXP Save Search*                      |
-| Notice Briefing | A specific notice, its documents, amendments or fit score    | NXP Explain Fit Score · NXP Compare Versions · NXP Notice Documents                    |
-| Market Intel    | Incumbents, recompetes, vendors, forecasts                   | NXP Find Incumbent · NXP Recompete Query                                               |
-| Push            | Sending notices to TechnoMile, push status, auto-push rules  | NXP Preview Push · NXP Push To TechnoMile* · NXP Push Status · NXP Set Auto-Push Rule* |
+| Subagent        | Handles                                                      | Actions (Apex invocable)                                                                |
+| --------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Search Builder  | Creating, changing, explaining or saving searches and alerts | NXP Draft Search Criteria · NXP Preview Search · NXP Save Search*                       |
+| Notice Briefing | A specific notice, its documents, amendments or fit score    | NXP Explain Fit Score · NXP Compare Versions · NXP Notice Documents                     |
+| Market Intel    | Incumbents, recompetes, vendors, forecasts                   | NXP Find Incumbent · NXP Recompete Query                                                |
+| Push            | Sending notices to Opportunity, push status, auto-push rules | NXP Preview Push · NXP Push To Opportunity* · NXP Push Status · NXP Set Auto-Push Rule* |
 
 \* Turn on **Require user confirmation** in Agentforce Builder.
 
@@ -22,7 +22,7 @@ The Agent Script blueprint (`packages/nxp-agents/reference/aiAuthoringBundles/`)
 | Rule                                | Enforcement                                                                                                                      |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | No save without a preview           | `NXP_SaveSearchAction` requires the token from `NXP_PreviewSearchAction` for the same criteria, user and day                     |
-| No push without a preview and a yes | `NXP_PushToTechnoMileAction` requires the token from `NXP_PreviewPushAction`; Builder confirmation on top                        |
+| No push without a preview and a yes | `NXP_PushToOpportunityAction` requires the token from `NXP_PreviewPushAction`; Builder confirmation on top                       |
 | Auto-push only for Power Users      | `NXP_SetAutoPushRuleAction` checks the `NXP_Power_User` custom permission and ownership                                          |
 | Users see only their data           | Actions run in user mode                                                                                                         |
 | Cite sources                        | Outputs include notice IDs; market answers state the data window                                                                 |

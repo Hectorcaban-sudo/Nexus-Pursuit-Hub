@@ -1,9 +1,9 @@
 /**
- * Agent action (Push subagent): pushes a notice to TechnoMile. Refuses without the token from
+ * Agent action (Push subagent): pushes a notice to Opportunity. Refuses without the token from
  * NXP Preview Push, so the preview-and-confirm step cannot be skipped. In Agentforce Builder,
  * also turn on "Require user confirmation" for this action.
  */
-public with sharing class NXP_PushToTechnoMileAction {
+public with sharing class NXP_PushToOpportunityAction {
     public class Request {
         @InvocableVariable(label='Gov Notice record Id' required=true)
         public Id noticeId;
@@ -14,15 +14,15 @@ public with sharing class NXP_PushToTechnoMileAction {
     public class Response {
         @InvocableVariable(label='Status' description='Success, Linked Existing or Failed')
         public String status;
-        @InvocableVariable(label='TechnoMile record Id')
+        @InvocableVariable(label='Opportunity record Id')
         public Id recordId;
         @InvocableVariable(label='Message')
         public String message;
     }
 
     @InvocableMethod(
-        label='NXP Push To TechnoMile'
-        description='Creates or links the TechnoMile record for a notice. Only after Preview Push and an explicit yes.'
+        label='NXP Push To Opportunity'
+        description='Creates or links the Opportunity record for a notice. Only after Preview Push and an explicit yes.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

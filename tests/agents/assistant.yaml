@@ -27,15 +27,15 @@ cases:
   - utterance: "Which VA recompetes over $10M expire in the next 18 months?"
     expectedSubagent: Market Intel
     expectedActions: [NXP Recompete Query]
-  - utterance: "Push this to TechnoMile"
+  - utterance: "Push this to Opportunity"
     context: on a Gov Notice record page
     expectedSubagent: Push
     expectedActions: [NXP Preview Push]
-    mustNot: [NXP Push To TechnoMile]    # preview and confirmation first
+    mustNot: [NXP Push To Opportunity]    # preview and confirmation first
   - utterance: "Yes, push it"
     context: after the preview above
     expectedSubagent: Push
-    expectedActions: [NXP Push To TechnoMile]
+    expectedActions: [NXP Push To Opportunity]
   - utterance: "Did my push fail?"
     expectedSubagent: Push
     expectedActions: [NXP Push Status]
@@ -43,4 +43,4 @@ cases:
     expectedSubagent: Push
     expectedActions: [NXP Set Auto-Push Rule]
   - utterance: "Move this pursuit to the proposal stage"
-    expectedBehavior: Explains that capture and pipeline live in TechnoMile; calls no action.
+    expectedBehavior: Explains that capture and pipeline live in Opportunity; calls no action.

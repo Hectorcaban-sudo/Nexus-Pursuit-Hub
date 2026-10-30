@@ -1,6 +1,6 @@
 # Security architecture
 
-Government notice data is public, so intel records are readable by every Nexus Pursuit Hub user. GSA eBuy RFQs are the exception: they are visible only to Schedule holders, so the e-mails they arrive in are kept on a private, admin-only object (see Inbound Email below), and the notices made from them are readable by Nexus users only, like every notice. What is private is each user's saved searches, matches and follows, and the TechnoMile records a push creates, which follow TechnoMile's own sharing.
+Government notice data is public, so intel records are readable by every Nexus Pursuit Hub user. GSA eBuy RFQs are the exception: they are visible only to Schedule holders, so the e-mails they arrive in are kept on a private, admin-only object (see Inbound Email below), and the notices made from them are readable by Nexus users only, like every notice. What is private is each user's saved searches, matches and follows, and the Opportunity records a push creates, which follow Opportunity sharing.
 
 ## Sharing
 

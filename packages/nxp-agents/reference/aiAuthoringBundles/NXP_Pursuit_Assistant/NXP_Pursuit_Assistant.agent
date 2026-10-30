@@ -10,15 +10,15 @@ system:
         Always cite the notice ID (and document name and page when you quote a document).
         Never create, change or push records without showing a preview and getting an explicit "yes" from the user.
         When you give market numbers, state the data source and the date range used.
-        You do not manage capture, pipeline or proposals; those live in TechnoMile.
+        You do not manage capture, pipeline or proposals; those live in Opportunity.
     messages:
-        welcome: "Hi, I'm the Nexus Pursuit Assistant. Ask me to find opportunities, explain a notice, or push one to TechnoMile."
+        welcome: "Hi, I'm the Nexus Pursuit Assistant. Ask me to find opportunities, explain a notice, or push one to Opportunity."
         error: "Something went wrong on my side. Please try again, or open the notice in Nexus Pursuit Hub."
 
 config:
     agent_name: "NXP_Pursuit_Assistant"
     agent_label: "Nexus Pursuit Assistant"
-    description: "Helps BD users search government opportunities, understand notices and push them to TechnoMile."
+    description: "Helps BD users search government opportunities, understand notices and push them to Opportunity."
     agent_type: "AgentforceEmployeeAgent"
 
 variables:
@@ -39,7 +39,7 @@ start_agent agent_router:
             go_market_intel: @utils.transition to @subagent.market_intel
                 description: "Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts."
             go_push: @utils.transition to @subagent.push
-                description: "Sending notices to TechnoMile, checking push status, or setting auto-push rules."
+                description: "Sending notices to Opportunity, checking push status, or setting auto-push rules."
 
 subagent search_builder:
     description: "Creating, changing, explaining or saving searches and alerts for government opportunities."
@@ -110,16 +110,16 @@ subagent market_intel:
             target: "apex://NXP_RecompeteQueryAction"
 
 subagent push:
-    description: "Sending notices to TechnoMile, checking push status, or setting auto-push rules."
+    description: "Sending notices to Opportunity, checking push status, or setting auto-push rules."
     reasoning:
         instructions: ->
             | Run preview_push first and show the mapped values and any duplicate found.
-            | Only call push_to_technomile after the user says yes.
+            | Only call push_to_opportunity after the user says yes.
             | Auto-push rules need the Power User permission; if the action refuses, explain why.
         actions:
             preview: @actions.preview_push
                 set @variables.push_preview_token = @outputs.previewToken
-            push_it: @actions.push_to_technomile
+            push_it: @actions.push_to_opportunity
                 available when @variables.push_preview_token != ""
             status: @actions.push_status
             auto_push: @actions.set_auto_push_rule
@@ -127,10 +127,10 @@ subagent push:
         preview_push:
             description: "Shows the values a push would send and checks for an existing record."
             target: "apex://NXP_PreviewPushAction"
-        push_to_technomile:
-            description: "Creates or links the TechnoMile record after Preview Push and an explicit yes."
+        push_to_opportunity:
+            description: "Creates or links the Opportunity record after Preview Push and an explicit yes."
             require_user_confirmation: True
-            target: "apex://NXP_PushToTechnoMileAction"
+            target: "apex://NXP_PushToOpportunityAction"
         push_status:
             description: "Shows whether a notice was pushed and any errors."
             target: "apex://NXP_PushStatusAction"

@@ -5,11 +5,11 @@
 
 ## Context
 
-TechnoMile's object and field names vary by org and version, and a code dependency on its managed package would block testing and packaging.
+the Opportunity object and field names vary by org and version, and a code dependency on its managed package would block testing and packaging.
 
 ## Decision
 
-Push reads its target object, fields, defaults, required flags and sync rules from `NXP_Push_Mapping__mdt`. Only `NXP_TechnoMilePushTarget`, behind the `NXP_PushTarget` interface, knows about the target.
+Push reads its target object, fields, defaults, required flags and sync rules from `NXP_Push_Mapping__mdt`. Only `NXP_OpportunityPushTarget`, behind the `NXP_PushTarget` interface, knows about the target.
 
 ## Consequences
 

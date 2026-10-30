@@ -1,5 +1,5 @@
 /**
- * Keeps pushed TechnoMile records current: on each notice change event, applies the Push Mapping
+ * Keeps pushed Opportunity records current: on each notice change event, applies the Push Mapping
  * sync rules (update, alert only) to records pushed earlier.
  */
 public without sharing class NXP_PostPushSyncHandler {

@@ -33,7 +33,7 @@
 | `NXP_Feed_Config__mdt`  | Feed connector, credential, path, page size, lookback, interval, channel | SAM_Opportunities, SAM_Backfill, SAM_Entity, USAspending_Awards, Agency_Forecasts (inactive; switched on by env-config)      |
 | `NXP_Feed_Mapping__mdt` | Source JSON path → target field + transform                              | SAM and forecast mappings                                                                                                    |
 | `NXP_Fit_Rule__mdt`     | Rule type and weight                                                     | NAICS 30, Agency 20, Set-Aside 15, Keyword 20, Value Range 15 (PSC, Vehicle off; Vehicle scores notices on vehicles we hold) |
-| `NXP_Push_Mapping__mdt` | Notice field → target field, required, sync behaviour                    | `TechnoMile_Default` set on Opportunity                                                                                      |
+| `NXP_Push_Mapping__mdt` | Notice field → target field, required, sync behaviour                    | `Opportunity_Default` set on Opportunity                                                                                     |
 | `NXP_Setting__mdt`      | Key/value settings                                                       | Limits, retries, AI switches, listeners, template names, eBuy inbox (`Ebuy_*`) and Document Reader (`Document_*`) settings   |
 
 ## Platform event

@@ -5,7 +5,7 @@
 
 ## Context
 
-The solution has clear seams (data, ingestion, search, push, UI, agents). Some change boards require plain metadata deployments, and TechnoMile is a managed package in the same org.
+The solution has clear seams (data, ingestion, search, push, UI, agents). Some change boards require plain metadata deployments, and the capture app that owns the Opportunity records is a managed package in the same org.
 
 ## Decision
 

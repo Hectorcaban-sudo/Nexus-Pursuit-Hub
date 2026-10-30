@@ -207,7 +207,7 @@ if (haveSamples) {
     }
 }
 
-// 7. Push to TechnoMile (preview, token, push, idempotency) ---------------------------------
+// 7. Push to Opportunity (preview, token, push, idempotency) ---------------------------------
 if (haveSamples) {
     NXP_Gov_Notice__c top = samples[0];
     try {

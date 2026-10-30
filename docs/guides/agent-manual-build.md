@@ -21,7 +21,7 @@ Agent Script is not available in Government Cloud, so the agent is configured by
 1. **Setup → Agentforce Agents → New Agent → Agentforce Employee Agent.**
     - Name: _Nexus Pursuit Assistant_.
     - API name: `NXP_Pursuit_Assistant`.
-    - Description: _Helps BD users search government opportunities, understand notices and push them to TechnoMile._
+    - Description: _Helps BD users search government opportunities, understand notices and push them to Opportunity._
 2. **Agent instructions / role.** Paste:
 
     ```text
@@ -30,7 +30,7 @@ Agent Script is not available in Government Cloud, so the agent is configured by
     Always cite the notice ID (and document name and page when you quote a document).
     Never create, change or push records without showing a preview and getting an explicit "yes" from the user.
     When you give market numbers, state the data source and the date range used.
-    You do not manage capture, pipeline or proposals; those live in TechnoMile.
+    You do not manage capture, pipeline or proposals; those live in Opportunity.
     ```
 
 3. **Remove default subagents** you don't need, then create these four. Write the classification description exactly as shown, because it drives routing:
@@ -40,7 +40,7 @@ Agent Script is not available in Government Cloud, so the agent is configured by
 | Search Builder (`NXP_Search_Builder`)   | Creating, changing, explaining or saving searches and alerts for government opportunities. | Turn the user's request into search criteria with NXP Draft Search Criteria. · Always run NXP Preview Search and show the count and top results before saving. · Save only after the user confirms, passing the preview token.                                                                                                                     |
 | Notice Briefing (`NXP_Notice_Briefing`) | Questions about a specific notice, solicitation, its documents, amendments or fit score.   | Identify the notice from the page context or ask for the notice ID. · For "what changed", use NXP Compare Versions. · For "why this score", use NXP Explain Fit Score. · For what the solicitation documents require, use NXP Notice Documents, and say the details were read by AI and should be checked against the files. · Cite the notice ID. |
 | Market Intel (`NXP_Market_Intel`)       | Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts.            | Use the most specific action. · Always state the data window the action returned. · Do not estimate numbers the actions did not return.                                                                                                                                                                                                            |
-| Push (`NXP_Push`)                       | Sending notices to TechnoMile, checking push status, or setting auto-push rules.           | Run NXP Preview Push first and show the mapped values and any duplicate. · Only call NXP Push To TechnoMile after the user says yes, passing the preview token. · Auto-push needs the Power User permission; explain if refused.                                                                                                                   |
+| Push (`NXP_Push`)                       | Sending notices to Opportunity, checking push status, or setting auto-push rules.          | Run NXP Preview Push first and show the mapped values and any duplicate. · Only call NXP Push To Opportunity after the user says yes, passing the preview token. · Auto-push needs the Power User permission; explain if refused.                                                                                                                  |
 
 4. **Add actions** to each subagent: New Action → Apex → select the class.
 
@@ -55,11 +55,11 @@ Agent Script is not available in Government Cloud, so the agent is configured by
 | Market Intel    | NXP Find Incumbent (`NXP_FindIncumbentAction`)              | –                         | Answer                      |
 | Market Intel    | NXP Recompete Query (`NXP_RecompeteQueryAction`)            | –                         | Recompetes                  |
 | Push            | NXP Preview Push (`NXP_PreviewPushAction`)                  | –                         | Preview                     |
-| Push            | NXP Push To TechnoMile (`NXP_PushToTechnoMileAction`)       | **Yes**                   | Status, Message             |
+| Push            | NXP Push To Opportunity (`NXP_PushToOpportunityAction`)     | **Yes**                   | Status, Message             |
 | Push            | NXP Push Status (`NXP_PushStatusAction`)                    | –                         | Status                      |
 | Push            | NXP Set Auto-Push Rule (`NXP_SetAutoPushRuleAction`)        | **Yes**                   | Message                     |
 
-Mark _Preview token_ outputs as **not** shown to the user but available to the agent. They are passed to Save Search and Push To TechnoMile.
+Mark _Preview token_ outputs as **not** shown to the user but available to the agent. They are passed to Save Search and Push To Opportunity.
 
 5. **Test** in the conversation preview with every case in `tests/agents/assistant.yaml`, and check the plan trace for the expected subagent and actions. When routing is wrong, fix classification descriptions first.
 6. **Activate**, assign agent access to the NXP user permission set group or profile, and add the agent to the Nexus Pursuit Hub app's Agentforce panel.
@@ -74,4 +74,4 @@ Mark _Preview token_ outputs as **not** shown to the user but available to the a
 
 ## Why the guardrails hold without Agent Script
 
-Save Search and Push To TechnoMile refuse to act without the **preview token** returned by their preview action for the same user, subject and day. Auto-push changes check the Power User permission in Apex. So even if the model skipped an instruction, the action would decline and tell the user to preview first.
+Save Search and Push To Opportunity refuse to act without the **preview token** returned by their preview action for the same user, subject and day. Auto-push changes check the Power User permission in Apex. So even if the model skipped an instruction, the action would decline and tell the user to preview first.

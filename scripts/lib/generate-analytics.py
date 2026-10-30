@@ -20,7 +20,7 @@ RT = {
         ('Matches', 'NXP_Saved_Search__c.Matches__r', ['Name', 'User_Action__c', 'Change_Type__c', 'Alert_Status__c', 'Gov_Notice__c', 'CreatedDate'])], 'Matches__r'),
     'NXP_Saved_Searches': ('NXP_Saved_Search__c', 'NXP Saved Searches', 'Saved searches by owner.', [
         ('Saved Searches', 'NXP_Saved_Search__c', ['Name', 'Owner_Name__c', 'Alert_Frequency__c', 'Auto_Push__c', 'Visibility__c', 'Active__c', 'CreatedDate'])], None),
-    'NXP_Push_Logs': ('NXP_Push_Log__c', 'NXP Push Logs', 'Each push to TechnoMile and each sync.', [
+    'NXP_Push_Logs': ('NXP_Push_Log__c', 'NXP Push Logs', 'Each push to Opportunity and each sync.', [
         ('Push Logs', 'NXP_Push_Log__c', ['Name', 'Gov_Notice__c', 'Status__c', 'Mode__c', 'Source__c', 'Target_Object__c', 'Target_Record_Id__c', 'Pushed_By__c', 'Attempts__c', 'Error__c', 'CreatedDate'])], None),
     'NXP_Feed_Runs': ('NXP_Feed_Run__c', 'NXP Feed Runs', 'Feed runs and import calls with their counts.', [
         ('Feed Runs', 'NXP_Feed_Run__c', ['Name', 'Feed_Name__c', 'Channel__c', 'Status__c', 'Started__c', 'Finished__c', 'Records_Read__c', 'Records_Created__c', 'Records_Updated__c', 'Records_Rejected__c', 'Caller__c'])], None),
@@ -106,7 +106,7 @@ report(R, 'NXP_New_Notices_30_Days', 'NXP - New notices, last 30 days', 'NXP_Not
        down=[(N + 'Notice_Type__c', None)], columns=[N + 'Name', N + 'Fit_Score__c'], time=(N + 'CreatedDate', 'INTERVAL_LAST30'))
 report(R, 'NXP_New_Notices_By_Fit_Band', 'NXP - New notices by fit band', 'NXP_Notices', 'Notices created in the last 30 days, by fit score band.',
        down=[(N + 'Fit_Band__c', None)], columns=[N + 'Name'], time=(N + 'CreatedDate', 'INTERVAL_LAST30'))
-report(R, 'NXP_About_To_Miss', 'NXP - High-fit, due soon, not pushed', 'NXP_Notices', 'Active notices with fit 60 or more, due in the next 14 days, not pushed to TechnoMile.',
+report(R, 'NXP_About_To_Miss', 'NXP - High-fit, due soon, not pushed', 'NXP_Notices', 'Active notices with fit 60 or more, due in the next 14 days, not pushed to Opportunity.',
        down=[(N + 'Title__c', None)], columns=[N + 'Notice_Id__c', N + 'Agency_Path__c', N + 'Response_Due__c', N + 'Fit_Score__c'],
        filters=[(N + 'Status__c', 'equals', 'Active'), (N + 'Fit_Score__c', 'greaterOrEqual', '60'), (N + 'Pushed__c', 'equals', '0'),
                 (N + 'Response_Due__c', 'equals', 'NEXT_N_DAYS:14')], details=True)
@@ -117,7 +117,7 @@ report(R, 'NXP_Match_Outcomes', 'NXP - Match outcomes', 'NXP_Searches_And_Matche
        down=[(M + 'User_Action__c', None)], columns=[M + 'Name'], time=(M + 'CreatedDate', 'INTERVAL_LAST30'))
 report('NXP_Admin_Reports', 'NXP_Matches_By_Search', 'NXP Admin - Matches by saved search', 'NXP_Searches_And_Matches', 'Matches in the last 30 days per saved search, and how many were pushed.',
        down=[(SM + 'Name', None)], across=[(M + 'User_Action__c', None)], fmt='Matrix', columns=[M + 'Name'], time=(M + 'CreatedDate', 'INTERVAL_LAST30'))
-report(R, 'NXP_Pushes_By_Month', 'NXP - Pushes by month and source', 'NXP_Push_Logs', 'Successful pushes to TechnoMile by month and where they started.', 'Matrix',
+report(R, 'NXP_Pushes_By_Month', 'NXP - Pushes by month and source', 'NXP_Push_Logs', 'Successful pushes to Opportunity by month and where they started.', 'Matrix',
        down=[(P + 'CreatedDate', 'Month')], across=[(P + 'Source__c', None)], columns=[P + 'Name'],
        filters=[(P + 'Status__c', 'equals', 'Success,Linked Existing'), (P + 'Mode__c', 'notEqual', 'Sync'), (P + 'CreatedDate', 'equals', 'LAST_N_MONTHS:6')])
 report(R, 'NXP_Pushes_30_Days', 'NXP - Pushes, last 30 days', 'NXP_Push_Logs', 'Successful pushes in the last 30 days, by mode.',
@@ -220,14 +220,14 @@ def dashboard(folder, name, title, desc, comps):
 
 r = lambda n: 'NXP_Reports/' + n
 a = lambda n: 'NXP_Admin_Reports/' + n
-dashboard('NXP_Dashboards', 'NXP_Market_Activity', 'Nexus: Market and activity', 'New notices, matches, pushes to TechnoMile, fit, high-fit notices about to be missed, eBuy RFQs. Runs as the user who deployed it (a Nexus admin), so it shows notice-level data only; no private search names.', [
+dashboard('NXP_Dashboards', 'NXP_Market_Activity', 'Nexus: Market and activity', 'New notices, matches, pushes to Opportunity, fit, high-fit notices about to be missed, eBuy RFQs. Runs as the user who deployed it (a Nexus admin), so it shows notice-level data only; no private search names.', [
     comp(0, 0, 4, 3, 'Metric', r('NXP_New_Notices_30_Days'), 'New notices (30 days)'),
     comp(0, 3, 4, 3, 'Metric', r('NXP_Match_Outcomes'), 'Search matches (30 days)'),
-    comp(0, 6, 4, 3, 'Metric', r('NXP_Pushes_30_Days'), 'Pushed to TechnoMile (30 days)'),
+    comp(0, 6, 4, 3, 'Metric', r('NXP_Pushes_30_Days'), 'Pushed to Opportunity (30 days)'),
     comp(0, 9, 4, 3, 'Metric', r('NXP_About_To_Miss'), 'High-fit, due in 14 days, not pushed'),
     comp(4, 0, 8, 6, 'ColumnStacked', r('NXP_New_Notices_By_Week_Source'), 'New notices per week, by source'),
     comp(4, 6, 8, 6, 'Bar', r('NXP_Match_Outcomes'), 'What happened to matches (30 days)', 'RowValueDescending'),
-    comp(12, 0, 8, 6, 'ColumnStacked', r('NXP_Pushes_By_Month'), 'Pushes to TechnoMile per month'),
+    comp(12, 0, 8, 6, 'ColumnStacked', r('NXP_Pushes_By_Month'), 'Pushes to Opportunity per month'),
     comp(12, 6, 8, 6, 'Bar', r('NXP_New_Notices_By_Fit_Band'), 'Fit score of new notices (30 days)'),
     comp(20, 0, 8, 6, 'Table', r('NXP_About_To_Miss'), 'About to miss: fit 60+, due in 14 days, not pushed'),
     comp(20, 6, 8, 6, 'Bar', r('NXP_Ebuy_By_Vehicle'), 'eBuy RFQs per vehicle (90 days)', 'RowValueDescending'),

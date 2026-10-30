@@ -9,7 +9,7 @@
 # Scratch org? Delete the whole org instead: sf org delete scratch --target-org <alias>
 # Before you run it, delete what was built by hand (see docs/deployment/deployment-guide.md#uninstall):
 # the Nexus Pursuit Assistant agent and its agent actions, the NXP prompt templates, and any reports,
-# flows or list views people built on NXP objects. Records pushed to TechnoMile/Opportunity are kept.
+# flows or list views people built on NXP objects. Opportunity records created by pushes are kept.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 . scripts/lib/common.sh
@@ -101,7 +101,7 @@ fi
 cat <<MSG
 
 Nexus Pursuit Hub was removed from $ORG.
-Left in place on purpose: records pushed to TechnoMile (Opportunity) and any Data Cloud data
+Left in place on purpose: Opportunity records created by pushes and any Data Cloud data
 streams for NXP_Awards. The SAM.gov API key was removed with the NXP External Credential.
 If a step failed, fix what it names (usually something built by hand) and run the script again;
 components that are already gone are skipped.

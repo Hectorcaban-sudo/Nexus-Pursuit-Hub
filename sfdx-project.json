@@ -42,7 +42,7 @@
             "versionName": "Spring 2027",
             "versionNumber": "1.0.0.NEXT",
             "default": false,
-            "versionDescription": "Push to TechnoMile: mapping-driven push target, push log, post-push sync",
+            "versionDescription": "Push to Opportunity: mapping-driven push target, push log, post-push sync",
             "dependencies": [
                 {
                     "package": "nxp-core",

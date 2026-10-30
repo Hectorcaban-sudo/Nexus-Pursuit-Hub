@@ -49,7 +49,7 @@
                 <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
-                <header>Pushed to TechnoMile (30 days)</header>
+                <header>Pushed to Opportunity (30 days)</header>
                 <indicatorHighColor>#54C254</indicatorHighColor>
                 <indicatorLowColor>#C25454</indicatorLowColor>
                 <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
@@ -122,7 +122,7 @@
                 <chartAxisRange>Auto</chartAxisRange>
                 <componentType>ColumnStacked</componentType>
                 <displayUnits>Auto</displayUnits>
-                <header>Pushes to TechnoMile per month</header>
+                <header>Pushes to Opportunity per month</header>
                 <legendPosition>Bottom</legendPosition>
                 <report>NXP_Reports/NXP_Pushes_By_Month</report>
                 <showPercentage>false</showPercentage>
@@ -194,7 +194,7 @@
     </dashboardGridLayout>
     <dashboardType>SpecifiedUser</dashboardType>
     <description
-    >New notices, matches, pushes to TechnoMile, fit, high-fit notices about to be missed, eBuy RFQs. Runs as the user who deployed it (a Nexus admin), so it shows notice-level data only; no private search names.</description>
+    >New notices, matches, pushes to Opportunity, fit, high-fit notices about to be missed, eBuy RFQs. Runs as the user who deployed it (a Nexus admin), so it shows notice-level data only; no private search names.</description>
     <isGridLayout>true</isGridLayout>
     <textColor>#000000</textColor>
     <title>Nexus: Market and activity</title>

@@ -10,7 +10,7 @@
        dependents first.
     Before you run it, delete what was built by hand: the Nexus Pursuit Assistant agent and its NXP
     agent actions, the NXP prompt templates, and reports, flows or list views built on NXP objects.
-    Records pushed to TechnoMile (Opportunity) are kept.
+    Opportunity records created by pushes are kept.
     Scratch org? Delete the whole org instead: sf org delete scratch --target-org <alias>
     Bash version: scripts/uninstall.sh
 
@@ -107,7 +107,7 @@ else {
 
 Write-Host ''
 Write-Host "Nexus Pursuit Hub was removed from $Org." -ForegroundColor Green
-Write-Host 'Left in place on purpose: records pushed to TechnoMile (Opportunity) and any Data Cloud data'
+Write-Host 'Left in place on purpose: Opportunity records created by pushes and any Data Cloud data'
 Write-Host 'streams for NXP_Awards. The SAM.gov API key was removed with the NXP External Credential.'
 Write-Host 'If a step failed, fix what it names (usually something built by hand) and run the script again;'
 Write-Host 'components that are already gone are skipped.'

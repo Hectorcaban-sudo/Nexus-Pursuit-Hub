@@ -14,7 +14,7 @@ public with sharing class NXP_PushStatusAction {
 
     @InvocableMethod(
         label='NXP Push Status'
-        description='Shows whether a notice was pushed to TechnoMile and any errors.'
+        description='Shows whether a notice was pushed to Opportunity and any errors.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

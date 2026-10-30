@@ -3,5 +3,5 @@
     <apiVersion>68.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>NXP Push Dialog</masterLabel>
-    <description>Push to TechnoMile modal.</description>
+    <description>Push to Opportunity modal.</description>
 </LightningComponentBundle>

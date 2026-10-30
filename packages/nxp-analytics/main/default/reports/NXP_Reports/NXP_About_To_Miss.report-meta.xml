@@ -12,7 +12,7 @@
     <columns>
         <field>NXP_Gov_Notice__c$Fit_Score__c</field>
     </columns>
-    <description>Active notices with fit 60 or more, due in the next 14 days, not pushed to TechnoMile.</description>
+    <description>Active notices with fit 60 or more, due in the next 14 days, not pushed to Opportunity.</description>
     <filter>
         <criteriaItems>
             <column>NXP_Gov_Notice__c$Status__c</column>

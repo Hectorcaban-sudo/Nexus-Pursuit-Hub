@@ -169,10 +169,10 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
             noticeId,
             source: 'Match Inbox',
             size: 'medium',
-            label: 'Push to TechnoMile'
+            label: 'Push to Opportunity'
         });
         if (result) {
-            toast(this, 'Pushed to TechnoMile', result.message);
+            toast(this, 'Pushed to Opportunity', result.message);
             this.load();
         }
     }

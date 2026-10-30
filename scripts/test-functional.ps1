@@ -5,7 +5,7 @@
 .DESCRIPTION
     Runs scripts\apex\smoke-test.apex: the REST ingestion resource and its idempotency, configuration,
     fit scoring, search drafting and preview, saved searches and matches, notice page data, push to
-    TechnoMile (preview, guardrail, push, push log), feed console and the digest batch.
+    Opportunity (preview, guardrail, push, push log), feed console and the digest batch.
     The smoke test saves its results in an NXP_Log__c row (Source 'NXP-SMOKE'); this script reads
     that row, so results don't depend on the size of the debug log.
     Optional: every Apex unit test with code coverage (-ApexTests).

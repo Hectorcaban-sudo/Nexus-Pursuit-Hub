@@ -1,5 +1,5 @@
 /**
- * Push to TechnoMile: preview, duplicate check, create or link, document links, Push Log,
+ * Push to Opportunity: preview, duplicate check, create or link, document links, Push Log,
  * and post-push sync when the government amends a pushed notice.
  * Manual and agent pushes run in user mode (the user must be able to create the target record);
  * auto-push, retry and sync run in system mode as background jobs.
@@ -76,7 +76,7 @@ public without sharing class NXP_PushService {
         if (targetOverride != null) {
             return targetOverride;
         }
-        return new NXP_TechnoMilePushTarget();
+        return new NXP_OpportunityPushTarget();
     }
 
     public static PushPreview preview(Id noticeId) {

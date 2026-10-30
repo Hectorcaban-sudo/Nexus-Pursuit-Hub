@@ -3,7 +3,7 @@
     <baseObject>NXP_Push_Log__c</baseObject>
     <category>other</category>
     <deployed>true</deployed>
-    <description>Each push to TechnoMile and each sync.</description>
+    <description>Each push to Opportunity and each sync.</description>
     <label>NXP Push Logs</label>
     <sections>
         <columns>

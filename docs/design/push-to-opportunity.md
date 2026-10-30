@@ -1,4 +1,4 @@
-# Push to TechnoMile
+# Push to Opportunity
 
 ![Push workflow](../diagrams/05-push-workflow.jpg)
 
@@ -14,18 +14,18 @@
 
 ## Mapping (`NXP_Push_Mapping__mdt`)
 
-Rows in the mapping set named by `NXP_Setting.Push_Mapping_Set` (default `TechnoMile_Default`):
+Rows in the mapping set named by `NXP_Setting.Push_Mapping_Set` (default `Opportunity_Default`):
 
-| Field              | Meaning                                                                |
-| ------------------ | ---------------------------------------------------------------------- |
-| `Target_Object__c` | API name of TechnoMile's opportunity object (shipped as `Opportunity`) |
-| `Source_Field__c`  | Gov Notice field; blank to use the default value only                  |
-| `Target_Field__c`  | Field on the target object                                             |
-| `Default_Value__c` | Used when the source is blank (for example the initial stage)          |
-| `Required__c`      | Push fails with a clear message if there is no value                   |
-| `Sync_Behavior__c` | `Update` (rewrite on amendment), `Alert Only` (notify owner), `Never`  |
+| Field              | Meaning                                                               |
+| ------------------ | --------------------------------------------------------------------- |
+| `Target_Object__c` | API name of the target object (shipped as `Opportunity`)              |
+| `Source_Field__c`  | Gov Notice field; blank to use the default value only                 |
+| `Target_Field__c`  | Field on the target object                                            |
+| `Default_Value__c` | Used when the source is blank (for example the initial stage)         |
+| `Required__c`      | Push fails with a clear message if there is no value                  |
+| `Sync_Behavior__c` | `Update` (rewrite on amendment), `Alert Only` (notify owner), `Never` |
 
-Shipped rows: Title → Name, Response Due → CloseDate (Update), StageName default "Prospecting", Estimated Value → Amount (Alert Only), Push Details → Description. `Push_Details__c` is a formula on the notice that puts the source (for example _GSA eBuy RFQ_), Nexus ID, solicitation or RFQ number, vehicle, due date and link on one line. `Contract_Vehicle_Code__c` (formula) exposes the vehicle code for mapping to a TechnoMile vehicle field. The notice's Files (for eBuy, the RFQ attachments) are linked to the pushed record.
+Shipped rows: Title → Name, Response Due → CloseDate (Update), StageName default "Prospecting", Estimated Value → Amount (Alert Only), Push Details → Description. `Push_Details__c` is a formula on the notice that puts the source (for example _GSA eBuy RFQ_), Nexus ID, solicitation or RFQ number, vehicle, due date and link on one line. `Contract_Vehicle_Code__c` (formula) exposes the vehicle code for mapping to an Opportunity vehicle field. The notice's Files (for eBuy, the RFQ attachments) are linked to the pushed record.
 
 ## Duplicate check
 
@@ -34,7 +34,7 @@ Before creating, the service looks for:
 1. A notice already pushed (`Pushed_Record_Id__c`).
 2. A target record whose mapped field equals the notice's `Solicitation_Number__c` or `Notice_Id__c`.
 
-To turn on the second check, add a text field such as `NXP_Solicitation_Number__c` to the TechnoMile object, and add a mapping row from `Solicitation_Number__c` to that field.
+To turn on the second check, add a text field such as `NXP_Solicitation_Number__c` to the Opportunity object, and add a mapping row from `Solicitation_Number__c` to that field.
 
 ## After the push
 

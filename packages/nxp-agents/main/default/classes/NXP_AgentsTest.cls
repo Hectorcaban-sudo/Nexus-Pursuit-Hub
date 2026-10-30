@@ -19,7 +19,7 @@ private class NXP_AgentsTest {
             rows.add(
                 new NXP_Push_Mapping__mdt(
                     Active__c = true,
-                    Mapping_Set__c = 'TechnoMile_Default',
+                    Mapping_Set__c = 'Opportunity_Default',
                     Target_Object__c = 'Opportunity',
                     Source_Field__c = r[0],
                     Target_Field__c = r[1],
@@ -29,7 +29,7 @@ private class NXP_AgentsTest {
                 )
             );
         }
-        NXP_TechnoMilePushTarget.mappingOverride = rows;
+        NXP_OpportunityPushTarget.mappingOverride = rows;
     }
 
     private static NXP_Gov_Notice__c notice() {
@@ -133,17 +133,17 @@ private class NXP_AgentsTest {
         NXP_PreviewPushAction.Response p = NXP_PreviewPushAction.run(new List<NXP_PreviewPushAction.Request>{ pr })[0];
         System.assert(p.preview.contains('new one will be created'), p.preview);
 
-        NXP_PushToTechnoMileAction.Request push = new NXP_PushToTechnoMileAction.Request();
+        NXP_PushToOpportunityAction.Request push = new NXP_PushToOpportunityAction.Request();
         push.noticeId = n.Id;
         push.previewToken = 'forged';
         System.assertEquals(
             'Failed',
-            NXP_PushToTechnoMileAction.run(new List<NXP_PushToTechnoMileAction.Request>{ push })[0].status
+            NXP_PushToOpportunityAction.run(new List<NXP_PushToOpportunityAction.Request>{ push })[0].status
         );
         push.previewToken = p.previewToken;
         System.assertEquals(
             'Success',
-            NXP_PushToTechnoMileAction.run(new List<NXP_PushToTechnoMileAction.Request>{ push })[0].status
+            NXP_PushToOpportunityAction.run(new List<NXP_PushToOpportunityAction.Request>{ push })[0].status
         );
 
         NXP_PushStatusAction.Request st = new NXP_PushStatusAction.Request();

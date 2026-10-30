@@ -5,7 +5,7 @@ Government opportunity intelligence on Salesforce. Nexus Pursuit Hub replaces th
 - **Feeds:** it ingests government feeds (SAM.gov, agency forecasts, USAspending awards, SAM.gov entities) and GSA eBuy RFQs received by e-mail.
 - **Market intel:** forecasts, recompetes, vendor, agency and contract-vehicle views, with Watch alerts.
 - **Searches:** each user builds their own saved searches and gets alerts on matches.
-- **Push:** chosen notices go into **TechnoMile**, which keeps managing opportunities and capture.
+- **Push:** chosen notices become **Opportunity** records, where capture is managed.
 
 ![Solution architecture](docs/diagrams/01-solution-architecture.jpg)
 
@@ -29,7 +29,7 @@ Government opportunity intelligence on Salesforce. Nexus Pursuit Hub replaces th
 | User-built saved searches with boolean keywords, live preview and a 13-week back-test                                  | **My Searches** tab (`nxpSearchBuilder`)                                          |
 | Real-time, daily and weekly alerts; follow alerts                                                                      | `NXP_SearchMatchService`, `NXP_AlertService`, `NXP_DigestBatch`                   |
 | Match Inbox: push, watch or dismiss                                                                                    | **Match Inbox** tab (`nxpMatchInbox`)                                             |
-| Push to TechnoMile: manual, bulk, auto-push rules and post-push sync                                                   | `nxp-push`, `NXP_Push_Mapping__mdt`                                               |
+| Push to Opportunity: manual, bulk, auto-push rules and post-push sync                                                  | `nxp-push`, `NXP_Push_Mapping__mdt`                                               |
 | Forecasts board and recompete timeline, with Watch                                                                     | **Forecasts** and **Recompetes** tabs                                             |
 | Vendor and agency profiles: awards, incumbents, what's coming, contacts                                                | Gov Vendor and Gov Agency record pages                                            |
 | Vehicle portfolio: vehicles we hold, their notices and expiry; notices that need a vehicle we lack                     | **Vehicle Portfolio** tab (`nxpVehiclePortfolio`)                                 |
@@ -111,4 +111,4 @@ Version 1.0.0, first build:
     - 41 Jest tests pass (in several time zones) and ESLint is clean.
     - Every bash and PowerShell script parses, and each was run against a stand-in `sf` CLI and REST endpoint to check its commands and results.
 - **Not yet run:** the code has not been deployed to an org from this repository. Run `scripts/validate.sh --org <org>` first; it compiles everything and runs every Apex test.
-- **Org-specific settings:** the push target and the TechnoMile field mapping must be set per org. See the [admin guide](docs/guides/admin-guide.md#push-mapping). The eBuy e-mail address, prompt templates and AI switches are also set up per org after deployment.
+- **Org-specific settings:** the push target and the Opportunity field mapping must be set per org. See the [admin guide](docs/guides/admin-guide.md#push-mapping). The eBuy e-mail address, prompt templates and AI switches are also set up per org after deployment.

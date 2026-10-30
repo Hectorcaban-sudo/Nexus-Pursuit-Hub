@@ -3,7 +3,7 @@
     <columns>
         <field>NXP_Push_Log__c$Name</field>
     </columns>
-    <description>Successful pushes to TechnoMile by month and where they started.</description>
+    <description>Successful pushes to Opportunity by month and where they started.</description>
     <filter>
         <criteriaItems>
             <column>NXP_Push_Log__c$Status__c</column>

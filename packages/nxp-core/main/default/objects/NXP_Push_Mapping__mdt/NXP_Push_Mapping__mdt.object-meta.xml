@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Gov Notice field to TechnoMile (target object) field.</description>
+    <description>Gov Notice field to Opportunity (target object) field.</description>
     <label>NXP Push Mapping</label>
     <pluralLabel>NXP Push Mappings</pluralLabel>
     <visibility>Public</visibility>

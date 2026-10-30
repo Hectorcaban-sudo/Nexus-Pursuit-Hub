@@ -11,7 +11,7 @@ Copy into the release ticket and tick each item.
 - [ ] Feed Console: _Run now_ on SAM_Opportunities → run Succeeded, records read > 0
 - [ ] Smoke test: open a new notice → summary card renders; follow / unfollow works
 - [ ] Smoke test: preview a saved search; save; a match appears after the next run
-- [ ] Smoke test (UAT/prod): push one sample notice to TechnoMile → record created, Push Log Success; delete the test record afterwards
+- [ ] Smoke test (UAT/prod): push one sample notice to Opportunity → record created, Push Log Success; delete the test record afterwards
 - [ ] Smoke test: Forecasts, Recompetes, Vehicle Portfolio and a vendor and agency page load with data
 - [ ] Smoke test (if eBuy is set up): send a test eBuy e-mail → **Inbound Emails** shows it _Ingested_ and the notice exists
 - [ ] Smoke test (if the Document Reader is on): attach a PDF to a notice → Documents card shows _Read_ within a few minutes
@@ -26,7 +26,7 @@ Copy into the release ticket and tick each item.
 - [ ] SAM.gov `ApiKey` set on the NXP SAM.gov principal
 - [ ] Forecast Named Credential URL and `FC_*` mappings set
 - [ ] Active Company Profile created; `rescore-notices.apex` run
-- [ ] Push mapping points at the TechnoMile object; duplicate field added and mapped; `Contract_Vehicle_Code__c` mapped if TechnoMile has a vehicle field
+- [ ] Push mapping points at the Opportunity object; duplicate field added and mapped; `Contract_Vehicle_Code__c` mapped if the Opportunity has a vehicle field
 - [ ] Contract vehicles we hold created (We Hold, expiry, Inbox Address)
 - [ ] eBuy (if used): `NXP_Ebuy_Inbox` address created with the integration user as context user; eBuy mail routed to it; `Ebuy_Allowed_Senders` set; auto-push search for eBuy RFQs created by a Power User (optional)
 - [ ] Report and dashboard folders shared: _Nexus Pursuit Hub_ with BD users, _Nexus Admin_ with admins and the project lead; subscriptions set up (optional)
@@ -42,4 +42,4 @@ Copy into the release ticket and tick each item.
 
 - [ ] Four-week parallel run complete: share of GovWin-alerted notices also caught meets the agreed target
 - [ ] Users trained (user guide), saved searches rebuilt
-- [ ] GovWin → TechnoMile connector switched off after Nexus pushes are confirmed
+- [ ] GovWin → Opportunity connector switched off after Nexus pushes are confirmed

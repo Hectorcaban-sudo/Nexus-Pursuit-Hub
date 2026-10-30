@@ -2,7 +2,7 @@
     "name": "nexus-pursuit-hub",
     "private": true,
     "version": "1.0.0",
-    "description": "Nexus Pursuit Hub: government opportunity intelligence on Salesforce (GovWin replacement) with push to TechnoMile",
+    "description": "Nexus Pursuit Hub: government opportunity intelligence on Salesforce (GovWin replacement) with push to Opportunity",
     "scripts": {
         "lint": "eslint \"packages/**/lwc/**/*.js\"",
         "test": "npm run test:unit",

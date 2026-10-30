@@ -8,10 +8,10 @@
     <protected>false</protected>
     <values>
         <field>Description__c</field>
-        <value xsi:type="xsd:string">Mapping set used by Push to TechnoMile</value>
+        <value xsi:type="xsd:string">Mapping set used by Push to Opportunity</value>
     </values>
     <values>
         <field>Value__c</field>
-        <value xsi:type="xsd:string">TechnoMile_Default</value>
+        <value xsi:type="xsd:string">Opportunity_Default</value>
     </values>
 </CustomMetadata>

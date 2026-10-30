@@ -1,15 +1,15 @@
 # Solution architecture
 
-Nexus Pursuit Hub is a Salesforce-native market-intelligence app that replaces GovWin IQ. It runs in the same org as TechnoMile:
+Nexus Pursuit Hub is a Salesforce-native market-intelligence app that replaces GovWin IQ. It runs in the same Salesforce org as your Opportunity records:
 
 - Nexus Pursuit Hub finds and tracks government opportunities.
-- TechnoMile manages the pursuits that users push into it.
+- Opportunity records hold the pursuits that users push, and capture is managed there.
 
 ![Solution architecture](../diagrams/01-solution-architecture.jpg)
 
 ## Scope
 
-| Nexus Pursuit Hub owns                                                 | TechnoMile keeps                           |
+| Nexus Pursuit Hub owns                                                 | Opportunity (capture) keeps                |
 | ---------------------------------------------------------------------- | ------------------------------------------ |
 | Government feed ingestion, de-duplication, amendments, documents       | Opportunity / pursuit records and pipeline |
 | Searchable library of notices, forecasts, awards, vendors and agencies | Capture stages, gates, bid/no-bid, pWin    |
@@ -27,13 +27,13 @@ Nexus Pursuit Hub is a Salesforce-native market-intelligence app that replaces G
 | Intelligence | Fit score (`NXP_FitScoreService`), saved-search matching, alerts, watches, AI summaries, Document Reader and eBuy extraction (prompt templates)                                                                                                                     |
 | Experience   | Lightning app _Nexus Pursuit Hub_: Match Inbox, My Searches, Gov Notice record page (with Documents), Forecasts, Recompetes, Agency and Vendor profiles, Vehicle Portfolio; for admins Feed Console and Inbound Emails; reports and dashboards for leads and admins |
 | Agent        | Nexus Pursuit Assistant (Agentforce employee agent) with four subagents                                                                                                                                                                                             |
-| Hand-off     | Push to TechnoMile through a configurable mapping; amendments keep pushed records current                                                                                                                                                                           |
+| Hand-off     | Push to Opportunity through a configurable mapping; amendments keep pushed records current                                                                                                                                                                          |
 
 ## Main flows
 
 1. **Ingest.** A scheduled job, a batch, a REST call or an eBuy e-mail delivers records. `NXP_IngestionService` upserts notices, writes a Notice Version for every change of tracked fields, and publishes a change event ([02](../diagrams/02-ingestion-pipeline.jpg), [03](../diagrams/03-import-channels.jpg)).
 2. **Match and alert.** A platform-event trigger runs each new or changed notice against every active saved search. It records Search Matches, sends real-time alerts, queues digests, alerts followers, requests AI summaries and calls the auto-push listener ([04](../diagrams/04-search-alert-workflow.jpg)).
-3. **Push.** A user (or an auto-push rule, or the assistant) pushes a notice. The push service checks for an existing record, then creates or links the TechnoMile record, logs the push, and keeps it in sync on later amendments ([05](../diagrams/05-push-workflow.jpg)).
+3. **Push.** A user (or an auto-push rule, or the assistant) pushes a notice. The push service checks for an existing record, then creates or links the Opportunity record, logs the push, and keeps it in sync on later amendments ([05](../diagrams/05-push-workflow.jpg)).
 4. **Read documents.** PDFs attached to a notice (eBuy attachments, uploads) are read by the Document Reader, which lists requirements, evaluation factors, key dates and risks and flags differences from the notice.
 5. **Assist.** The Nexus Pursuit Assistant drafts searches, explains notices, fit scores and their documents, answers market questions and pushes notices. Every push and save needs a preview and an explicit yes ([10](../diagrams/10-agent-architecture.jpg)).
 
@@ -43,7 +43,7 @@ Nexus Pursuit Hub is a Salesforce-native market-intelligence app that replaces G
 | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | Seven unlocked packages without namespace (the seventh, `nxp-analytics`, holds reports and dashboards); direct source deploy also supported | [0001](../adr/0001-unlocked-packages-no-namespace.md) |
 | One ingestion service for all channels, events decouple consumers                                                                           | [0002](../adr/0002-single-ingestion-path.md)          |
-| Push target configured by metadata, no code dependency on TechnoMile                                                                        | [0003](../adr/0003-configurable-push-target.md)       |
+| Push target configured by metadata, no code dependency on Opportunity                                                                       | [0003](../adr/0003-configurable-push-target.md)       |
 | Agents built manually in Government Cloud; guardrails enforced in Apex                                                                      | [0004](../adr/0004-manual-agents-apex-guardrails.md)  |
 | API 68.0 everywhere                                                                                                                         | [0005](../adr/0005-api-68.md)                         |
 | Releases by scripted `sf` commands, no CI/CD for now                                                                                        | [0006](../adr/0006-scripted-releases.md)              |

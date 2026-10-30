@@ -1,11 +1,11 @@
 /**
  * Push target driven entirely by NXP_Push_Mapping__mdt (mapping set from NXP_Setting
  * Push_Mapping_Set). Ships pointed at Opportunity; point Target_Object__c and the target fields at
- * TechnoMile's opportunity object in each org. Dedupe uses mapping rows whose Source_Field__c is
+ * the Opportunity object in each org. Dedupe uses mapping rows whose Source_Field__c is
  * Solicitation_Number__c or Notice_Id__c (add a field such as NXP_Solicitation_Number__c on the
  * target object and map it to enable this).
  */
-public inherited sharing class NXP_TechnoMilePushTarget implements NXP_PushTarget {
+public inherited sharing class NXP_OpportunityPushTarget implements NXP_PushTarget {
     private static final Set<String> MATCH_SOURCES = new Set<String>{ 'solicitation_number__c', 'notice_id__c' };
 
     @TestVisible
@@ -15,7 +15,7 @@ public inherited sharing class NXP_TechnoMilePushTarget implements NXP_PushTarge
     private final String objectName;
     private final Map<String, Schema.SObjectField> targetFields;
 
-    public NXP_TechnoMilePushTarget() {
+    public NXP_OpportunityPushTarget() {
         this.mappings = loadMappings();
         if (mappings.isEmpty()) {
             throw new IllegalArgumentException('No active NXP_Push_Mapping__mdt rows for mapping set ' + mappingSet());
@@ -231,7 +231,7 @@ public inherited sharing class NXP_TechnoMilePushTarget implements NXP_PushTarge
     }
 
     private static String mappingSet() {
-        return NXP_Settings.getString('Push_Mapping_Set', 'TechnoMile_Default');
+        return NXP_Settings.getString('Push_Mapping_Set', 'Opportunity_Default');
     }
 
     private static List<NXP_Push_Mapping__mdt> loadMappings() {
