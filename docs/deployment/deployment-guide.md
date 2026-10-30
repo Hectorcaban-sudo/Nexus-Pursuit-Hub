@@ -130,7 +130,9 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
     - the assistant ([agent manual build](../guides/agent-manual-build.md)).
 10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
-11. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
+11. **Search templates:** as an `NXP_Admin` user, run `sf apex run --file scripts/apex/seed-search-templates.apex --target-org <alias>` to create the four starter templates under _Start from a template_ on My Searches (safe to run again; edit or delete them like any search).
+12. **Admin e-mail:** the daily problems e-mail goes to every active `NXP_Admin` user at 07:00. Set `Admin_Digest_Recipients` to send it elsewhere, or `Admin_Digest_Mode = Off`.
+13. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
 
 ## SAM.gov API key
 

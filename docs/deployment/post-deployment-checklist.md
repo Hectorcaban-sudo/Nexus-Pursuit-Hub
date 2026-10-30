@@ -6,7 +6,7 @@ Copy into the release ticket and tick each item.
 
 - [ ] Deployment succeeded; job ID and manifest attached to the ticket
 - [ ] `env-config/<env>` deployed
-- [ ] `schedule-jobs.apex` ran; Setup → Scheduled Jobs shows _NXP Feed Scheduler_, _NXP Daily Digest_, _NXP Weekly Digest_, _NXP Notice Analyst :15_, _NXP Notice Analyst :45_, _NXP Push Retry_
+- [ ] `schedule-jobs.apex` ran; Setup → Scheduled Jobs shows _NXP Feed Scheduler_, _NXP Daily Digest_, _NXP Weekly Digest_, _NXP Notice Analyst :15_, _NXP Notice Analyst :45_, _NXP Push Retry_, _NXP Admin Digest_
 - [ ] Platform event subscribers running (Setup → Platform Events → NXP Gov Notice Changed → Subscriptions)
 - [ ] Feed Console: _Run now_ on SAM_Opportunities → run Succeeded, records read > 0
 - [ ] Smoke test: open a new notice → summary card renders; follow / unfollow works
@@ -33,6 +33,9 @@ Copy into the release ticket and tick each item.
 - [ ] Report and dashboard folders shared: _Nexus Pursuit Hub_ with BD users, _Nexus Admin_ with admins and the project lead; subscriptions set up (optional)
 - [ ] GovWin parallel run: first GovWin export loaded with `load-govwin-export` (if the cut-over is in progress)
 - [ ] Custom notification _NXP Match Alert_ delivery enabled
+- [ ] Search templates created (`seed-search-templates.apex`) and visible under _Start from a template_ to a BD user
+- [ ] Scheduled jobs include **NXP Admin Digest**; `Admin_Digest_Recipients` set if admins shouldn't get it
+- [ ] `AI_Max_Calls_Per_Day` set to fit your Einstein credits
 - [ ] Org-wide e-mail address set in `Alert_OrgWide_Email_Id` (optional)
 - [ ] REST integration user, External Client App and NXP_Integration set up (if used)
 - [ ] Data Cloud `NXP_Awards` connector and data stream created (if used)

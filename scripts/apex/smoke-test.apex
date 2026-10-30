@@ -554,6 +554,38 @@ try {
     fails++;
 }
 
+// 9b. Improvements: admin digest, templates, AI limit, document checks -----------------------
+try {
+    NXP_AdminDigestJob.Digest d = NXP_AdminDigestJob.build(Datetime.now().addDays(-1));
+    out.add('PASS|Admin digest|' + d.problems + ' problem(s) in the last 24 hours would be e-mailed (mode ' + NXP_Settings.getString('Admin_Digest_Mode', 'Problems') + ')');
+    if ([SELECT COUNT() FROM CronTrigger WHERE CronJobDetail.Name = :NXP_AdminDigestJob.JOB_NAME] == 0) {
+        out.add('WARN|Admin digest|Not scheduled. Run scripts/post-deploy/schedule-jobs.apex.');
+    }
+} catch (Exception e) {
+    out.add('FAIL|Admin digest|' + e.getMessage());
+    fails++;
+}
+try {
+    List<NXP_SearchController.TemplateSummary> templates = NXP_SearchController.getTemplates();
+    out.add((templates.isEmpty() ? 'WARN' : 'PASS') + '|Search templates|' + templates.size() + ' template(s)' + (templates.isEmpty() ? '. Run scripts/apex/seed-search-templates.apex.' : ''));
+} catch (Exception e) {
+    out.add('FAIL|Search templates|' + e.getMessage());
+    fails++;
+}
+try {
+    out.add('PASS|AI limit|' + NXP_AiService.callsToday() + ' of ' + NXP_AiService.maxCallsPerDay() + ' AI calls used today (0 = no limit)');
+} catch (Exception e) {
+    out.add('FAIL|AI limit|' + e.getMessage());
+    fails++;
+}
+try {
+    Integer openDocs = [SELECT COUNT() FROM NXP_Document_Analysis__c WHERE Check_Count__c > 0 AND Checks_Reviewed__c = NULL];
+    out.add('PASS|Document checks|' + openDocs + ' document(s) with open disagreements');
+} catch (Exception e) {
+    out.add('FAIL|Document checks|' + e.getMessage());
+    fails++;
+}
+
 // 10. AI and errors -------------------------------------------------------------------------
 out.add(
     NXP_Settings.getBoolean('AI_Enabled', false)

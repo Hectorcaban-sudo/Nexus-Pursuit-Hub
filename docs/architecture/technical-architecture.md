@@ -58,6 +58,7 @@ The capture app behind the Opportunity records is not a code dependency. The pus
 | File attached to a notice (`ContentDocumentLink`) | `NXP_ContentDocumentLinkTrigger` → `NXP_DocumentAnalysisJob` (Queueable, one file per job) | Read PDFs with the Document Reader                                                       |
 | New awards (`NXP_AwardSummaryTrigger`)            | `NXP_WatchService`                                                                         | Vendor and recompete watch alerts                                                        |
 | `NXP Push Retry` (:20)                            | `NXP_PushRetryJob`                                                                         | Retry failed auto-pushes                                                                 |
+| `NXP Admin Digest` (07:00)                        | `NXP_AdminDigestJob`                                                                       | Problems e-mail to admins (eBuy, feeds, pushes, documents, AI limit)                     |
 
 ## Governor-limit design
 

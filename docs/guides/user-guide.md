@@ -4,7 +4,7 @@ Nexus Pursuit Hub finds government opportunities for you and sends the good ones
 
 ## 1. Build a search
 
-1. Go to **My Searches** and click **+**.
+1. Go to **My Searches** and click **+**, or pick one under **Start from a template** and click **Use template**. A template makes a private copy you can change; it shows how many notices match it now and how many people use it.
 2. Either describe what you want in **Describe it** and click **Draft criteria**, or fill in the criteria yourself:
     - Keywords: `cyber AND ("zero trust" OR ZTA)`; `icam*` for word beginnings; `NOT training` to exclude.
     - Buyer, NAICS (`5415*` covers a family), PSC, set-aside, notice type.
@@ -17,8 +17,8 @@ Nexus Pursuit Hub finds government opportunities for you and sends the good ones
 
 Every new match lands in **Match Inbox**, best fit first. Each card shows:
 
-- The fit score.
-- The notice type and set-aside, plus what changed if it was amended.
+- The fit score, with up to three reasons: the two rules that added the most points (green) and the one that cost the most (amber for some points, red for none).
+- The notice type and set-aside, plus what changed if it was amended. A red **document checks** chip means a read solicitation document disagrees with the notice (see below).
 - The buyer, value and how many days are left.
 - An AI summary when one is available.
 - Why the notice matched.
@@ -29,11 +29,14 @@ Every new match lands in **Match Inbox**, best fit first. Each card shows:
 | **Watch**               | Follows the notice; you're alerted when it changes                                                                 |
 | **Dismiss**             | Removes it from the inbox; your reason helps tune searches                                                         |
 
+To act on several at once, tick the cards (or **Select all**) and use **Watch**, **Dismiss** (one reason for all) or **Push** above the list. Push needs the Power User permission.
+
 ## 3. Read a notice
 
 Open a notice title to see:
 
-- Days to respond and the fit score, with _why it scores_ rule by rule.
+- Days to respond and the fit score, with the top reasons under the header (**All rules** jumps to the full breakdown).
+- A red box when a read document disagrees with the notice (due date, NAICS or set-aside): what the notice says next to what the file says, with **Open document** and **Mark as checked**. Marking it hides it for everyone; if the file is read again and still disagrees, it comes back. The days-to-respond tile says _Check the date below_ when the due dates differ, and the push dialog warns too.
 - The AI summary (check it against the solicitation), the full description and contacts. SAM.gov sends only a link to the description; it is fetched automatically for notices that match a search or score high. For others, click **Load description**. Summaries are written for notices that match a saved search.
 - Version history: every amendment and what changed.
 - Push history, plus **Open on SAM.gov** and **Follow**.
@@ -73,7 +76,8 @@ The assistant always shows a preview and waits for your **yes** before saving a 
 
 - Share a search with your team (**Visibility: Team**, plus the public group name) or as an **Org Template**.
 - Turn on **Auto-push** for a search: _Fit Threshold_ (for example 70) or _All Matches_.
-- Select several cards and click **Push selected**.
+- Select several cards and click **Push**.
+- Save a search as an **Org Template** to list it under _Start from a template_ for everyone. Templates never alert, match or auto-push themselves; people use copies.
 
 ## FAQ
 
