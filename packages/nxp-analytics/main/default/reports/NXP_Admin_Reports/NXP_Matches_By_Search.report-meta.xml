@@ -13,7 +13,7 @@
         <field>NXP_Saved_Search__c$Name</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>NXP - Matches by saved search</name>
+    <name>NXP Admin - Matches by saved search</name>
     <params>
         <name>co</name>
         <value>1</value>

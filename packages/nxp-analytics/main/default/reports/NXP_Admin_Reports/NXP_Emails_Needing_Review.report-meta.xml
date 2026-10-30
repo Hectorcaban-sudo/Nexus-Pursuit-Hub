@@ -23,7 +23,7 @@
         <field>NXP_Inbound_Email__c$Status__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>NXP Admin - Inbound emails needing review</name>
+    <name>NXP Admin - Emails needing review</name>
     <params>
         <name>co</name>
         <value>1</value>

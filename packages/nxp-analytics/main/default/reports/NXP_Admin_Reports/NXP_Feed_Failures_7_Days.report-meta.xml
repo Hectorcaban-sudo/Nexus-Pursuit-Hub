@@ -20,7 +20,7 @@
         <field>NXP_Feed_Run__c$Feed_Name__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>NXP Admin - Failed feed runs, last 7 days</name>
+    <name>NXP Admin - Failed feed runs (7 days)</name>
     <params>
         <name>co</name>
         <value>1</value>

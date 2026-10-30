@@ -17,7 +17,7 @@
         <field>NXP_GovWin_Alert__c$Result__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>NXP Admin - GovWin alerts caught by a search</name>
+    <name>NXP Admin - GovWin alerts caught</name>
     <params>
         <name>co</name>
         <value>1</value>

@@ -171,10 +171,29 @@
             <rowIndex>20</rowIndex>
             <rowSpan>8</rowSpan>
         </dashboardGridComponents>
+        <dashboardGridComponents>
+            <colSpan>12</colSpan>
+            <columnIndex>0</columnIndex>
+            <dashboardComponent>
+                <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
+                <chartAxisRange>Auto</chartAxisRange>
+                <componentType>BarStacked</componentType>
+                <displayUnits>Auto</displayUnits>
+                <header>Matches per saved search, by outcome (30 days)</header>
+                <legendPosition>Bottom</legendPosition>
+                <report>NXP_Admin_Reports/NXP_Matches_By_Search</report>
+                <showPercentage>false</showPercentage>
+                <showValues>true</showValues>
+                <sortBy>RowValueDescending</sortBy>
+                <useReportChart>false</useReportChart>
+            </dashboardComponent>
+            <rowIndex>28</rowIndex>
+            <rowSpan>8</rowSpan>
+        </dashboardGridComponents>
         <numberOfColumns>12</numberOfColumns>
         <rowHeight>36</rowHeight>
     </dashboardGridLayout>
-    <dashboardType>LoggedInUser</dashboardType>
+    <dashboardType>SpecifiedUser</dashboardType>
     <description
     >Weekly active users, saved searches per user, where pushes come from, and the GovWin parallel-run catch rate.</description>
     <isGridLayout>true</isGridLayout>

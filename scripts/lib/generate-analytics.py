@@ -59,6 +59,7 @@ def B(rt):
 REPORTS = []
 def report(folder, name, label, rt, desc, fmt='Summary', down=(), across=(), columns=(), filters=(), time=None, details=False, aggregates=()):
     """down/across: (field, granularity|None); filters: (field, operator, value); time: (field, interval)."""
+    assert len(label) <= 40, f'Report name over 40 characters: {label}'
     REPORTS.append((folder, name))
     x = H + f'<Report {NS}>\n'
     cols = list(columns)
@@ -105,7 +106,7 @@ report(R, 'NXP_New_Notices_30_Days', 'NXP - New notices, last 30 days', 'NXP_Not
        down=[(N + 'Notice_Type__c', None)], columns=[N + 'Name', N + 'Fit_Score__c'], time=(N + 'CreatedDate', 'INTERVAL_LAST30'))
 report(R, 'NXP_New_Notices_By_Fit_Band', 'NXP - New notices by fit band', 'NXP_Notices', 'Notices created in the last 30 days, by fit score band.',
        down=[(N + 'Fit_Band__c', None)], columns=[N + 'Name'], time=(N + 'CreatedDate', 'INTERVAL_LAST30'))
-report(R, 'NXP_About_To_Miss', 'NXP - High-fit notices due soon, not pushed', 'NXP_Notices', 'Active notices with fit 60 or more, due in the next 14 days, not pushed to TechnoMile.',
+report(R, 'NXP_About_To_Miss', 'NXP - High-fit, due soon, not pushed', 'NXP_Notices', 'Active notices with fit 60 or more, due in the next 14 days, not pushed to TechnoMile.',
        down=[(N + 'Title__c', None)], columns=[N + 'Notice_Id__c', N + 'Agency_Path__c', N + 'Response_Due__c', N + 'Fit_Score__c'],
        filters=[(N + 'Status__c', 'equals', 'Active'), (N + 'Fit_Score__c', 'greaterOrEqual', '60'), (N + 'Pushed__c', 'equals', '0'),
                 (N + 'Response_Due__c', 'equals', 'NEXT_N_DAYS:14')], details=True)
@@ -114,7 +115,7 @@ report(R, 'NXP_Ebuy_By_Vehicle', 'NXP - eBuy RFQs by vehicle', 'NXP_Notices', 'G
        filters=[(N + 'Source_Feed__c', 'equals', 'EMAIL_GSA_eBuy')], time=(N + 'CreatedDate', 'INTERVAL_LAST90'), details=True)
 report(R, 'NXP_Match_Outcomes', 'NXP - Match outcomes', 'NXP_Searches_And_Matches', 'Search matches in the last 30 days by what the user did (none, watching, dismissed, pushed).',
        down=[(M + 'User_Action__c', None)], columns=[M + 'Name'], time=(M + 'CreatedDate', 'INTERVAL_LAST30'))
-report(R, 'NXP_Matches_By_Search', 'NXP - Matches by saved search', 'NXP_Searches_And_Matches', 'Matches in the last 30 days per saved search, and how many were pushed.',
+report('NXP_Admin_Reports', 'NXP_Matches_By_Search', 'NXP Admin - Matches by saved search', 'NXP_Searches_And_Matches', 'Matches in the last 30 days per saved search, and how many were pushed.',
        down=[(SM + 'Name', None)], across=[(M + 'User_Action__c', None)], fmt='Matrix', columns=[M + 'Name'], time=(M + 'CreatedDate', 'INTERVAL_LAST30'))
 report(R, 'NXP_Pushes_By_Month', 'NXP - Pushes by month and source', 'NXP_Push_Logs', 'Successful pushes to TechnoMile by month and where they started.', 'Matrix',
        down=[(P + 'CreatedDate', 'Month')], across=[(P + 'Source__c', None)], columns=[P + 'Name'],
@@ -127,7 +128,7 @@ report(R, 'NXP_Pushes_30_Days', 'NXP - Pushes, last 30 days', 'NXP_Push_Logs', '
 A = 'NXP_Admin_Reports'
 report(A, 'NXP_Feed_Runs_By_Feed', 'NXP Admin - Feed runs by feed', 'NXP_Feed_Runs', 'Feed runs in the last 7 days, by feed and status.', 'Matrix',
        down=[(F + 'Feed_Name__c', None)], across=[(F + 'Status__c', None)], columns=[F + 'Name'], time=(F + 'Started__c', 'INTERVAL_LAST7'))
-report(A, 'NXP_Feed_Failures_7_Days', 'NXP Admin - Failed feed runs, last 7 days', 'NXP_Feed_Runs', 'Failed feed runs in the last 7 days.',
+report(A, 'NXP_Feed_Failures_7_Days', 'NXP Admin - Failed feed runs (7 days)', 'NXP_Feed_Runs', 'Failed feed runs in the last 7 days.',
        down=[(F + 'Feed_Name__c', None)], columns=[F + 'Name', F + 'Started__c'], filters=[(F + 'Status__c', 'equals', 'Failed')], time=(F + 'Started__c', 'INTERVAL_LAST7'), details=True)
 report(A, 'NXP_Records_Per_Day', 'NXP Admin - Records loaded per day', 'NXP_Feed_Runs', 'Records read, created, updated and rejected per day, last 7 days.',
        down=[(F + 'Started__c', 'Day')], columns=[F + 'Name'],
@@ -140,7 +141,7 @@ report(A, 'NXP_Push_Failures', 'NXP Admin - Push failures, last 7 days', 'NXP_Pu
        time=(P + 'CreatedDate', 'INTERVAL_LAST7'), details=True)
 report(A, 'NXP_Inbound_Emails_By_Status', 'NXP Admin - Inbound emails by status', 'NXP_Inbound_Emails', 'eBuy inbox e-mail in the last 30 days, by status.',
        down=[(E + 'Status__c', None)], columns=[E + 'Name'], time=(E + 'Received__c', 'INTERVAL_LAST30'))
-report(A, 'NXP_Emails_Needing_Review', 'NXP Admin - Inbound emails needing review', 'NXP_Inbound_Emails', 'eBuy e-mails marked Needs Review or Failed.',
+report(A, 'NXP_Emails_Needing_Review', 'NXP Admin - Emails needing review', 'NXP_Inbound_Emails', 'eBuy e-mails marked Needs Review or Failed.',
        down=[(E + 'Status__c', None)], columns=[E + 'Subject__c', E + 'From_Address__c', E + 'Received__c'], filters=[(E + 'Status__c', 'equals', 'Needs Review,Failed')], details=True)
 report(A, 'NXP_Documents_By_Status', 'NXP Admin - Document analyses by status', 'NXP_Document_Analyses', 'Files registered in the last 30 days, by Document Reader status.',
        down=[(D + 'Status__c', None)], columns=[D + 'Name'], time=(D + 'CreatedDate', 'INTERVAL_LAST30'))
@@ -162,7 +163,7 @@ report(A, 'NXP_Pushes_By_Source', 'NXP Admin - Where pushes come from', 'NXP_Pus
        filters=[(P + 'Status__c', 'equals', 'Success,Linked Existing'), (P + 'Mode__c', 'notEqual', 'Sync')], time=(P + 'CreatedDate', 'INTERVAL_LAST30'))
 report(A, 'NXP_GovWin_Catch_Rate', 'NXP Admin - GovWin parallel run', 'NXP_GovWin_Alerts', 'GovWin alerts by whether Nexus caught them (Caught by a search, In Nexus no search matched, Not in Nexus).',
        down=[(G + 'Result__c', None)], columns=[G + 'Title__c', G + 'Solicitation_Number__c', G + 'Alert_Date__c'], details=True)
-report(A, 'NXP_GovWin_Caught', 'NXP Admin - GovWin alerts caught by a search', 'NXP_GovWin_Alerts', 'GovWin alerts that matched a Nexus saved search.',
+report(A, 'NXP_GovWin_Caught', 'NXP Admin - GovWin alerts caught', 'NXP_GovWin_Alerts', 'GovWin alerts that matched a Nexus saved search.',
        down=[(G + 'Result__c', None)], columns=[G + 'Title__c'], filters=[(G + 'Result__c', 'equals', 'Caught by a search')])
 report(A, 'NXP_GovWin_All', 'NXP Admin - GovWin alerts loaded', 'NXP_GovWin_Alerts', 'All GovWin alerts loaded for the parallel run.',
        down=[(G + 'Result__c', None)], columns=[G + 'Title__c'])
@@ -213,13 +214,13 @@ def dashboard(folder, name, title, desc, comps):
     x += '    <backgroundEndColor>#FFFFFF</backgroundEndColor>\n    <backgroundFadeDirection>Diagonal</backgroundFadeDirection>\n    <backgroundStartColor>#FFFFFF</backgroundStartColor>\n'
     x += '    <chartTheme>light</chartTheme>\n    <colorPalette>unity</colorPalette>\n    <dashboardChartTheme>light</dashboardChartTheme>\n    <dashboardColorPalette>unity</dashboardColorPalette>\n'
     x += '    <dashboardGridLayout>\n' + ''.join(comps) + '        <numberOfColumns>12</numberOfColumns>\n        <rowHeight>36</rowHeight>\n    </dashboardGridLayout>\n'
-    x += f'    <dashboardType>LoggedInUser</dashboardType>\n    <description>{esc(desc)}</description>\n    <isGridLayout>true</isGridLayout>\n'
+    x += f'    <dashboardType>SpecifiedUser</dashboardType>\n    <description>{esc(desc)}</description>\n    <isGridLayout>true</isGridLayout>\n'
     x += f'    <textColor>#000000</textColor>\n    <title>{esc(title)}</title>\n    <titleColor>#000000</titleColor>\n    <titleSize>12</titleSize>\n</Dashboard>\n'
     w(f'{ROOT}/dashboards/{folder}/{name}.dashboard-meta.xml', x)
 
 r = lambda n: 'NXP_Reports/' + n
 a = lambda n: 'NXP_Admin_Reports/' + n
-dashboard('NXP_Dashboards', 'NXP_Market_Activity', 'Nexus: Market and activity', 'New notices, matches, pushes to TechnoMile, fit, high-fit notices about to be missed, eBuy RFQs. Shows the data the viewer can see.', [
+dashboard('NXP_Dashboards', 'NXP_Market_Activity', 'Nexus: Market and activity', 'New notices, matches, pushes to TechnoMile, fit, high-fit notices about to be missed, eBuy RFQs. Runs as the user who deployed it (a Nexus admin), so it shows notice-level data only; no private search names.', [
     comp(0, 0, 4, 3, 'Metric', r('NXP_New_Notices_30_Days'), 'New notices (30 days)'),
     comp(0, 3, 4, 3, 'Metric', r('NXP_Match_Outcomes'), 'Search matches (30 days)'),
     comp(0, 6, 4, 3, 'Metric', r('NXP_Pushes_30_Days'), 'Pushed to TechnoMile (30 days)'),
@@ -230,7 +231,6 @@ dashboard('NXP_Dashboards', 'NXP_Market_Activity', 'Nexus: Market and activity',
     comp(12, 6, 8, 6, 'Bar', r('NXP_New_Notices_By_Fit_Band'), 'Fit score of new notices (30 days)'),
     comp(20, 0, 8, 6, 'Table', r('NXP_About_To_Miss'), 'About to miss: fit 60+, due in 14 days, not pushed'),
     comp(20, 6, 8, 6, 'Bar', r('NXP_Ebuy_By_Vehicle'), 'eBuy RFQs per vehicle (90 days)', 'RowValueDescending'),
-    comp(28, 0, 8, 12, 'BarStacked', r('NXP_Matches_By_Search'), 'Matches per saved search, by outcome (30 days)', 'RowValueDescending'),
 ])
 dashboard('NXP_Admin_Dashboards', 'NXP_Operations', 'Nexus: Operations', 'Feed health, records loaded, push results, eBuy inbox, Document Reader and errors. For Nexus admins.', [
     comp(0, 0, 4, 3, 'Metric', a('NXP_Feed_Failures_7_Days'), 'Failed feed runs (7 days)'),
@@ -255,5 +255,6 @@ dashboard('NXP_Admin_Dashboards', 'NXP_Adoption', 'Nexus: Adoption and GovWin cu
     comp(12, 0, 8, 6, 'Bar', a('NXP_Searches_By_User'), 'Saved searches per user', 'RowValueDescending'),
     comp(12, 6, 8, 6, 'Bar', a('NXP_Pushes_By_Source'), 'Where pushes come from (30 days)', 'RowValueDescending'),
     comp(20, 0, 8, 12, 'Table', a('NXP_Activity_By_User'), 'Screen views by user (30 days)', 'RowValueDescending'),
+    comp(28, 0, 8, 12, 'BarStacked', a('NXP_Matches_By_Search'), 'Matches per saved search, by outcome (30 days)', 'RowValueDescending'),
 ])
 print(len(REPORTS), 'reports')

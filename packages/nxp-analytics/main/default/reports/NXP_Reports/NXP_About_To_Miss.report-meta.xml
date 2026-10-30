@@ -44,7 +44,7 @@
         <field>NXP_Gov_Notice__c$Title__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
-    <name>NXP - High-fit notices due soon, not pushed</name>
+    <name>NXP - High-fit, due soon, not pushed</name>
     <params>
         <name>co</name>
         <value>1</value>
