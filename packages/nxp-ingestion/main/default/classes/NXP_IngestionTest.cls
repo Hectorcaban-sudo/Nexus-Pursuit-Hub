@@ -45,6 +45,18 @@ private class NXP_IngestionTest {
         }
     }
 
+    /** Two records per page out of 2,500 in total; remembers the last URL called. */
+    public class PagedSam implements HttpCalloutMock {
+        public String lastUrl;
+        public HttpResponse respond(HttpRequest req) {
+            lastUrl = req.getEndpoint();
+            HttpResponse res = new HttpResponse();
+            res.setStatusCode(200);
+            res.setBody(SAM_PAGE.replace('"totalRecords":2', '"totalRecords":2500'));
+            return res;
+        }
+    }
+
     private static NXP_Feed_Config__mdt samConfig() {
         return NXP_ConnectorSupport.config('SAM_Opportunities');
     }
@@ -89,6 +101,27 @@ private class NXP_IngestionTest {
         System.assertEquals(4, [SELECT COUNT() FROM NXP_Gov_Agency__c]);
         System.assertEquals(1, [SELECT COUNT() FROM NXP_Gov_Contact__c]);
         System.assertEquals(2, [SELECT COUNT() FROM NXP_Notice_Version__c WHERE Change_Type__c = 'Original']);
+    }
+
+    @IsTest
+    static void samOffsetIsAPageIndex() {
+        PagedSam mock = new PagedSam();
+        Test.setMock(HttpCalloutMock.class, mock);
+        NXP_FeedConnector c = NXP_ConnectorSupport.connectorFor(samConfig());
+        Test.startTest();
+        NXP_FeedPage first = c.fetchPage(c.initialCheckpoint(null));
+        System.assert(mock.lastUrl.contains('offset=0'), mock.lastUrl);
+        System.assertEquals(true, first.hasMore, '2,500 records at 1,000 a page need three pages');
+        System.assertEquals(1, first.nextCheckpoint.get('offset'));
+
+        NXP_FeedPage second = c.fetchPage(first.nextCheckpoint);
+        System.assert(mock.lastUrl.contains('offset=1'), mock.lastUrl);
+        System.assertEquals(true, second.hasMore);
+
+        NXP_FeedPage third = c.fetchPage(second.nextCheckpoint);
+        System.assert(mock.lastUrl.contains('offset=2'), mock.lastUrl);
+        System.assertEquals(false, third.hasMore, 'Page 3 holds records 2,000 to 2,499');
+        Test.stopTest();
     }
 
     @IsTest

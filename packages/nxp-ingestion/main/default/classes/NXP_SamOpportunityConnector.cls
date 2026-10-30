@@ -1,6 +1,7 @@
 /**
  * SAM.gov Get Opportunities Public API v2 (GET /opportunities/v2/search).
- * Pages by offset over a posted-date window. The API key is sent as the X-Api-Key header
+ * Pages over a posted-date window. SAM.gov's offset is a page index (0, 1, 2...), not a record
+ * offset, and limit is the page size (max 1000). The API key is sent as the X-Api-Key header
  * by the NXP_SAM_Gov Named Credential, never stored in code or metadata records.
  */
 public inherited sharing class NXP_SamOpportunityConnector implements NXP_FeedConnector {
@@ -41,6 +42,7 @@ public inherited sharing class NXP_SamOpportunityConnector implements NXP_FeedCo
 
     public NXP_FeedPage fetchPage(Map<String, Object> checkpoint) {
         Integer pageSize = config.Page_Size__c == null ? 1000 : config.Page_Size__c.intValue();
+        // Page index, not a record offset: SAM.gov returns page N as records N*limit to (N+1)*limit - 1.
         Integer offset = checkpoint.get('offset') == null ? 0 : Integer.valueOf(checkpoint.get('offset'));
         Map<String, String> params = NXP_ConnectorSupport.parseParams(config.Extra_Parameters__c);
         params.put('postedFrom', String.valueOf(checkpoint.get('postedFrom')));
@@ -57,8 +59,8 @@ public inherited sharing class NXP_SamOpportunityConnector implements NXP_FeedCo
         for (Object item : items) {
             page.records.add(toRecord(config.DeveloperName, item));
         }
-        Integer nextOffset = offset + items.size();
-        page.hasMore = !items.isEmpty() && nextOffset < page.totalRecords;
+        Integer nextOffset = offset + 1;
+        page.hasMore = !items.isEmpty() && nextOffset * pageSize < page.totalRecords;
         page.nextCheckpoint = new Map<String, Object>(checkpoint);
         page.nextCheckpoint.put('offset', nextOffset);
         return page;
