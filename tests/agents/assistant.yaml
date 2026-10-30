@@ -4,43 +4,64 @@
 # Release gate: 90% or more pass.
 agent: NXP_Pursuit_Assistant
 cases:
-  - utterance: "Alert me daily on Army cloud migration, 541512 or 541519, 8(a) or small business, over $5M"
-    expectedSubagent: Search Builder
-    expectedActions: [NXP Draft Search Criteria, NXP Preview Search]
-    mustNot: [NXP Save Search]           # never saves before the user says yes
-  - utterance: "Yes, save it as Army cloud"
-    context: after the preview above
-    expectedSubagent: Search Builder
-    expectedActions: [NXP Save Search]
-  - utterance: "Why is the fit score on this notice 72?"
-    context: on a Gov Notice record page
-    expectedSubagent: Notice Briefing
-    expectedActions: [NXP Explain Fit Score]
-  - utterance: "What changed in the latest amendment?"
-    context: on a Gov Notice record page
-    expectedSubagent: Notice Briefing
-    expectedActions: [NXP Compare Versions]
-  - utterance: "Who is the incumbent on this one?"
-    context: on a Gov Notice record page
-    expectedSubagent: Market Intel
-    expectedActions: [NXP Find Incumbent]
-  - utterance: "Which VA recompetes over $10M expire in the next 18 months?"
-    expectedSubagent: Market Intel
-    expectedActions: [NXP Recompete Query]
-  - utterance: "Push this to Opportunity"
-    context: on a Gov Notice record page
-    expectedSubagent: Push
-    expectedActions: [NXP Preview Push]
-    mustNot: [NXP Push To Opportunity]    # preview and confirmation first
-  - utterance: "Yes, push it"
-    context: after the preview above
-    expectedSubagent: Push
-    expectedActions: [NXP Push To Opportunity]
-  - utterance: "Did my push fail?"
-    expectedSubagent: Push
-    expectedActions: [NXP Push Status]
-  - utterance: "Turn on auto-push for my DHS search above 70"
-    expectedSubagent: Push
-    expectedActions: [NXP Set Auto-Push Rule]
-  - utterance: "Move this pursuit to the proposal stage"
-    expectedBehavior: Explains that capture and pipeline live in Opportunity; calls no action.
+    - utterance: 'Alert me daily on Army cloud migration, 541512 or 541519, 8(a) or small business, over $5M'
+      expectedSubagent: Search Builder
+      expectedActions: [NXP Draft Search Criteria, NXP Preview Search]
+      mustNot: [NXP Save Search] # never saves before the user says yes
+    - utterance: 'Yes, save it as Army cloud'
+      context: after the preview above
+      expectedSubagent: Search Builder
+      expectedActions: [NXP Save Search]
+    - utterance: 'Why is the fit score on this notice 72?'
+      context: on a Gov Notice record page
+      expectedSubagent: Notice Briefing
+      expectedActions: [NXP Explain Fit Score]
+    - utterance: 'What changed in the latest amendment?'
+      context: on a Gov Notice record page
+      expectedSubagent: Notice Briefing
+      expectedActions: [NXP Compare Versions]
+    - utterance: 'Who is the incumbent on this one?'
+      context: on a Gov Notice record page
+      expectedSubagent: Market Intel
+      expectedActions: [NXP Find Incumbent]
+    - utterance: 'Which VA recompetes over $10M expire in the next 18 months?'
+      expectedSubagent: Market Intel
+      expectedActions: [NXP Recompete Query]
+    - utterance: 'Push this to Opportunity'
+      context: on a Gov Notice record page
+      expectedSubagent: Push
+      expectedActions: [NXP Preview Push]
+      mustNot: [NXP Push To Opportunity] # preview and confirmation first
+    - utterance: 'Yes, push it'
+      context: after the preview above
+      expectedSubagent: Push
+      expectedActions: [NXP Push To Opportunity]
+    - utterance: 'Did my push fail?'
+      expectedSubagent: Push
+      expectedActions: [NXP Push Status]
+    - utterance: 'Turn on auto-push for my DHS search above 70'
+      expectedSubagent: Push
+      expectedActions: [NXP Set Auto-Push Rule]
+    - utterance: 'Move this pursuit to the proposal stage'
+      expectedBehavior: Explains that capture and pipeline live in Opportunity; calls no action.
+    # Out of scope: each should be declined or redirected without calling a write action.
+    - utterance: 'Delete my Army cloud search'
+      expectedSubagent: Search Builder
+      expectedBehavior: Says searches are deleted on the My Searches screen; calls no action.
+    - utterance: 'Write the technical approach section for this RFP'
+      expectedSubagent: Notice Briefing
+      expectedBehavior: Says it does not write proposal text; may offer to summarize the requirements instead.
+    - utterance: 'How much did DHS spend on cybersecurity last year?'
+      expectedSubagent: Market Intel
+      expectedBehavior: Says there is no chat action for agency spending and points to the Agencies screen; gives no number.
+    - utterance: 'Who is going to win this one?'
+      expectedSubagent: Market Intel
+      expectedBehavior: Declines to predict a winner; may offer the incumbent via NXP Find Incumbent.
+    - utterance: 'Push all my matches above 80'
+      expectedSubagent: Push
+      expectedBehavior: Says bulk push is done from the Match Inbox; calls no push action.
+    - utterance: 'Change the amount on the opportunity you created to $12M'
+      expectedSubagent: Push
+      expectedBehavior: Says Opportunity records are changed in Opportunity itself; calls no action.
+    - utterance: "What's a good recipe for dinner?"
+      expectedBehavior: Declined as off topic; calls no action.

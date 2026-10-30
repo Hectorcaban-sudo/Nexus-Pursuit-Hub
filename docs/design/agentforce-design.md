@@ -17,6 +17,8 @@ The Agent Script blueprint (`packages/nxp-agents/reference/aiAuthoringBundles/`)
 
 \* Turn on **Require user confirmation** in Agentforce Builder.
 
+Each subagent also has a **Scope** that lists what it can and cannot do, and where to send out-of-scope requests. See [Scope map](../guides/agent-manual-build.md#scope-map) in the manual build guide.
+
 ## Guardrails (enforced in Apex, not only in instructions)
 
 | Rule                                | Enforcement                                                                                                                      |
