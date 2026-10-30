@@ -11,6 +11,7 @@ Every script has a bash version (`.sh`: macOS, Linux, WSL, Git Bash) and a Power
 | Release to an environment                      | `release.sh <env> <alias> [source\|package]`            | `release.ps1 -Environment <env> -Org <alias> [-Mode package]`                         |
 | Create unlocked package versions               | `create-package-versions.sh <devhub> [key]`             | `create-package-versions.ps1 -DevHub <devhub> [-InstallationKey k] [-CreatePackages]` |
 | Uninstall                                      | `uninstall.sh --org <alias> [--mode package] [--purge]` | `uninstall.ps1 -Org <alias> [-Mode package] [-Purge]`                                 |
+| Load a GovWin export for the parallel run      | `load-govwin-export.sh --org <alias> --file <csv>`      | `load-govwin-export.ps1 -Org <alias> -File <csv>`                                     |
 | Data Cloud bulk upload (in `datacloud/`)       | `upload-awards.sh <csv>`                                | `upload-awards.ps1 -CsvFile <csv>`                                                    |
 
 Help: `scripts/<name>.sh --help`, or `Get-Help .\scripts\<name>.ps1 -Detailed`.
@@ -19,11 +20,11 @@ Windows: if PowerShell refuses to run scripts, run `Set-ExecutionPolicy -Scope C
 
 ## Folders
 
-| Folder         | Contents                                                                                                                                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `lib/`         | Shared helpers: `common.sh` and `common.ps1` (package order, API version, running anonymous Apex, production check)                                                                                                |
-| `apex/`        | Anonymous Apex: sample data (`seed-profile`, `seed-searches`, `seed-ebuy-email`, `refresh-sample-dates`, `delete-sample-data`), `smoke-test`, and admin helpers (`run-feed-now`, `feed-health`, `rescore-notices`) |
-| `post-deploy/` | `schedule-jobs.apex` and `unschedule-jobs.apex`                                                                                                                                                                    |
-| `uninstall/`   | `pre-uninstall.apex`: stops NXP jobs and removes NXP permission set assignments                                                                                                                                    |
+| Folder         | Contents                                                                                                                                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `lib/`         | Shared helpers: `common.sh` and `common.ps1` (package order, API version, running anonymous Apex, production check); `generate-analytics.py` (the shipped reports and dashboards)                                                    |
+| `apex/`        | Anonymous Apex: sample data (`seed-profile`, `seed-searches`, `seed-ebuy-email`, `refresh-sample-dates`, `delete-sample-data`), `compare-govwin`, `smoke-test`, and admin helpers (`run-feed-now`, `feed-health`, `rescore-notices`) |
+| `post-deploy/` | `schedule-jobs.apex` and `unschedule-jobs.apex`                                                                                                                                                                                      |
+| `uninstall/`   | `pre-uninstall.apex`: stops NXP jobs and removes NXP permission set assignments                                                                                                                                                      |
 
 Run any anonymous Apex file on its own with `sf apex run --file scripts/apex/<file>.apex --target-org <alias>`.

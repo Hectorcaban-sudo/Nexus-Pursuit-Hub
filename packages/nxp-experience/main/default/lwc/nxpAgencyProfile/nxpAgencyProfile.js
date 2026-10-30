@@ -2,7 +2,7 @@ import { LightningElement, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getAgencyProfile from '@salesforce/apex/NXP_MarketController.getAgencyProfile';
 import watch from '@salesforce/apex/NXP_MarketController.watch';
-import { daysUntil, formatMoney, toast, toastError } from 'c/nxpUtils';
+import { daysUntil, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const KINDS = {
     notice: { label: 'Notice', className: 'kind kind_notice' },
@@ -47,6 +47,7 @@ export default class NxpAgencyProfile extends NavigationMixin(LightningElement) 
     loading = true;
 
     connectedCallback() {
+        logUsage('Agency');
         this.load();
     }
 

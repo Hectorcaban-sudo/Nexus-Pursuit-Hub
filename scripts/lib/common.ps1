@@ -14,7 +14,8 @@ $script:PackageDirs = @(
     'packages/nxp-search',
     'packages/nxp-push',
     'packages/nxp-experience',
-    'packages/nxp-agents'
+    'packages/nxp-agents',
+    'packages/nxp-analytics'
 )
 
 function Write-Step([string]$Message) {

@@ -52,7 +52,11 @@ Open a notice title to see:
 
 Watches show in the bell icon as **NXP Match Alert** notifications, like followed notices.
 
-## 5. Ask the assistant
+## 5. Dashboards
+
+Open **Dashboards → Nexus: Market and activity** for new notices by source, what happened to your matches, pushes to TechnoMile and the high-fit notices due soon that nobody has pushed. Click a chart to open its report. It shows what you can see, so your own searches and matches.
+
+## 6. Ask the assistant
 
 Open the Agentforce panel and ask, for example:
 

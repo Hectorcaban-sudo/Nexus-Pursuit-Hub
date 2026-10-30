@@ -3,7 +3,7 @@
     Create unlocked package versions in dependency order (PowerShell version of create-package-versions.sh).
 
 .DESCRIPTION
-    The Dev Hub is your production org. First time only, create the six packages with -CreatePackages.
+    The Dev Hub is your production org. First time only, create the seven packages with -CreatePackages.
     Promote each version after QA:
       sf package version promote --package <alias@x.y.z-n> --target-dev-hub <devhub>
 

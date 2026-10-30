@@ -2,7 +2,7 @@ import { LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getForecastBoard from '@salesforce/apex/NXP_MarketController.getForecastBoard';
 import watch from '@salesforce/apex/NXP_MarketController.watch';
-import { debounce, formatDate, formatMoney, toast, toastError } from 'c/nxpUtils';
+import { debounce, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const SET_ASIDES = [
     { label: 'Any set-aside', value: '' },
@@ -42,6 +42,7 @@ export default class NxpForecastBoard extends NavigationMixin(LightningElement) 
     setAsideOptions = SET_ASIDES;
 
     connectedCallback() {
+        logUsage('Forecasts');
         this.debouncedLoad = debounce(() => this.load(), 400);
         this.load();
     }

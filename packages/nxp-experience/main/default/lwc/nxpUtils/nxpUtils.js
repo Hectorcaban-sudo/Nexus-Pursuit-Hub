@@ -2,6 +2,7 @@
  * Shared helpers for Nexus Pursuit Hub Lightning Web Components.
  */
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import logView from '@salesforce/apex/NXP_UsageController.logView';
 
 /** Flattens the many shapes of LDS / Apex errors into readable strings. */
 export function reduceErrors(errors) {
@@ -119,4 +120,16 @@ export function debounce(fn, wait) {
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         timer = setTimeout(() => fn(...args), wait);
     };
+}
+
+/** Records that the user opened a Nexus screen, for the Adoption dashboard. Never fails the screen. */
+export function logUsage(screen) {
+    try {
+        const pending = logView({ screen });
+        if (pending && typeof pending.catch === 'function') {
+            pending.catch(() => {});
+        }
+    } catch (e) {
+        // ignore: usage is best effort
+    }
 }

@@ -3,7 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import getVehiclePortfolio from '@salesforce/apex/NXP_VehicleController.getVehiclePortfolio';
 import setHeld from '@salesforce/apex/NXP_VehicleController.setHeld';
 import watch from '@salesforce/apex/NXP_MarketController.watch';
-import { dueLabel, daysUntil, formatDate, formatMoney, toast, toastError } from 'c/nxpUtils';
+import { dueLabel, daysUntil, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const VEHICLE_OBJECT = 'NXP_Contract_Vehicle__c';
 
@@ -58,6 +58,7 @@ export default class NxpVehiclePortfolio extends NavigationMixin(LightningElemen
     busy = false;
 
     connectedCallback() {
+        logUsage('Vehicle Portfolio');
         this.load();
     }
 

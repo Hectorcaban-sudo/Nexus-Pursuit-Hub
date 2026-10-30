@@ -5,7 +5,8 @@
 .DESCRIPTION
     Loads a sample Company Profile, 7 agencies, 3 contract vehicles, 4 vendors, 6 award summaries,
     3 forecasts, 10 SAMPLE notices (scored on insert), 4 saved searches for you, the search matches
-    and alerts they produce, and one made-up eBuy RFQ e-mail (notice EBUY:RFQ9990001).
+    and alerts they produce, one made-up eBuy RFQ e-mail (notice EBUY:RFQ9990001)
+    and 5 sample GovWin alerts for the parallel-run comparison.
     Refuses to run against a production org unless -AllowProduction is given.
     Bash version: scripts/load-sample-data.sh
 
@@ -55,7 +56,8 @@ $loads = @(
     @{ File = 'data/seed/5-NXP_Award_Summary__c.csv'; Object = 'NXP_Award_Summary__c'; ExternalId = 'PIID__c' },
     @{ File = 'data/seed/6-NXP_Gov_Forecast__c.csv'; Object = 'NXP_Gov_Forecast__c'; ExternalId = 'Forecast_Id__c' },
     @{ File = 'data/seed/7-NXP_Gov_Notice__c.csv'; Object = 'NXP_Gov_Notice__c'; ExternalId = 'Notice_Id__c' },
-    @{ File = 'data/seed/8-NXP_Gov_Contact__c.csv'; Object = 'NXP_Gov_Contact__c'; ExternalId = 'Contact_Key__c' }
+    @{ File = 'data/seed/8-NXP_Gov_Contact__c.csv'; Object = 'NXP_Gov_Contact__c'; ExternalId = 'Contact_Key__c' },
+    @{ File = 'data/seed/9-NXP_GovWin_Alert__c.csv'; Object = 'NXP_GovWin_Alert__c'; ExternalId = 'GovWin_Id__c' }
 )
 foreach ($load in $loads) {
     Write-Step "Upserting $(Split-Path $load.File -Leaf) into $($load.Object) (by $($load.ExternalId))"
@@ -72,6 +74,9 @@ Invoke-ApexFile 'scripts/apex/seed-searches.apex' $Org
 
 Write-Step 'Sample eBuy RFQ e-mail (Inbound Emails)'
 Invoke-ApexFile 'scripts/apex/seed-ebuy-email.apex' $Org
+
+Write-Step 'GovWin parallel-run comparison (sample GovWin alerts)'
+Invoke-ApexFile 'scripts/apex/compare-govwin.apex' $Org
 
 Write-Host ''
 Write-Host "Sample data loaded into $Org. Matching runs in the background and takes about a minute." -ForegroundColor Green

@@ -3,7 +3,7 @@ import LightningAlert from 'lightning/alert';
 import getConsole from '@salesforce/apex/NXP_FeedConsoleController.getConsole';
 import runNow from '@salesforce/apex/NXP_FeedConsoleController.runNow';
 import getRunErrors from '@salesforce/apex/NXP_FeedConsoleController.getRunErrors';
-import { formatDate, toast, toastError } from 'c/nxpUtils';
+import { formatDate, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const HEALTH_CLASS = {
     Healthy: 'status status_ok',
@@ -32,6 +32,7 @@ export default class NxpFeedConsole extends LightningElement {
     columns = COLUMNS;
 
     connectedCallback() {
+        logUsage('Feed Console');
         this.load();
     }
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source__c</fullName>
+    <description
+    >Where the push started, for reports: Match Inbox, Notice Page, Bulk, Auto-Push, Assistant, Sync or Other.</description>
+    <label>Source</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Match Inbox</fullName>
+                <default>false</default>
+                <label>Match Inbox</label>
+            </value>
+            <value>
+                <fullName>Notice Page</fullName>
+                <default>false</default>
+                <label>Notice Page</label>
+            </value>
+            <value>
+                <fullName>Bulk</fullName>
+                <default>false</default>
+                <label>Bulk</label>
+            </value>
+            <value>
+                <fullName>Auto-Push</fullName>
+                <default>false</default>
+                <label>Auto-Push</label>
+            </value>
+            <value>
+                <fullName>Assistant</fullName>
+                <default>false</default>
+                <label>Assistant</label>
+            </value>
+            <value>
+                <fullName>Sync</fullName>
+                <default>false</default>
+                <label>Sync</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

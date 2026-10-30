@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_Gov_Notice__c$Name</field>
+    </columns>
+    <columns>
+        <field>NXP_Gov_Notice__c$Fit_Score__c</field>
+    </columns>
+    <description>Notices created in the last 30 days, by type.</description>
+    <format>Summary</format>
+    <groupingsDown>
+        <field>NXP_Gov_Notice__c$Notice_Type__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP - New notices, last 30 days</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_Notices__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>NXP_Gov_Notice__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_LAST30</interval>
+    </timeFrameFilter>
+</Report>

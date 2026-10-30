@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>NXP_Push_Log__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Each push to TechnoMile and each sync.</description>
+    <label>NXP Push Logs</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Name</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Gov_Notice__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Status__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Mode__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Source__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Target_Object__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Target_Record_Id__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Pushed_By__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Attempts__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Error__c</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CreatedDate</field>
+            <table>NXP_Push_Log__c</table>
+        </columns>
+        <masterLabel>Push Logs</masterLabel>
+    </sections>
+</ReportType>

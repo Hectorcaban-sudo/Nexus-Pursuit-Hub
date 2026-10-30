@@ -46,6 +46,7 @@ Database.delete(pushedTargets, false);
 delete [SELECT Id FROM NXP_Saved_Search__c WHERE Name LIKE 'SAMPLE - %'];
 // Results of earlier functional-test runs.
 delete [SELECT Id FROM NXP_Log__c WHERE Source__c = 'NXP-SMOKE'];
+delete [SELECT Id FROM NXP_GovWin_Alert__c WHERE GovWin_Id__c LIKE 'SAMPLE-GW-%'];
 delete [SELECT Id FROM NXP_Company_Profile__c WHERE Name = 'Our company (sample)'];
 delete [SELECT Id FROM NXP_Contract_Vehicle__c WHERE Name LIKE '%(sample)'];
 // Watches on sample forecasts, awards and vendors.

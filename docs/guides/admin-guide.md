@@ -100,6 +100,8 @@ SAM.gov attachments are not downloaded automatically yet: add them to the notice
 
 - Run `scripts/apex/feed-health.apex` or open the Feed Console daily during the first weeks.
 - Open **Inbound Emails** for eBuy messages marked _Needs Review_, _Rejected_ or _Failed_.
+- The **Nexus: Operations** dashboard shows feed, push, eBuy inbox, Document Reader and error health together; subscribe to it daily ([reports and dashboards](../design/reports-and-dashboards.md)).
+- During the GovWin parallel run, load each week's GovWin export with `scripts/load-govwin-export` and check **Nexus: Adoption and GovWin cut-over** ([data/govwin](../../data/govwin/README.md)).
 - Check reports on `NXP_Log__c` (Level = ERROR) and on `NXP_Push_Log__c` (Status = Failed).
 - Check platform event subscriber status after deployments.
 - To pause everything: `scripts/post-deploy/unschedule-jobs.apex`. To resume: `schedule-jobs.apex`.

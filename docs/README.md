@@ -1,26 +1,26 @@
 # Nexus Pursuit Hub documentation
 
-| Folder          | Documents                                                                                                                                                                                                                                                                             |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `architecture/` | [Solution architecture](architecture/solution-architecture.md) · [Technical architecture](architecture/technical-architecture.md) · [Security architecture](architecture/security-architecture.md)                                                                                    |
-| `design/`       | [Functional design](design/functional-design.md) · [Data model](design/data-model.md) · [Search and alerts](design/search-and-alerts.md) · [Push to TechnoMile](design/push-to-technomile.md) · [Agentforce design](design/agentforce-design.md) · [UI screens](design/ui-screens.md) |
-| `integration/`  | [Feeds and connectors](integration/feeds-and-connectors.md) · [REST ingestion API](integration/rest-ingestion-api.md) · [Data Cloud ingestion](integration/data-cloud-ingestion.md)                                                                                                   |
-| `guides/`       | [Developer guide](guides/developer-guide.md) · [Admin guide](guides/admin-guide.md) · [User guide](guides/user-guide.md) · [Agent manual build](guides/agent-manual-build.md) · [Testing guide](guides/testing-guide.md)                                                              |
-| `deployment/`   | [Deployment guide](deployment/deployment-guide.md) · [Environments](deployment/environments.md) · [Post-deployment checklist](deployment/post-deployment-checklist.md)                                                                                                                |
-| `adr/`          | Architecture decision records 0001–0006                                                                                                                                                                                                                                               |
-| `diagrams/`     | JPG workflow diagrams; Graphviz sources in `diagrams/src` (`./render.sh` regenerates them)                                                                                                                                                                                            |
+| Folder          | Documents                                                                                                                                                                                                                                                                                                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `architecture/` | [Solution architecture](architecture/solution-architecture.md) · [Technical architecture](architecture/technical-architecture.md) · [Security architecture](architecture/security-architecture.md)                                                                                                                                                 |
+| `design/`       | [Functional design](design/functional-design.md) · [Data model](design/data-model.md) · [Search and alerts](design/search-and-alerts.md) · [Push to TechnoMile](design/push-to-technomile.md) · [Agentforce design](design/agentforce-design.md) · [UI screens](design/ui-screens.md) · [Reports and dashboards](design/reports-and-dashboards.md) |
+| `integration/`  | [Feeds and connectors](integration/feeds-and-connectors.md) · [REST ingestion API](integration/rest-ingestion-api.md) · [Data Cloud ingestion](integration/data-cloud-ingestion.md)                                                                                                                                                                |
+| `guides/`       | [Developer guide](guides/developer-guide.md) · [Admin guide](guides/admin-guide.md) · [User guide](guides/user-guide.md) · [Agent manual build](guides/agent-manual-build.md) · [Testing guide](guides/testing-guide.md)                                                                                                                           |
+| `deployment/`   | [Deployment guide](deployment/deployment-guide.md) · [Environments](deployment/environments.md) · [Post-deployment checklist](deployment/post-deployment-checklist.md)                                                                                                                                                                             |
+| `adr/`          | Architecture decision records 0001–0006                                                                                                                                                                                                                                                                                                            |
+| `diagrams/`     | JPG workflow diagrams; Graphviz sources in `diagrams/src` (`./render.sh` regenerates them)                                                                                                                                                                                                                                                         |
 
 ## Diagrams
 
-| Diagram                                                             | Shows                                                  |
-| ------------------------------------------------------------------- | ------------------------------------------------------ |
-| [01 Solution architecture](diagrams/01-solution-architecture.jpg)   | Sources, channels, packages, TechnoMile, users         |
-| [02 Ingestion pipeline](diagrams/02-ingestion-pipeline.jpg)         | Fetch → normalize → match & version → enrich → publish |
-| [03 Import channels](diagrams/03-import-channels.jpg)               | Standard feeds plus the four additional channels       |
-| [04 Search & alert workflow](diagrams/04-search-alert-workflow.jpg) | Change event → matching → alerts, inbox, auto-push     |
-| [05 Push workflow](diagrams/05-push-workflow.jpg)                   | Preview → dedupe → create or link → log → sync         |
-| [06 Package dependencies](diagrams/06-package-dependencies.jpg)     | Install order of the six packages                      |
-| [07 Data model](diagrams/07-data-model.jpg)                         | NXP_ objects, key fields, relationships                |
-| [08 Development workflow](diagrams/08-dev-workflow.jpg)             | Branch to merge in VS Code                             |
-| [09 Release workflow](diagrams/09-deployment-workflow.jpg)          | INT → QA → UAT → production with `release.sh`          |
-| [10 Agent architecture](diagrams/10-agent-architecture.jpg)         | Assistant, subagents, actions, background jobs         |
+| Diagram                                                             | Shows                                                                                 |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [01 Solution architecture](diagrams/01-solution-architecture.jpg)   | Sources, channels, packages, TechnoMile, users                                        |
+| [02 Ingestion pipeline](diagrams/02-ingestion-pipeline.jpg)         | Fetch → normalize → match & version → enrich → publish                                |
+| [03 Import channels](diagrams/03-import-channels.jpg)               | Standard feeds plus the four additional channels                                      |
+| [04 Search & alert workflow](diagrams/04-search-alert-workflow.jpg) | Change event → matching → alerts, inbox, auto-push                                    |
+| [05 Push workflow](diagrams/05-push-workflow.jpg)                   | Preview → dedupe → create or link → log → sync                                        |
+| [06 Package dependencies](diagrams/06-package-dependencies.jpg)     | Install order of the packages (diagram predates `nxp-analytics`, which installs last) |
+| [07 Data model](diagrams/07-data-model.jpg)                         | NXP_ objects, key fields, relationships                                               |
+| [08 Development workflow](diagrams/08-dev-workflow.jpg)             | Branch to merge in VS Code                                                            |
+| [09 Release workflow](diagrams/09-deployment-workflow.jpg)          | INT → QA → UAT → production with `release.sh`                                         |
+| [10 Agent architecture](diagrams/10-agent-architecture.jpg)         | Assistant, subagents, actions, background jobs                                        |

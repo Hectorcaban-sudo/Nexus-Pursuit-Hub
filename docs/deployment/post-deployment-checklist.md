@@ -15,6 +15,7 @@ Copy into the release ticket and tick each item.
 - [ ] Smoke test: Forecasts, Recompetes, Vehicle Portfolio and a vendor and agency page load with data
 - [ ] Smoke test (if eBuy is set up): send a test eBuy e-mail → **Inbound Emails** shows it _Ingested_ and the notice exists
 - [ ] Smoke test (if the Document Reader is on): attach a PDF to a notice → Documents card shows _Read_ within a few minutes
+- [ ] Dashboards _Nexus: Market and activity_, _Nexus: Operations_ and _Nexus: Adoption and GovWin cut-over_ open without errors
 - [ ] No new ERROR rows in `NXP_Log__c` in the first hour
 - [ ] QA only: `load-sample-data --reset` and `test-functional --apex-tests` pass; screen walkthrough done ([testing guide](../guides/testing-guide.md#3-walk-through-the-app))
 
@@ -28,6 +29,8 @@ Copy into the release ticket and tick each item.
 - [ ] Push mapping points at the TechnoMile object; duplicate field added and mapped; `Contract_Vehicle_Code__c` mapped if TechnoMile has a vehicle field
 - [ ] Contract vehicles we hold created (We Hold, expiry, Inbox Address)
 - [ ] eBuy (if used): `NXP_Ebuy_Inbox` address created with the integration user as context user; eBuy mail routed to it; `Ebuy_Allowed_Senders` set; auto-push search for eBuy RFQs created by a Power User (optional)
+- [ ] Report and dashboard folders shared: _Nexus Pursuit Hub_ with BD users, _Nexus Admin_ with admins and the project lead; subscriptions set up (optional)
+- [ ] GovWin parallel run: first GovWin export loaded with `load-govwin-export` (if the cut-over is in progress)
 - [ ] Custom notification _NXP Match Alert_ delivery enabled
 - [ ] Org-wide e-mail address set in `Alert_OrgWide_Email_Id` (optional)
 - [ ] REST integration user, External Client App and NXP_Integration set up (if used)

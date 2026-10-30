@@ -10,6 +10,33 @@ public without sharing class NXP_PushService {
     public static final String MODE_AGENT = 'Agent';
     public static final String MODE_SYNC = 'Sync';
 
+    /**
+     * Where the push started, for reporting (Push Log Source__c): Match Inbox, Notice Page, Bulk.
+     * Set by the controller for the current transaction; otherwise derived from the mode.
+     */
+    public static String source;
+
+    @TestVisible
+    private static String sourceFor(String mode) {
+        if (String.isNotBlank(source)) {
+            return source;
+        }
+        switch on mode {
+            when 'Auto' {
+                return 'Auto-Push';
+            }
+            when 'Agent' {
+                return 'Assistant';
+            }
+            when 'Sync' {
+                return 'Sync';
+            }
+            when else {
+                return 'Other';
+            }
+        }
+    }
+
     public class PushPreview {
         @AuraEnabled
         public Id noticeId;
@@ -368,6 +395,7 @@ public without sharing class NXP_PushService {
             Target_Record_Id__c = targetId,
             Status__c = status,
             Mode__c = mode,
+            Source__c = sourceFor(mode),
             Pushed_By__c = pusher,
             Attempts__c = 1,
             Error__c = status == 'Success' || status == 'Linked Existing' ? null : NXP_Text.truncate(error, 32768),

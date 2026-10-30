@@ -1,4 +1,6 @@
+import logView from '@salesforce/apex/NXP_UsageController.logView';
 import {
+    logUsage,
     reduceErrors,
     formatMoney,
     daysUntil,
@@ -10,6 +12,8 @@ import {
     formatDate,
     toDate
 } from 'c/nxpUtils';
+
+jest.mock('@salesforce/apex/NXP_UsageController.logView', () => ({ default: jest.fn() }), { virtual: true });
 
 describe('c-nxp-utils', () => {
     it('flattens Apex and JS errors', () => {
@@ -79,5 +83,19 @@ describe('c/nxpUtils dates', () => {
 
     it('still accepts full timestamps', () => {
         expect(toDate('2026-11-07T18:00:00.000Z').toISOString()).toBe('2026-11-07T18:00:00.000Z');
+    });
+});
+
+describe('logUsage', () => {
+    it('records the screen and never throws', async () => {
+        logView.mockResolvedValue(undefined);
+        logUsage('Forecasts');
+        expect(logView).toHaveBeenCalledWith({ screen: 'Forecasts' });
+        logView.mockRejectedValue(new Error('offline'));
+        expect(() => logUsage('Forecasts')).not.toThrow();
+        logView.mockImplementation(() => {
+            throw new Error('boom');
+        });
+        expect(() => logUsage('Forecasts')).not.toThrow();
     });
 });

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_Feed_Run__c$Name</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>NXP_Feed_Run__c$Records_Read__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>NXP_Feed_Run__c$Records_Created__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>NXP_Feed_Run__c$Records_Updated__c</field>
+    </columns>
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>NXP_Feed_Run__c$Records_Rejected__c</field>
+    </columns>
+    <description>Records read, created, updated and rejected per day, last 7 days.</description>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>NXP_Feed_Run__c$Started__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP Admin - Records loaded per day</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_Feed_Runs__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>NXP_Feed_Run__c$Started__c</dateColumn>
+        <interval>INTERVAL_LAST7</interval>
+    </timeFrameFilter>
+</Report>

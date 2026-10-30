@@ -17,6 +17,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NXP_UsageController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_NoticeDocumentsAction</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -97,6 +101,11 @@
         <name>NXP_Setting__mdt</name>
     </customMetadataTypeAccesses>
     <description>Everyone in BD: search, save own searches, follow, push manually, use the assistant.</description>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Fit_Band__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>NXP_Gov_Notice__c.Contract_Vehicle_Code__c</field>
@@ -805,6 +814,16 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>NXP_Document_Analysis__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Push_Log__c.Source__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Saved_Search__c.Owner_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>

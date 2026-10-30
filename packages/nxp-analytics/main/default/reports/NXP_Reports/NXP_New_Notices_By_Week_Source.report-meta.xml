@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_Gov_Notice__c$Name</field>
+    </columns>
+    <description>Notices created in the last 60 days, by week and source feed.</description>
+    <format>Matrix</format>
+    <groupingsAcross>
+        <field>NXP_Gov_Notice__c$Source_Feed__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsAcross>
+    <groupingsDown>
+        <dateGranularity>Week</dateGranularity>
+        <field>NXP_Gov_Notice__c$CreatedDate</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP - New notices by week and source</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_Notices__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>NXP_Gov_Notice__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_LAST60</interval>
+    </timeFrameFilter>
+</Report>

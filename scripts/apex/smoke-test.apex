@@ -492,6 +492,46 @@ try {
     fails++;
 }
 
+// 7i. Reporting data: GovWin comparison, usage log, reports and dashboards ------------------------
+try {
+    List<NXP_GovWin_Alert__c> gw = [
+        SELECT Id, GovWin_Id__c, Solicitation_Number__c
+        FROM NXP_GovWin_Alert__c
+        WHERE GovWin_Id__c LIKE 'SAMPLE-GW-%'
+    ];
+    if (gw.isEmpty()) {
+        out.add('FAIL|GovWin comparison|no sample GovWin alerts; run load-sample-data again');
+        fails++;
+    } else {
+        NXP_GovWinCompareBatch.compare(gw);
+        Map<String, String> result = new Map<String, String>();
+        for (NXP_GovWin_Alert__c a : [SELECT GovWin_Id__c, Result__c FROM NXP_GovWin_Alert__c WHERE Id IN :gw]) {
+            result.put(a.GovWin_Id__c, a.Result__c);
+        }
+        Boolean gwOk =
+            result.get('SAMPLE-GW-001') == NXP_GovWinCompareBatch.CAUGHT &&
+            result.get('SAMPLE-GW-005') == NXP_GovWinCompareBatch.MISSING;
+        out.add((gwOk ? 'PASS' : 'FAIL') + '|GovWin comparison|' + JSON.serialize(result));
+        fails += gwOk ? 0 : 1;
+    }
+    NXP_UsageService.record('Match Inbox');
+    Integer usage = [SELECT COUNT() FROM NXP_Usage__c WHERE User__c = :me AND Week__c = THIS_WEEK];
+    out.add((usage == 1 ? 'PASS' : 'FAIL') + '|Usage log|' + usage + ' row for you this week');
+    fails += usage == 1 ? 0 : 1;
+    Integer reports = [SELECT COUNT() FROM Report WHERE DeveloperName LIKE 'NXP_%'];
+    Integer dashboards = [SELECT COUNT() FROM Dashboard WHERE DeveloperName LIKE 'NXP_%'];
+    if (reports == 0 && dashboards == 0) {
+        out.add('WARN|Reports and dashboards|none found; deploy packages/nxp-analytics');
+    } else {
+        Boolean analyticsOk = reports >= 27 && dashboards == 3;
+        out.add((analyticsOk ? 'PASS' : 'FAIL') + '|Reports and dashboards|' + reports + ' reports, ' + dashboards + ' dashboards');
+        fails += analyticsOk ? 0 : 1;
+    }
+} catch (Exception e) {
+    out.add('FAIL|Reporting data|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();

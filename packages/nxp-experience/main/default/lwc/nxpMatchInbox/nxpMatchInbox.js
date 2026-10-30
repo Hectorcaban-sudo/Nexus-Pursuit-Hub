@@ -6,7 +6,7 @@ import getInbox from '@salesforce/apex/NXP_SearchController.getInbox';
 import setMatchAction from '@salesforce/apex/NXP_SearchController.setMatchAction';
 import bulkPush from '@salesforce/apex/NXP_PushController.bulkPush';
 import NxpPushDialog from 'c/nxpPushDialog';
-import { formatMoney, dueLabel, daysUntil, toast, toastError } from 'c/nxpUtils';
+import { formatMoney, dueLabel, daysUntil, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const SORTS = [
     { label: 'Fit score, then due date', value: 'fit' },
@@ -26,6 +26,7 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
     sortOptions = SORTS;
 
     connectedCallback() {
+        logUsage('Match Inbox');
         this.load();
     }
 
@@ -164,7 +165,12 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
 
     async handlePush(event) {
         const noticeId = event.currentTarget.dataset.id;
-        const result = await NxpPushDialog.open({ noticeId, size: 'medium', label: 'Push to TechnoMile' });
+        const result = await NxpPushDialog.open({
+            noticeId,
+            source: 'Match Inbox',
+            size: 'medium',
+            label: 'Push to TechnoMile'
+        });
         if (result) {
             toast(this, 'Pushed to TechnoMile', result.message);
             this.load();

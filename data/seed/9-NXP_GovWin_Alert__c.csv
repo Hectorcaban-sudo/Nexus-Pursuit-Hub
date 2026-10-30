@@ -1,0 +1,6 @@
+GovWin_Id__c,Title__c,Solicitation_Number__c,Agency__c,Alert_Date__c
+SAMPLE-GW-001,Zero Trust Architecture Engineering Support (GovWin sample),SAMPLE-SOL-0001,DHS - CBP,2026-10-27
+SAMPLE-GW-002,Cyber Range Operations and Training (GovWin sample),SAMPLE-SOL-0010,Army,2026-10-20
+SAMPLE-GW-003,"Facilities Maintenance, Port of Entry (GovWin sample)",SAMPLE-SOL-0009,DHS - CBP,2026-10-21
+SAMPLE-GW-004,Clinical Data Analytics Platform (GovWin sample),SAMPLE-SOL-0008,VA - VHA,2026-10-22
+SAMPLE-GW-005,Medical Logistics Support (GovWin sample; not in Nexus),SAMPLE-SOL-9999,DLA,2026-10-23

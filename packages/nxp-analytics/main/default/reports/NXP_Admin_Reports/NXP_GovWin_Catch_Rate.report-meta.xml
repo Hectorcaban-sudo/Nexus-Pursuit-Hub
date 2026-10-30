@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_GovWin_Alert__c$Title__c</field>
+    </columns>
+    <columns>
+        <field>NXP_GovWin_Alert__c$Solicitation_Number__c</field>
+    </columns>
+    <columns>
+        <field>NXP_GovWin_Alert__c$Alert_Date__c</field>
+    </columns>
+    <description
+    >GovWin alerts by whether Nexus caught them (Caught by a search, In Nexus no search matched, Not in Nexus).</description>
+    <format>Summary</format>
+    <groupingsDown>
+        <field>NXP_GovWin_Alert__c$Result__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP Admin - GovWin parallel run</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_GovWin_Alerts__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+</Report>

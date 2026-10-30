@@ -19,15 +19,15 @@ Nexus Pursuit Hub is a Salesforce-native market-intelligence app that replaces G
 
 ## Building blocks
 
-| Layer        | Components                                                                                                                                                                                                             |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sources      | SAM.gov Opportunities and Entity APIs, USAspending (and FPDS), agency forecasts, GSA eBuy RFQ e-mail, other systems that push data in                                                                                  |
-| Import       | Standard pipeline (Queueable chain), scheduled Apex batch, Apex callouts on demand, Apex REST ingestion API, Data Cloud Ingestion API, inbound e-mail service (eBuy)                                                   |
-| Processing   | `NXP_IngestionService`: one path for every channel (normalize, resolve agency, dedupe, version, publish `NXP_Gov_Notice_Changed__e`)                                                                                   |
-| Intelligence | Fit score (`NXP_FitScoreService`), saved-search matching, alerts, watches, AI summaries, Document Reader and eBuy extraction (prompt templates)                                                                        |
-| Experience   | Lightning app _Nexus Pursuit Hub_: Match Inbox, My Searches, Gov Notice record page (with Documents), Forecasts, Recompetes, Agency and Vendor profiles, Vehicle Portfolio; for admins Feed Console and Inbound Emails |
-| Agent        | Nexus Pursuit Assistant (Agentforce employee agent) with four subagents                                                                                                                                                |
-| Hand-off     | Push to TechnoMile through a configurable mapping; amendments keep pushed records current                                                                                                                              |
+| Layer        | Components                                                                                                                                                                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sources      | SAM.gov Opportunities and Entity APIs, USAspending (and FPDS), agency forecasts, GSA eBuy RFQ e-mail, other systems that push data in                                                                                                                               |
+| Import       | Standard pipeline (Queueable chain), scheduled Apex batch, Apex callouts on demand, Apex REST ingestion API, Data Cloud Ingestion API, inbound e-mail service (eBuy)                                                                                                |
+| Processing   | `NXP_IngestionService`: one path for every channel (normalize, resolve agency, dedupe, version, publish `NXP_Gov_Notice_Changed__e`)                                                                                                                                |
+| Intelligence | Fit score (`NXP_FitScoreService`), saved-search matching, alerts, watches, AI summaries, Document Reader and eBuy extraction (prompt templates)                                                                                                                     |
+| Experience   | Lightning app _Nexus Pursuit Hub_: Match Inbox, My Searches, Gov Notice record page (with Documents), Forecasts, Recompetes, Agency and Vendor profiles, Vehicle Portfolio; for admins Feed Console and Inbound Emails; reports and dashboards for leads and admins |
+| Agent        | Nexus Pursuit Assistant (Agentforce employee agent) with four subagents                                                                                                                                                                                             |
+| Hand-off     | Push to TechnoMile through a configurable mapping; amendments keep pushed records current                                                                                                                                                                           |
 
 ## Main flows
 
@@ -39,14 +39,14 @@ Nexus Pursuit Hub is a Salesforce-native market-intelligence app that replaces G
 
 ## Key decisions
 
-| Decision                                                                     | ADR                                                   |
-| ---------------------------------------------------------------------------- | ----------------------------------------------------- |
-| Six unlocked packages without namespace; direct source deploy also supported | [0001](../adr/0001-unlocked-packages-no-namespace.md) |
-| One ingestion service for all channels, events decouple consumers            | [0002](../adr/0002-single-ingestion-path.md)          |
-| Push target configured by metadata, no code dependency on TechnoMile         | [0003](../adr/0003-configurable-push-target.md)       |
-| Agents built manually in Government Cloud; guardrails enforced in Apex       | [0004](../adr/0004-manual-agents-apex-guardrails.md)  |
-| API 68.0 everywhere                                                          | [0005](../adr/0005-api-68.md)                         |
-| Releases by scripted `sf` commands, no CI/CD for now                         | [0006](../adr/0006-scripted-releases.md)              |
+| Decision                                                                                                                                    | ADR                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Seven unlocked packages without namespace (the seventh, `nxp-analytics`, holds reports and dashboards); direct source deploy also supported | [0001](../adr/0001-unlocked-packages-no-namespace.md) |
+| One ingestion service for all channels, events decouple consumers                                                                           | [0002](../adr/0002-single-ingestion-path.md)          |
+| Push target configured by metadata, no code dependency on TechnoMile                                                                        | [0003](../adr/0003-configurable-push-target.md)       |
+| Agents built manually in Government Cloud; guardrails enforced in Apex                                                                      | [0004](../adr/0004-manual-agents-apex-guardrails.md)  |
+| API 68.0 everywhere                                                                                                                         | [0005](../adr/0005-api-68.md)                         |
+| Releases by scripted `sf` commands, no CI/CD for now                                                                                        | [0006](../adr/0006-scripted-releases.md)              |
 
 ## Non-functional targets
 

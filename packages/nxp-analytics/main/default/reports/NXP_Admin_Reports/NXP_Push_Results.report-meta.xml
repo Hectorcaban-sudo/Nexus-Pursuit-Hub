@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_Push_Log__c$Name</field>
+    </columns>
+    <description>Pushes and syncs in the last 30 days, by status.</description>
+    <format>Summary</format>
+    <groupingsDown>
+        <field>NXP_Push_Log__c$Status__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP Admin - Push results</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_Push_Logs__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>NXP_Push_Log__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_LAST30</interval>
+    </timeFrameFilter>
+</Report>

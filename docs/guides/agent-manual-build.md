@@ -4,7 +4,7 @@ Agent Script is not available in Government Cloud, so the agent is configured by
 
 ## Before you start
 
-1. Deploy all six packages: every action (invocable Apex) must exist before the agent can reference it.
+1. Deploy all seven packages: every action (invocable Apex) must exist before the agent can reference it.
 2. In Setup, confirm Einstein and Agentforce are enabled in this org and covered by your ATO, and review Einstein Trust Layer settings.
 3. Create or confirm the agent user. Users who chat need `NXP_User`, which grants the action classes, plus agent access.
 4. Create the prompt templates in Prompt Builder, using the API names and text in `packages/nxp-agents/reference/genAiPromptTemplates/`:

@@ -37,6 +37,9 @@
 | 21  | Admin           | see every e-mail the eBuy inbox received, why it was rejected or needs review, and reprocess it                                                 | Inbound Emails tab                   |
 | 22  | BD user         | have eBuy RFQs that fit us pushed to TechnoMile automatically                                                                                   | Auto-push saved search               |
 | 23  | BD user         | read what a solicitation document requires (requirements, evaluation, dates, clearance, risks) and where it disagrees with the notice           | Documents card, NXP Notice Documents |
+| 24  | BD lead         | see trends in new notices, matches and pushes, and the high-fit notices about to be missed                                                      | Market and activity dashboard        |
+| 25  | Admin           | see feed, push, eBuy inbox and Document Reader health in one place                                                                              | Operations dashboard                 |
+| 26  | Project lead    | track adoption and how many GovWin alerts Nexus also caught during the parallel run                                                             | Adoption dashboard, GovWin load      |
 
 ## GovWin IQ coverage
 

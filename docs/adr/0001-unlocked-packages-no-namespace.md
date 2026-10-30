@@ -14,3 +14,7 @@ Split the code into six unlocked packages along those seams, with no namespace, 
 ## Consequences
 
 Each package can be versioned and tested on its own, and install order is explicit. Without a namespace, names must stay prefixed. Choose one release path per org; package-installed components cannot later be replaced by source deploys.
+
+## Update
+
+A seventh package, `nxp-analytics`, was added for report types, reports and dashboards. It depends on all the others and installs last, so report metadata never blocks the code packages and can be released on its own.

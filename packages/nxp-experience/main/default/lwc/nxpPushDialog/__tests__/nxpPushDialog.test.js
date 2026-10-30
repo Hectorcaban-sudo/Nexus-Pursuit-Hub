@@ -3,7 +3,7 @@ import NxpPushDialog from 'c/nxpPushDialog';
 import previewPush from '@salesforce/apex/NXP_PushController.previewPush';
 
 jest.mock('@salesforce/apex/NXP_PushController.previewPush', () => ({ default: jest.fn() }), { virtual: true });
-jest.mock('@salesforce/apex/NXP_PushController.pushNotice', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_PushController.pushNoticeFrom', () => ({ default: jest.fn() }), { virtual: true });
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 

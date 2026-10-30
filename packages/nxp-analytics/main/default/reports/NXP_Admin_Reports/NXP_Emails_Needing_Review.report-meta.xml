@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_Inbound_Email__c$Subject__c</field>
+    </columns>
+    <columns>
+        <field>NXP_Inbound_Email__c$From_Address__c</field>
+    </columns>
+    <columns>
+        <field>NXP_Inbound_Email__c$Received__c</field>
+    </columns>
+    <description>eBuy e-mails marked Needs Review or Failed.</description>
+    <filter>
+        <criteriaItems>
+            <column>NXP_Inbound_Email__c$Status__c</column>
+            <columnToValue>false</columnToValue>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Needs Review,Failed</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <field>NXP_Inbound_Email__c$Status__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP Admin - Inbound emails needing review</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_Inbound_Emails__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+</Report>

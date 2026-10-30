@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Local checks: Prettier (Apex, LWC), ESLint (LWC), Jest (LWC) and Code Analyzer when installed.
-    With -Org, also a check-only deployment of all six packages with RunLocalTests (nothing is saved).
+    With -Org, also a check-only deployment of all seven packages with RunLocalTests (nothing is saved).
 
 .EXAMPLE
     .\scripts\validate.ps1

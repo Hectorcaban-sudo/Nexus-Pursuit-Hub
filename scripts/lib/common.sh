@@ -3,7 +3,7 @@
 
 API_VERSION="68.0"
 # Install order. Uninstall uses the reverse.
-PACKAGE_DIRS=(packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-push packages/nxp-experience packages/nxp-agents)
+PACKAGE_DIRS=(packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-push packages/nxp-experience packages/nxp-agents packages/nxp-analytics)
 
 step() { printf '\n\033[36m==> %s\033[0m\n' "$*"; }
 warn() { printf '\033[33m%s\033[0m\n' "$*"; }

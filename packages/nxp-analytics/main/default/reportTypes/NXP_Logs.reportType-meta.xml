@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>NXP_Log__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Application log entries.</description>
+    <label>NXP Logs</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Name</field>
+            <table>NXP_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Level__c</field>
+            <table>NXP_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Source__c</field>
+            <table>NXP_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Message__c</field>
+            <table>NXP_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Record_Id__c</field>
+            <table>NXP_Log__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CreatedDate</field>
+            <table>NXP_Log__c</table>
+        </columns>
+        <masterLabel>Logs</masterLabel>
+    </sections>
+</ReportType>

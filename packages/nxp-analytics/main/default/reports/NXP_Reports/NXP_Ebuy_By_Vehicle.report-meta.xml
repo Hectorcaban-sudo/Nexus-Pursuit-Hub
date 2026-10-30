@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_Gov_Notice__c$Notice_Id__c</field>
+    </columns>
+    <columns>
+        <field>NXP_Gov_Notice__c$Title__c</field>
+    </columns>
+    <columns>
+        <field>NXP_Gov_Notice__c$Response_Due__c</field>
+    </columns>
+    <description>GSA eBuy RFQs received in the last 90 days, by contract vehicle.</description>
+    <filter>
+        <criteriaItems>
+            <column>NXP_Gov_Notice__c$Source_Feed__c</column>
+            <columnToValue>false</columnToValue>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>EMAIL_GSA_eBuy</value>
+        </criteriaItems>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <field>NXP_Gov_Notice__c$Contract_Vehicle_Code__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP - eBuy RFQs by vehicle</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_Notices__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>NXP_Gov_Notice__c$CreatedDate</dateColumn>
+        <interval>INTERVAL_LAST90</interval>
+    </timeFrameFilter>
+</Report>

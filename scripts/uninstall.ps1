@@ -6,7 +6,7 @@
     1. Stops the NXP scheduled and queued jobs and removes the NXP permission set assignments.
     2. -Mode source  (default, for orgs deployed with sf commands): deletes the components of each
        package folder with a destructive deployment, dependents first (agents ... core).
-       -Mode package (for orgs with the unlocked packages installed): uninstalls the six packages,
+       -Mode package (for orgs with the unlocked packages installed): uninstalls the seven packages,
        dependents first.
     Before you run it, delete what was built by hand: the Nexus Pursuit Assistant agent and its NXP
     agent actions, the NXP prompt templates, and reports, flows or list views built on NXP objects.

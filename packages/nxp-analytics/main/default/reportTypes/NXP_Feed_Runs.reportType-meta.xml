@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>NXP_Feed_Run__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Feed runs and import calls with their counts.</description>
+    <label>NXP Feed Runs</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Name</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Feed_Name__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Channel__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Status__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Started__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Finished__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Records_Read__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Records_Created__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Records_Updated__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Records_Rejected__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Caller__c</field>
+            <table>NXP_Feed_Run__c</table>
+        </columns>
+        <masterLabel>Feed Runs</masterLabel>
+    </sections>
+</ReportType>

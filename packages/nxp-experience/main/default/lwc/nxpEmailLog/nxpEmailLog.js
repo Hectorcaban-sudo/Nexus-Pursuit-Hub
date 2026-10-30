@@ -4,7 +4,7 @@ import getEmails from '@salesforce/apex/NXP_EmailLogController.getEmails';
 import getEmail from '@salesforce/apex/NXP_EmailLogController.getEmail';
 import reprocess from '@salesforce/apex/NXP_EmailLogController.reprocess';
 import ignore from '@salesforce/apex/NXP_EmailLogController.ignore';
-import { debounce, formatDate, toast, toastError } from 'c/nxpUtils';
+import { debounce, formatDate, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const STATUS_OPTIONS = [
     { label: 'All statuses', value: '' },
@@ -80,6 +80,7 @@ export default class NxpEmailLog extends NavigationMixin(LightningElement) {
     statusOptions = STATUS_OPTIONS;
 
     connectedCallback() {
+        logUsage('Inbound Emails');
         this.debouncedLoad = debounce(() => this.load(), 400);
         this.load();
     }

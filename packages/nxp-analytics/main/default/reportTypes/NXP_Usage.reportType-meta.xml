@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>NXP_Usage__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>Which users opened Nexus screens each week (admins only).</description>
+    <label>NXP Usage</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Name</field>
+            <table>NXP_Usage__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>User__c</field>
+            <table>NXP_Usage__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Week__c</field>
+            <table>NXP_Usage__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Views__c</field>
+            <table>NXP_Usage__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Screens__c</field>
+            <table>NXP_Usage__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Last_Screen__c</field>
+            <table>NXP_Usage__c</table>
+        </columns>
+        <masterLabel>Usage</masterLabel>
+    </sections>
+</ReportType>

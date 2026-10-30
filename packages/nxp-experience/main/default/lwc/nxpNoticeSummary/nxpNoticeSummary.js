@@ -3,7 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import followNotice from '@salesforce/apex/NXP_SearchController.followNotice';
 import NxpPushDialog from 'c/nxpPushDialog';
-import { daysUntil, formatDate, formatMoney, toast, toastError } from 'c/nxpUtils';
+import { daysUntil, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
 export default class NxpNoticeSummary extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -11,6 +11,7 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     loading = true;
 
     connectedCallback() {
+        logUsage('Notice');
         this.load();
     }
 

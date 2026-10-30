@@ -63,8 +63,12 @@ private class NXP_PushTest {
         System.assertEquals(null, p.existingRecordId);
         System.assertNotEquals(null, p.token);
 
-        NXP_PushService.PushResult r = NXP_PushController.pushNotice(n.Id, null, true);
+        NXP_PushService.PushResult r = NXP_PushController.pushNoticeFrom(n.Id, true, 'Match Inbox');
         System.assertEquals('Success', r.status, r.message);
+        System.assertEquals('Match Inbox', [SELECT Source__c FROM NXP_Push_Log__c].Source__c);
+        System.assertEquals(null, NXP_PushService.source, 'cleared after the push');
+        System.assertEquals('Assistant', NXP_PushService.sourceFor('Agent'));
+        System.assertEquals('Auto-Push', NXP_PushService.sourceFor('Auto'));
         Opportunity o = [SELECT Name, CloseDate, Amount, NextStep FROM Opportunity WHERE Id = :r.targetId];
         System.assertEquals(Date.newInstance(2027, 1, 15), o.CloseDate);
         System.assertEquals('SOL-A', o.NextStep);

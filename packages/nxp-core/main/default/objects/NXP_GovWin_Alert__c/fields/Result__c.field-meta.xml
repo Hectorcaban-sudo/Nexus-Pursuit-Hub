@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Result__c</fullName>
+    <description>Set by NXP_GovWinCompareBatch.</description>
+    <label>Result</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Caught by a search</fullName>
+                <default>false</default>
+                <label>Caught by a search</label>
+            </value>
+            <value>
+                <fullName>In Nexus, no search matched</fullName>
+                <default>false</default>
+                <label>In Nexus, no search matched</label>
+            </value>
+            <value>
+                <fullName>Not in Nexus</fullName>
+                <default>false</default>
+                <label>Not in Nexus</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

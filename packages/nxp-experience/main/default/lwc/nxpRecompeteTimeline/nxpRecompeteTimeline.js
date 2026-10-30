@@ -2,7 +2,7 @@ import { LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getRecompetes from '@salesforce/apex/NXP_MarketController.getRecompetes';
 import watch from '@salesforce/apex/NXP_MarketController.watch';
-import { daysUntil, debounce, formatDate, formatMoney, toast, toastError } from 'c/nxpUtils';
+import { daysUntil, debounce, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
 /** The timeline axis runs from 24 months ago to 24 months ahead; today is the middle. */
 const AXIS_MONTHS = 24;
@@ -42,6 +42,7 @@ export default class NxpRecompeteTimeline extends NavigationMixin(LightningEleme
     selectedId;
 
     connectedCallback() {
+        logUsage('Recompetes');
         this.debouncedLoad = debounce(() => this.load(), 400);
         this.load();
     }

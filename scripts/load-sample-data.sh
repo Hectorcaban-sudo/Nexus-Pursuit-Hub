@@ -7,7 +7,8 @@
 #
 # Loads: a sample Company Profile, 7 agencies, 3 contract vehicles, 4 vendors, 6 award summaries,
 # 3 forecasts, 10 SAMPLE notices (scored on insert), 4 saved searches for you, the search matches
-# and alerts they produce, and one made-up eBuy RFQ e-mail (notice EBUY:RFQ9990001).
+# and alerts they produce, one made-up eBuy RFQ e-mail (notice EBUY:RFQ9990001)
+# and 5 sample GovWin alerts for the parallel-run comparison.
 # Refuses to run against a production org unless --allow-production is given.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -23,7 +24,7 @@ while [[ $# -gt 0 ]]; do
     --reset) RESET=true; shift ;;
     --delete) DELETE_ONLY=true; shift ;;
     --allow-production) ALLOW_PROD=true; shift ;;
-    -h|--help) sed -n '2,11p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
     *) die "Unknown option $1" ;;
   esac
 done
@@ -53,6 +54,7 @@ LOADS=(
   "data/seed/6-NXP_Gov_Forecast__c.csv|NXP_Gov_Forecast__c|Forecast_Id__c"
   "data/seed/7-NXP_Gov_Notice__c.csv|NXP_Gov_Notice__c|Notice_Id__c"
   "data/seed/8-NXP_Gov_Contact__c.csv|NXP_Gov_Contact__c|Contact_Key__c"
+  "data/seed/9-NXP_GovWin_Alert__c.csv|NXP_GovWin_Alert__c|GovWin_Id__c"
 )
 for load in "${LOADS[@]}"; do
   IFS='|' read -r file object extid <<<"$load"
@@ -69,6 +71,9 @@ run_apex scripts/apex/seed-searches.apex "$ORG"
 
 step "Sample eBuy RFQ e-mail (Inbound Emails)"
 run_apex scripts/apex/seed-ebuy-email.apex "$ORG"
+
+step "GovWin parallel-run comparison (sample GovWin alerts)"
+run_apex scripts/apex/compare-govwin.apex "$ORG"
 
 cat <<MSG
 

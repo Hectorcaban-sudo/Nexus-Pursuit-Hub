@@ -1,7 +1,7 @@
 import { api } from 'lwc';
 import LightningModal from 'lightning/modal';
 import previewPush from '@salesforce/apex/NXP_PushController.previewPush';
-import pushNotice from '@salesforce/apex/NXP_PushController.pushNotice';
+import pushNoticeFrom from '@salesforce/apex/NXP_PushController.pushNoticeFrom';
 import { reduceErrors } from 'c/nxpUtils';
 
 /**
@@ -11,6 +11,8 @@ import { reduceErrors } from 'c/nxpUtils';
  */
 export default class NxpPushDialog extends LightningModal {
     @api noticeId;
+    /** Where the dialog was opened from, recorded on the push log: Match Inbox or Notice Page. */
+    @api source = 'Notice Page';
 
     preview;
     error;
@@ -80,10 +82,10 @@ export default class NxpPushDialog extends LightningModal {
     async handlePush() {
         this.pushing = true;
         try {
-            const result = await pushNotice({
+            const result = await pushNoticeFrom({
                 noticeId: this.noticeId,
-                ownerId: null,
-                includeDocuments: this.includeDocuments
+                includeDocuments: this.includeDocuments,
+                source: this.source
             });
             if (result.status === 'Failed') {
                 this.error = result.message;

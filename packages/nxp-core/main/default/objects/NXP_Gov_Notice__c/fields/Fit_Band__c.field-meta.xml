@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fit_Band__c</fullName>
+    <description>Fit score band, for reports: 75-100 High, 60-74 Medium, 40-59, Under 40, Not scored.</description>
+    <formula>IF(ISBLANK(Fit_Score__c), "Not scored",
+IF(Fit_Score__c &gt;= 75, "75-100 High",
+IF(Fit_Score__c &gt;= 60, "60-74 Medium",
+IF(Fit_Score__c &gt;= 40, "40-59", "Under 40"))))</formula>
+    <formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+    <label>Fit Band</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

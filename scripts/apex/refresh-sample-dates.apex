@@ -92,3 +92,10 @@ for (NXP_Contract_Vehicle__c v : vehicles) {
 }
 update vehicles;
 System.debug('Expiry dates refreshed on ' + vehicles.size() + ' SAMPLE contract vehicles.');
+
+// GovWin sample alerts: alerted 2 to 9 days ago.
+List<NXP_GovWin_Alert__c> govwin = [SELECT Id, GovWin_Id__c FROM NXP_GovWin_Alert__c WHERE GovWin_Id__c LIKE 'SAMPLE-GW-%'];
+for (NXP_GovWin_Alert__c g : govwin) {
+    g.Alert_Date__c = today.addDays(-2 - Integer.valueOf(g.GovWin_Id__c.right(1)));
+}
+update govwin;

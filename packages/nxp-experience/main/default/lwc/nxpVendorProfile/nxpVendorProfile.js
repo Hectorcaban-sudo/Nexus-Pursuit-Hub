@@ -3,7 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import getVendorProfile from '@salesforce/apex/NXP_MarketController.getVendorProfile';
 import watch from '@salesforce/apex/NXP_MarketController.watch';
 import refreshVendor from '@salesforce/apex/NXP_MarketController.refreshVendor';
-import { daysUntil, dueLabel, formatDate, formatMoney, toast, toastError } from 'c/nxpUtils';
+import { daysUntil, dueLabel, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
 export default class NxpVendorProfile extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -12,6 +12,7 @@ export default class NxpVendorProfile extends NavigationMixin(LightningElement) 
     refreshing = false;
 
     connectedCallback() {
+        logUsage('Vendor');
         this.load();
     }
 

@@ -14,7 +14,7 @@ ENV="${1:?env (dev|qa|uat|prod)}"
 ORG="${2:?org alias}"
 MODE="${3:-source}"
 VERSION="$(git describe --tags --always 2>/dev/null || echo untagged)"
-DIRS=(packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-push packages/nxp-experience packages/nxp-agents)
+DIRS=(packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-push packages/nxp-experience packages/nxp-agents packages/nxp-analytics)
 
 [[ -d "env-config/$ENV" ]] || { echo "No env-config/$ENV"; exit 1; }
 

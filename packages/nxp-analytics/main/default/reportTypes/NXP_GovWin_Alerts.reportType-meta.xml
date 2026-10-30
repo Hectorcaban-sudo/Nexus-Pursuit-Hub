@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>NXP_GovWin_Alert__c</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <description>GovWin alerts from the parallel run and whether Nexus caught them.</description>
+    <label>NXP GovWin Alerts</label>
+    <sections>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Name</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>GovWin_Id__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Title__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Solicitation_Number__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Agency__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Alert_Date__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Result__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Search_Matches__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Gov_Notice__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Compared__c</field>
+            <table>NXP_GovWin_Alert__c</table>
+        </columns>
+        <masterLabel>GovWin Alerts</masterLabel>
+    </sections>
+</ReportType>

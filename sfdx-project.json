@@ -109,6 +109,40 @@
                     "versionNumber": "1.0.0.LATEST"
                 }
             ]
+        },
+        {
+            "path": "packages/nxp-analytics",
+            "package": "nxp-analytics",
+            "versionName": "Spring 2027",
+            "versionNumber": "1.0.0.NEXT",
+            "default": false,
+            "versionDescription": "Report types, reports and dashboards (market, operations, adoption); installs after the permission sets",
+            "dependencies": [
+                {
+                    "package": "nxp-core",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-ingestion",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-search",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-push",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-experience",
+                    "versionNumber": "1.0.0.LATEST"
+                },
+                {
+                    "package": "nxp-agents",
+                    "versionNumber": "1.0.0.LATEST"
+                }
+            ]
         }
     ],
     "name": "nexus-pursuit-hub",

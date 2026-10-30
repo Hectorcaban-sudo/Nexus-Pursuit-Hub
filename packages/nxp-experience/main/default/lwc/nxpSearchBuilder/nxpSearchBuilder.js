@@ -7,7 +7,17 @@ import previewSearch from '@salesforce/apex/NXP_SearchController.previewSearch';
 import saveSearch from '@salesforce/apex/NXP_SearchController.saveSearch';
 import deleteSearch from '@salesforce/apex/NXP_SearchController.deleteSearch';
 import draftCriteria from '@salesforce/apex/NXP_SearchController.draftCriteria';
-import { splitList, joinList, dueLabel, formatMoney, debounce, toast, toastError, reduceErrors } from 'c/nxpUtils';
+import {
+    splitList,
+    joinList,
+    dueLabel,
+    formatMoney,
+    debounce,
+    toast,
+    toastError,
+    reduceErrors,
+    logUsage
+} from 'c/nxpUtils';
 
 const SET_ASIDES = ['Small Business', '8(a)', 'HUBZone', 'Service-Disabled', 'Women-Owned'];
 const TYPES = [
@@ -84,6 +94,7 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
     }
 
     connectedCallback() {
+        logUsage('My Searches');
         this.loadSearches();
         this.runPreview();
     }

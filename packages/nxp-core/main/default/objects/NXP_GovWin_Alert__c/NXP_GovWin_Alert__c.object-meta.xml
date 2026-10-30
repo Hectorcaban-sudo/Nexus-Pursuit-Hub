@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description
+    >A notice GovWin IQ alerted on during the parallel run, loaded from a GovWin export, and whether Nexus caught it.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <externalSharingModel>Private</externalSharingModel>
+    <label>GovWin Alert</label>
+    <nameField>
+        <displayFormat>GW-{000000}</displayFormat>
+        <label>GovWin Alert</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>GovWin Alerts</pluralLabel>
+    <sharingModel>Private</sharingModel>
+    <visibility>Public</visibility>
+</CustomObject>

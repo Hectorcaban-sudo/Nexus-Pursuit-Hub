@@ -25,6 +25,18 @@ public with sharing class NXP_PushController {
         return results[0];
     }
 
+    /** Same as pushNotice, recording where the push started (Match Inbox or Notice Page) for reports. */
+    @AuraEnabled
+    public static NXP_PushService.PushResult pushNoticeFrom(Id noticeId, Boolean includeDocuments, String source) {
+        Set<String> allowed = new Set<String>{ 'Match Inbox', 'Notice Page' };
+        NXP_PushService.source = allowed.contains(source) ? source : 'Other';
+        try {
+            return pushNotice(noticeId, null, includeDocuments);
+        } finally {
+            NXP_PushService.source = null;
+        }
+    }
+
     @AuraEnabled
     public static List<NXP_PushService.PushResult> bulkPush(List<Id> noticeIds) {
         if (!FeatureManagement.checkPermission('NXP_Power_User')) {
@@ -33,7 +45,12 @@ public with sharing class NXP_PushController {
         if (noticeIds == null || noticeIds.size() > 200) {
             throw new AuraHandledException('Select between 1 and 200 notices.');
         }
-        return NXP_PushService.push(noticeIds, null, NXP_PushService.MODE_MANUAL, true);
+        NXP_PushService.source = 'Bulk';
+        try {
+            return NXP_PushService.push(noticeIds, null, NXP_PushService.MODE_MANUAL, true);
+        } finally {
+            NXP_PushService.source = null;
+        }
     }
 
     @AuraEnabled

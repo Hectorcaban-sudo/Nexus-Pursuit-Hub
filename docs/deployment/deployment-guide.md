@@ -21,11 +21,11 @@ How to install, release, test, roll back and remove Nexus Pursuit Hub with scrip
 
 ## Choose a release path
 
-The same six package folders (`packages/nxp-core` … `packages/nxp-agents`) can be released two ways. Pick one per org and stay with it: components installed by a package can't later be replaced by plain source deploys.
+The same seven package folders (`packages/nxp-core` … `packages/nxp-analytics`) can be released two ways. Pick one per org and stay with it: components installed by a package can't later be replaced by plain source deploys.
 
 |           | Source deploy (default)                                                                            | Unlocked packages                                                        |
 | --------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Unit      | One metadata deployment of all six folders                                                         | Six package versions, installed in dependency order                      |
+| Unit      | One metadata deployment of all seven folders                                                       | Six package versions, installed in dependency order                      |
 | Tests     | `RunLocalTests` during validation                                                                  | Coverage checked at version creation; `RunLocalTests` recommended in UAT |
 | Rollback  | Redeploy the previous Git tag; remove new components with a destructive manifest                   | Reinstall the previous promoted versions                                 |
 | Uninstall | `uninstall` script, source mode                                                                    | `uninstall` script, package mode                                         |
@@ -128,7 +128,8 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - Data Cloud connector ([Data Cloud ingestion](../integration/data-cloud-ingestion.md));
     - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
     - the assistant ([agent manual build](../guides/agent-manual-build.md)).
-10. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
+10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
+11. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
 
 ## Release with source deploy
 
@@ -184,7 +185,7 @@ sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-prod
 
 Needs a Dev Hub (usually production). Log in to it once: `sf org login web --alias nxp-devhub --set-default-dev-hub`.
 
-**One-time setup: create the six packages.** This adds their IDs to `packageAliases` in `sfdx-project.json`; commit that change.
+**One-time setup: create the seven packages.** This adds their IDs to `packageAliases` in `sfdx-project.json`; commit that change.
 
 ```bash
 for p in nxp-core nxp-ingestion nxp-search nxp-push nxp-experience nxp-agents; do
@@ -270,14 +271,14 @@ Government Cloud can't deploy Agent Script, so the Nexus Pursuit Assistant is bu
 
 ## Uninstall
 
-`scripts/uninstall.sh` (or `.\scripts\uninstall.ps1`) removes Nexus Pursuit Hub from an org. It deletes every `NXP_` component and, with the NXP objects, all Nexus records: notices, searches, matches, push logs, feed runs, inbound e-mails and document analyses. Files attached to notices stay in Salesforce Files. For a scratch org, delete the org instead: `sf org delete scratch --target-org <alias>`.
+`scripts/uninstall.sh` (or `.\scripts\uninstall.ps1`) removes Nexus Pursuit Hub from an org. It deletes every `NXP_` component and, with the NXP objects, all Nexus records: notices, searches, matches, push logs, feed runs, inbound e-mails, document analyses, usage and GovWin alerts. The NXP reports and dashboards go first. Files attached to notices stay in Salesforce Files. For a scratch org, delete the org instead: `sf org delete scratch --target-org <alias>`.
 
 **1. Delete what was built by hand.** These refer to Nexus components and block the delete:
 
 - the **Nexus Pursuit Assistant** agent (deactivate, then delete) and its NXP agent actions;
 - the NXP prompt templates in Prompt Builder;
 - the `NXP_Ebuy_Inbox` e-mail service address (Setup → Email Services), and any mail rule that forwards eBuy mail to it;
-- reports, dashboards, flows and list views people built on NXP objects.
+- reports, dashboards, flows and list views people built on NXP objects (the shipped NXP reports and dashboards are removed by the script).
 
 **2. Run the script.**
 
@@ -315,7 +316,7 @@ If a step fails, the error names the component that is still in use. Remove that
 | `test-functional`: REST ingestion `HTTP 403`                                            | The user running the test needs `NXP_Admin` or `NXP_Integration` (custom permission `NXP_Integration_Access`).                                                                                                                                                                                                            |
 | `test-functional`: _Smoke test: no results were found_                                  | The smoke test didn't finish. Run `sf apex run --file scripts/apex/smoke-test.apex --target-org <alias>` and read the error at the end of the output.                                                                                                                                                                     |
 | `test-functional`: WARN on _Event matching_                                             | The platform event subscriber had not run yet, or is suspended: **Setup → Platform Events → NXP Gov Notice Changed → Subscriptions**, then resume it.                                                                                                                                                                     |
-| Package install fails with a missing dependency                                         | Install order is core, ingestion, search, push, experience, agents. Check the order in `release/versions.json`.                                                                                                                                                                                                           |
+| Package install fails with a missing dependency                                         | Install order is core, ingestion, search, push, experience, agents, analytics. Check the order in `release/versions.json`.                                                                                                                                                                                                |
 | eBuy e-mail never appears in **Inbound Emails**                                         | The address isn't receiving it: check the e-mail address on `NXP_Ebuy_Inbox` is active and its _Accept Email From_ list includes the sender, and that eBuy or your mail rule sends to it. E-mail that arrives but isn't from `Ebuy_Allowed_Senders` shows as _Rejected_.                                                  |
 | Documents stay _Waiting to be read_ or show _Could not read_                            | Reading is off (`AI_Enabled`, `Document_Analysis_Enabled`), the `NXP_Document_Analysis` template is missing or inactive, it has no File input named `Document`, or its model doesn't read PDFs. The row's detail shows the error.                                                                                         |
 | Uninstall stops on a component that is `in use`                                         | Something built by hand still refers to it (agent action, prompt template, flow, report). Delete that and run the script again.                                                                                                                                                                                           |

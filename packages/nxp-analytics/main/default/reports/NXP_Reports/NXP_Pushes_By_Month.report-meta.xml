@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>NXP_Push_Log__c$Name</field>
+    </columns>
+    <description>Successful pushes to TechnoMile by month and where they started.</description>
+    <filter>
+        <criteriaItems>
+            <column>NXP_Push_Log__c$Status__c</column>
+            <columnToValue>false</columnToValue>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>Success,Linked Existing</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>NXP_Push_Log__c$Mode__c</column>
+            <columnToValue>false</columnToValue>
+            <isUnlocked>true</isUnlocked>
+            <operator>notEqual</operator>
+            <value>Sync</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>NXP_Push_Log__c$CreatedDate</column>
+            <columnToValue>false</columnToValue>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>LAST_N_MONTHS:6</value>
+        </criteriaItems>
+    </filter>
+    <format>Matrix</format>
+    <groupingsAcross>
+        <field>NXP_Push_Log__c$Source__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsAcross>
+    <groupingsDown>
+        <dateGranularity>Month</dateGranularity>
+        <field>NXP_Push_Log__c$CreatedDate</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>NXP - Pushes by month and source</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>NXP_Push_Logs__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+</Report>

@@ -29,7 +29,7 @@ if [[ -n "$ORG" ]]; then
   echo "==> Check-only deployment to $ORG with RunLocalTests"
   sf project deploy validate \
     --source-dir packages/nxp-core packages/nxp-ingestion packages/nxp-search \
-    packages/nxp-push packages/nxp-experience packages/nxp-agents \
+    packages/nxp-push packages/nxp-experience packages/nxp-agents packages/nxp-analytics \
     --target-org "$ORG" --api-version 68.0 --test-level RunLocalTests --coverage-formatters text --wait 60
 fi
 echo "==> All checks passed"

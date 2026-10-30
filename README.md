@@ -13,30 +13,31 @@ Government opportunity intelligence on Salesforce. Nexus Pursuit Hub replaces th
 | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | Platform  | Salesforce (Government Cloud supported), Salesforce DX source format, **API 68.0**                                            |
 | Naming    | Every object and component starts with `NXP_` (LWCs: `nxp` + camelCase)                                                       |
-| Packaging | Six unlocked packages, no namespace. They can also be deployed straight from source with `sf project deploy`.                 |
+| Packaging | Seven unlocked packages, no namespace. They can also be deployed straight from source with `sf project deploy`.               |
 | AI        | Agentforce assistant built manually in Agentforce Builder; prompt templates run by batch Apex; Agent Script kept as reference |
 | Release   | Scripted `sf` commands (`scripts/release.sh`), no CI/CD pipeline                                                              |
 
 ## What it does
 
-| Capability                                                                                                             | Where                                                                   |
-| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **Standard feeds:** SAM.gov opportunities, entities, forecasts and USAspending awards                                  | `nxp-ingestion` connectors on a Queueable pipeline or a scheduled batch |
-| **Additional import channels:** Apex REST ingestion API, scheduled Apex batch, Apex callouts, Data Cloud Ingestion API | `/services/apexrest/nxp/v1/notices`, `NXP_FeedFetchBatch`, `datacloud/` |
-| **GSA eBuy RFQs by e-mail** (eBuy has no API): parsed by rules, optional AI fill-in, admin log with Reprocess          | `NXP_Ebuy_Inbox` e-mail service, **Inbound Emails** tab (`nxpEmailLog`) |
-| Dedupe across sources, amendment versioning, change events                                                             | `NXP_IngestionService`                                                  |
-| Rules-based fit score against the company profile                                                                      | `NXP_FitScoreService`, `NXP_Fit_Rule__mdt`                              |
-| User-built saved searches with boolean keywords, live preview and a 13-week back-test                                  | **My Searches** tab (`nxpSearchBuilder`)                                |
-| Real-time, daily and weekly alerts; follow alerts                                                                      | `NXP_SearchMatchService`, `NXP_AlertService`, `NXP_DigestBatch`         |
-| Match Inbox: push, watch or dismiss                                                                                    | **Match Inbox** tab (`nxpMatchInbox`)                                   |
-| Push to TechnoMile: manual, bulk, auto-push rules and post-push sync                                                   | `nxp-push`, `NXP_Push_Mapping__mdt`                                     |
-| Forecasts board and recompete timeline, with Watch                                                                     | **Forecasts** and **Recompetes** tabs                                   |
-| Vendor and agency profiles: awards, incumbents, what's coming, contacts                                                | Gov Vendor and Gov Agency record pages                                  |
-| Vehicle portfolio: vehicles we hold, their notices and expiry; notices that need a vehicle we lack                     | **Vehicle Portfolio** tab (`nxpVehiclePortfolio`)                       |
-| Document Reader: AI reads notice PDFs (requirements, evaluation, dates, risks) and flags differences from the notice   | Documents card on the notice page (`nxpNoticeDocuments`)                |
-| Nexus Pursuit Assistant (Agentforce) and AI summaries                                                                  | `nxp-agents`                                                            |
-| Feed health and Run now for admins                                                                                     | **Feed Console** tab (`nxpFeedConsole`)                                 |
-| Admin-only e-mail log, settings and configuration                                                                      | **Inbound Emails** tab, `NXP_Setting__mdt`                              |
+| Capability                                                                                                             | Where                                                                             |
+| ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **Standard feeds:** SAM.gov opportunities, entities, forecasts and USAspending awards                                  | `nxp-ingestion` connectors on a Queueable pipeline or a scheduled batch           |
+| **Additional import channels:** Apex REST ingestion API, scheduled Apex batch, Apex callouts, Data Cloud Ingestion API | `/services/apexrest/nxp/v1/notices`, `NXP_FeedFetchBatch`, `datacloud/`           |
+| **GSA eBuy RFQs by e-mail** (eBuy has no API): parsed by rules, optional AI fill-in, admin log with Reprocess          | `NXP_Ebuy_Inbox` e-mail service, **Inbound Emails** tab (`nxpEmailLog`)           |
+| Dedupe across sources, amendment versioning, change events                                                             | `NXP_IngestionService`                                                            |
+| Rules-based fit score against the company profile                                                                      | `NXP_FitScoreService`, `NXP_Fit_Rule__mdt`                                        |
+| User-built saved searches with boolean keywords, live preview and a 13-week back-test                                  | **My Searches** tab (`nxpSearchBuilder`)                                          |
+| Real-time, daily and weekly alerts; follow alerts                                                                      | `NXP_SearchMatchService`, `NXP_AlertService`, `NXP_DigestBatch`                   |
+| Match Inbox: push, watch or dismiss                                                                                    | **Match Inbox** tab (`nxpMatchInbox`)                                             |
+| Push to TechnoMile: manual, bulk, auto-push rules and post-push sync                                                   | `nxp-push`, `NXP_Push_Mapping__mdt`                                               |
+| Forecasts board and recompete timeline, with Watch                                                                     | **Forecasts** and **Recompetes** tabs                                             |
+| Vendor and agency profiles: awards, incumbents, what's coming, contacts                                                | Gov Vendor and Gov Agency record pages                                            |
+| Vehicle portfolio: vehicles we hold, their notices and expiry; notices that need a vehicle we lack                     | **Vehicle Portfolio** tab (`nxpVehiclePortfolio`)                                 |
+| Document Reader: AI reads notice PDFs (requirements, evaluation, dates, risks) and flags differences from the notice   | Documents card on the notice page (`nxpNoticeDocuments`)                          |
+| Nexus Pursuit Assistant (Agentforce) and AI summaries                                                                  | `nxp-agents`                                                                      |
+| Feed health and Run now for admins                                                                                     | **Feed Console** tab (`nxpFeedConsole`)                                           |
+| Admin-only e-mail log, settings and configuration                                                                      | **Inbound Emails** tab, `NXP_Setting__mdt`                                        |
+| Reports and dashboards: market and activity, operations, adoption and the GovWin parallel run                          | `nxp-analytics` ([reports and dashboards](docs/design/reports-and-dashboards.md)) |
 
 ## Repository layout
 
@@ -48,6 +49,7 @@ packages/
   nxp-push/        push target, push service, post-push sync, push mappings
   nxp-experience/  Lightning app, tabs, record page, LWCs
   nxp-agents/      agent actions, AI jobs (Notice Analyst, Document Reader, eBuy AI), permission sets
+  nxp-analytics/   report types, reports and dashboards (installs last)
     reference/     Agent Script + prompt templates (not deployed in Government Cloud)
 env-config/<env>/  per-environment settings (each a small DX project)
 datacloud/         Ingestion API schema and bulk upload script
