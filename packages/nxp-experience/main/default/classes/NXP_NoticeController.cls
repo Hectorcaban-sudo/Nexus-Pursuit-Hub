@@ -151,6 +151,21 @@ public with sharing class NXP_NoticeController {
             ),
             AccessLevel.SYSTEM_MODE
         );
+        if (n.Description_Requested__c == true) {
+            // A saved search was waiting for this text: match the notice again.
+            Database.update(
+                new NXP_Gov_Notice__c(Id = n.Id, Description_Requested__c = false),
+                AccessLevel.SYSTEM_MODE
+            );
+            EventBus.publish(
+                new NXP_Gov_Notice_Changed__e(
+                    Notice_Record_Id__c = n.Id,
+                    Change_Type__c = NXP_SearchMatchService.DESCRIPTION_FETCHED,
+                    Is_New__c = false,
+                    Source_Feed__c = n.Source_Feed__c
+                )
+            );
+        }
         return n.Description__c;
     }
 }

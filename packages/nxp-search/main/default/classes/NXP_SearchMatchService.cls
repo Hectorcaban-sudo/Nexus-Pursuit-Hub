@@ -4,6 +4,9 @@
  * alerts, and notifies match listeners (auto-push).
  */
 public without sharing class NXP_SearchMatchService {
+    /** Change type published when SAM.gov description text arrives (NXP_NoticeEnrichBatch). */
+    public static final String DESCRIPTION_FETCHED = 'Description fetched';
+
     public static final String SEARCH_FIELDS =
         'Id, Name, OwnerId, Criteria_JSON__c, Alert_Frequency__c, Channels__c, Alert_On_Changes__c, ' +
         'Auto_Push__c, Auto_Push_Min_Fit__c, Active__c, Visibility__c';
@@ -49,6 +52,7 @@ public without sharing class NXP_SearchMatchService {
 
         Set<String> keys = new Set<String>();
         Map<String, NXP_Search_Match__c> candidates = new Map<String, NXP_Search_Match__c>();
+        Set<Id> wantText = new Set<Id>();
         for (NXP_Gov_Notice__c n : notices) {
             for (Id searchId : criteria.keySet()) {
                 NXP_SearchCriteria.MatchResult r;
@@ -58,6 +62,9 @@ public without sharing class NXP_SearchMatchService {
                     continue;
                 }
                 if (!r.matched) {
+                    if (r.needsDescription) {
+                        wantText.add(n.Id);
+                    }
                     continue;
                 }
                 String key = matchKey(searchId, n.Id);
@@ -69,7 +76,13 @@ public without sharing class NXP_SearchMatchService {
                         Gov_Notice__c = n.Id,
                         Match_Key__c = key,
                         Matched_Terms__c = NXP_Text.truncate(String.join(r.terms, ', '), 255),
-                        Change_Type__c = NXP_Text.truncate(newIds.contains(n.Id) ? 'New' : changeTypes.get(n.Id), 255)
+                        // A match found once the description text arrived is new to the user.
+                        Change_Type__c = NXP_Text.truncate(
+                            newIds.contains(n.Id) || changeTypes.get(n.Id) == DESCRIPTION_FETCHED
+                                ? 'New'
+                                : changeTypes.get(n.Id),
+                            255
+                        )
                     )
                 );
             }
@@ -98,7 +111,12 @@ public without sharing class NXP_SearchMatchService {
                 m.User_Action__c = 'None';
                 m.Alert_Status__c = silent ? 'Suppressed' : 'Pending';
                 toInsert.add(m);
-            } else if (s.Alert_On_Changes__c && prior.User_Action__c != 'Dismissed' && m.Change_Type__c != 'New') {
+            } else if (
+                s.Alert_On_Changes__c &&
+                prior.User_Action__c != 'Dismissed' &&
+                m.Change_Type__c != 'New' &&
+                changeTypes.get(m.Gov_Notice__c) != DESCRIPTION_FETCHED
+            ) {
                 // Update only what changed: the master-detail field cannot be re-sent on update.
                 toUpdate.add(
                     new NXP_Search_Match__c(
@@ -124,9 +142,17 @@ public without sharing class NXP_SearchMatchService {
         }
 
         requestSummaries(toSave, notices);
+        requestDescriptions(wantText, notices);
         Map<Id, NXP_Gov_Notice__c> noticeById = new Map<Id, NXP_Gov_Notice__c>(notices);
         NXP_AlertService.sendRealTime(toSave, searchById, noticeById);
-        NXP_AlertService.sendFollowAlerts(changeTypes, newIds, noticeById);
+        // Fetching description text is not a change followers need to hear about.
+        Map<Id, String> realChanges = new Map<Id, String>();
+        for (Id noticeId : changeTypes.keySet()) {
+            if (changeTypes.get(noticeId) != DESCRIPTION_FETCHED) {
+                realChanges.put(noticeId, changeTypes.get(noticeId));
+            }
+        }
+        NXP_AlertService.sendFollowAlerts(realChanges, newIds, noticeById);
         notifyListeners(toSave);
         NXP_Logger.flush();
         return toSave;
@@ -134,6 +160,25 @@ public without sharing class NXP_SearchMatchService {
 
     public static String matchKey(Id searchId, Id noticeId) {
         return String.valueOf(searchId) + '-' + String.valueOf(noticeId);
+    }
+
+    /**
+     * Marks notices whose match depends on description text that hasn't been fetched yet. The
+     * description fetch after each SAM.gov run (NXP_NoticeEnrichBatch) picks them up, then publishes
+     * DESCRIPTION_FETCHED so matching runs again with the text.
+     */
+    private static void requestDescriptions(Set<Id> noticeIds, List<NXP_Gov_Notice__c> notices) {
+        List<NXP_Gov_Notice__c> updates = new List<NXP_Gov_Notice__c>();
+        for (NXP_Gov_Notice__c n : notices) {
+            if (noticeIds.contains(n.Id) && n.Description_Requested__c != true) {
+                updates.add(new NXP_Gov_Notice__c(Id = n.Id, Description_Requested__c = true));
+            }
+        }
+        if (!updates.isEmpty()) {
+            NXP_TriggerHandler.bypass('NXP_GovNoticeTriggerHandler');
+            Database.update(updates, false, AccessLevel.SYSTEM_MODE);
+            NXP_TriggerHandler.clearBypass('NXP_GovNoticeTriggerHandler');
+        }
     }
 
     /** Marks matched notices for the Notice Analyst (AI summary) background job. */

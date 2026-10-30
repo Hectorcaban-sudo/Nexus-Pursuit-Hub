@@ -371,6 +371,25 @@ private class NXP_IngestionTest {
     }
 
     @IsTest
+    static void enrichBatchFetchesRequestedDescriptionsAndClearsTheRequest() {
+        Test.setMock(HttpCalloutMock.class, new Router());
+        NXP_IngestionService.ingest(samRecords());
+        NXP_Gov_Notice__c n = [SELECT Id FROM NXP_Gov_Notice__c WHERE Notice_Id__c = 'abc123'];
+        update new NXP_Gov_Notice__c(Id = n.Id, Description_Requested__c = true);
+        Test.startTest();
+        Database.executeBatch(new NXP_NoticeEnrichBatch(), 20);
+        Test.stopTest();
+        n = [
+            SELECT Description__c, Needs_Description__c, Description_Requested__c
+            FROM NXP_Gov_Notice__c
+            WHERE Id = :n.Id
+        ];
+        System.assertEquals(false, n.Needs_Description__c);
+        System.assertEquals(false, n.Description_Requested__c);
+        System.assert(n.Description__c.contains('Hello world'), n.Description__c);
+    }
+
+    @IsTest
     static void enrichBatchForChosenNotices() {
         Test.setMock(HttpCalloutMock.class, new Router());
         NXP_IngestionService.ingest(samRecords());

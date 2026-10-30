@@ -3,12 +3,16 @@
  *
  * SAM.gov's search API returns only a link for each description; the text costs one more API call
  * per notice and counts against the key's daily limit. So the default run fetches text only for
- * notices worth reading: those that matched a saved search (AI summary requested) and those at or
- * above the Description_Min_Fit setting. Anyone can fetch one more from the notice page
+ * notices worth reading: those that matched a saved search (AI summary requested), those a saved
+ * search can only decide from the text (Description_Requested__c; matching runs again when it
+ * arrives) and those at or above the Description_Min_Fit setting. Anyone can fetch one more from the notice page
  * (NXP_NoticeController.loadDescription). Scope 20 keeps each transaction well under the callout limit.
  * Recomputes the content hash so fetching text is never mistaken for an amendment.
  */
 public without sharing class NXP_NoticeEnrichBatch implements Database.Batchable<SObject>, Database.AllowsCallouts {
+    /** Must equal NXP_SearchMatchService.DESCRIPTION_FETCHED (nxp-search; this package can't reference it). */
+    public static final String DESCRIPTION_FETCHED = 'Description fetched';
+
     private final Set<Id> noticeIds;
 
     /** Matched notices and notices at or above Description_Min_Fit. */
@@ -25,7 +29,7 @@ public without sharing class NXP_NoticeEnrichBatch implements Database.Batchable
         Map<String, Object> binds = new Map<String, Object>();
         String filter;
         if (noticeIds == null) {
-            filter = ' AND (Fit_Score__c >= :minFit OR AI_Summary_Status__c IN :requested)';
+            filter = ' AND (Fit_Score__c >= :minFit OR AI_Summary_Status__c IN :requested OR Description_Requested__c = TRUE)';
             binds.put('minFit', NXP_Settings.getInteger('Description_Min_Fit', 50));
             binds.put('requested', new List<String>{ 'Pending', 'Complete', 'Failed' });
         } else {
@@ -45,10 +49,23 @@ public without sharing class NXP_NoticeEnrichBatch implements Database.Batchable
 
     public void execute(Database.BatchableContext context, List<NXP_Gov_Notice__c> scope) {
         List<NXP_Gov_Notice__c> updates = new List<NXP_Gov_Notice__c>();
+        List<NXP_Gov_Notice_Changed__e> rematch = new List<NXP_Gov_Notice_Changed__e>();
         for (NXP_Gov_Notice__c n : scope) {
             try {
                 apply(n);
                 updates.add(n);
+                if (n.Description_Requested__c == true) {
+                    // A saved search was waiting for this text: match the notice again.
+                    n.Description_Requested__c = false;
+                    rematch.add(
+                        new NXP_Gov_Notice_Changed__e(
+                            Notice_Record_Id__c = n.Id,
+                            Change_Type__c = DESCRIPTION_FETCHED,
+                            Is_New__c = false,
+                            Source_Feed__c = 'SAM_Opportunities'
+                        )
+                    );
+                }
             } catch (Exception e) {
                 // Leave Needs_Description__c set; the next run retries.
                 NXP_Logger.warn(
@@ -58,6 +75,9 @@ public without sharing class NXP_NoticeEnrichBatch implements Database.Batchable
             }
         }
         Database.update(updates, false, AccessLevel.SYSTEM_MODE);
+        if (!rematch.isEmpty()) {
+            EventBus.publish(rematch);
+        }
         NXP_Logger.flush();
     }
 

@@ -11,7 +11,7 @@ Nexus Pursuit Hub finds government opportunities for you and sends the good ones
     - Value, _Due within_ days, _Minimum fit score_.
 3. Watch **Live preview**: today's match count, matches per week over the last 13 weeks, and the top 20. Too many? Add a filter. None? Remove one.
 4. Choose alerts: **Daily** digest (recommended), **Weekly**, **Real Time** (for narrow, urgent searches) or **None**.
-5. Click **Save search**. Open notices that match it now appear in your Match Inbox within a minute, without alert e-mails. From then on, new and changed notices are matched as they arrive and alerted as you chose.
+5. Click **Save search**. Open notices that match it now appear in your Match Inbox within a minute, without alert e-mails. From then on, new and changed notices are matched as they arrive and alerted as you chose. Keywords are checked against the title and the description. SAM.gov sends descriptions separately, so a notice whose keywords appear only in its description can arrive in your inbox up to an hour after the notice itself.
 
 ## 2. Work the Match Inbox
 

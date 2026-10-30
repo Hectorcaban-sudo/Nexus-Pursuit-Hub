@@ -10,6 +10,8 @@
 public without sharing class NXP_InitialMatchJob implements Queueable {
     public static final String CHANGE_TYPE = 'Already open';
     private static final Integer MAX_ROWS = 2000;
+    /** Most notices whose description is fetched because only the text can decide this search. */
+    private static final Integer MAX_TEXT_REQUESTS = 100;
 
     private final Id searchId;
 
@@ -53,6 +55,7 @@ public without sharing class NXP_InitialMatchJob implements Queueable {
         // Best fit first, so the summary cap keeps the most relevant ones.
         List<NXP_Gov_Notice__c> matched = new List<NXP_Gov_Notice__c>();
         Map<String, NXP_Search_Match__c> byKey = new Map<String, NXP_Search_Match__c>();
+        List<NXP_Gov_Notice__c> wantText = new List<NXP_Gov_Notice__c>();
         for (NXP_Gov_Notice__c n : candidates) {
             NXP_SearchCriteria.MatchResult r;
             try {
@@ -61,6 +64,10 @@ public without sharing class NXP_InitialMatchJob implements Queueable {
                 continue;
             }
             if (!r.matched) {
+                // Only the description can decide: fetch it, and normal matching runs when it arrives.
+                if (r.needsDescription && n.Description_Requested__c != true && wantText.size() < MAX_TEXT_REQUESTS) {
+                    wantText.add(new NXP_Gov_Notice__c(Id = n.Id, Description_Requested__c = true));
+                }
                 continue;
             }
             matched.add(n);
@@ -79,7 +86,15 @@ public without sharing class NXP_InitialMatchJob implements Queueable {
                 )
             );
         }
+        if (!wantText.isEmpty()) {
+            NXP_TriggerHandler.bypass('NXP_GovNoticeTriggerHandler');
+            Database.update(wantText, false, AccessLevel.SYSTEM_MODE);
+            NXP_TriggerHandler.clearBypass('NXP_GovNoticeTriggerHandler');
+        }
         if (matched.isEmpty()) {
+            if (!wantText.isEmpty()) {
+                startDescriptionFetch(new Set<Id>());
+            }
             return 0;
         }
 
@@ -89,11 +104,15 @@ public without sharing class NXP_InitialMatchJob implements Queueable {
         }
         Database.insert(byKey.values(), false, AccessLevel.SYSTEM_MODE);
 
-        requestSummaries(matched);
+        Boolean fetchStarted = requestSummaries(matched);
+        if (!wantText.isEmpty() && !fetchStarted) {
+            startDescriptionFetch(new Set<Id>());
+        }
         return byKey.size();
     }
 
-    private static void requestSummaries(List<NXP_Gov_Notice__c> matched) {
+    /** Returns true when it started the description fetch. */
+    private static Boolean requestSummaries(List<NXP_Gov_Notice__c> matched) {
         Integer cap = NXP_Settings.getInteger('Initial_Match_Max_Summaries', 25);
         List<NXP_Gov_Notice__c> updates = new List<NXP_Gov_Notice__c>();
         Set<Id> needText = new Set<Id>();
@@ -115,7 +134,9 @@ public without sharing class NXP_InitialMatchJob implements Queueable {
         }
         if (!needText.isEmpty()) {
             startDescriptionFetch(needText);
+            return true;
         }
+        return false;
     }
 
     /**

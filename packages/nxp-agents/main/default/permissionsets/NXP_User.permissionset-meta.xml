@@ -562,6 +562,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Description_Requested__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>NXP_Gov_Notice__c.Needs_Description__c</field>
         <readable>true</readable>
     </fieldPermissions>

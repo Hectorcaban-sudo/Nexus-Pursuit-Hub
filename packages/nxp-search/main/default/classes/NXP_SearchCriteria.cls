@@ -7,6 +7,11 @@ public inherited sharing class NXP_SearchCriteria {
     public class MatchResult {
         public Boolean matched = false;
         public List<String> terms = new List<String>();
+        /**
+         * Everything matched except the keywords, and the keywords may be in the description, which
+         * is still only a SAM.gov link: fetch the text and match again.
+         */
+        public Boolean needsDescription = false;
     }
 
     @AuraEnabled
@@ -151,6 +156,13 @@ public inherited sharing class NXP_SearchCriteria {
                 text += ' ' + (n.Description__c == null ? '' : n.Description__c);
             }
             if (!expr.evaluate(NXP_KeywordExpression.normalize(text), hits)) {
+                r.needsDescription =
+                    (searchIn == null ||
+                    searchIn.isEmpty() ||
+                    searchIn.contains('description')) &&
+                    n.Needs_Description__c == true &&
+                    n.Description__c != null &&
+                    n.Description__c.startsWithIgnoreCase('http');
                 return r;
             }
         }

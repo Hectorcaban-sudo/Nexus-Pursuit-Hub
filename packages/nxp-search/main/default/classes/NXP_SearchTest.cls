@@ -245,6 +245,44 @@ private class NXP_SearchTest {
     }
 
     @IsTest
+    static void keywordsOnlyInTheDescriptionAreFetchedAndMatchedAgain() {
+        NXP_Gov_Notice__c n = notice('DESC-1', 'Recruiting support services', '541512', 20);
+        n.Description__c = 'https://api.sam.gov/prod/opportunities/v1/noticedesc?noticeid=DESC-1';
+        n.Needs_Description__c = true;
+        insert n;
+        insert new NXP_Saved_Search__c(
+            Name = 'CRM',
+            Criteria_JSON__c = '{"keywords":"CRM AND recruit*","agencies":["Homeland Security"]}',
+            Alert_Frequency__c = 'Daily',
+            Channels__c = 'Email',
+            Active__c = true
+        );
+
+        System.assertEquals(
+            0,
+            NXP_SearchMatchService.process(new Map<Id, String>{ n.Id => 'New' }, new Set<Id>{ n.Id }).size()
+        );
+        System.assert(
+            [SELECT Description_Requested__c FROM NXP_Gov_Notice__c WHERE Id = :n.Id].Description_Requested__c,
+            'Only the description can decide, so it is requested'
+        );
+
+        // The enrich batch replaces the link with text and publishes DESCRIPTION_FETCHED.
+        update new NXP_Gov_Notice__c(
+            Id = n.Id,
+            Description__c = 'The command needs a CRM for recruiters.',
+            Needs_Description__c = false,
+            Description_Requested__c = false
+        );
+        List<NXP_Search_Match__c> matches = NXP_SearchMatchService.process(
+            new Map<Id, String>{ n.Id => NXP_SearchMatchService.DESCRIPTION_FETCHED },
+            new Set<Id>()
+        );
+        System.assertEquals(1, matches.size());
+        System.assertEquals('New', [SELECT Change_Type__c FROM NXP_Search_Match__c].Change_Type__c);
+    }
+
+    @IsTest
     static void templatesShowCountsAndCopiesRememberTheirTemplate() {
         insert notice('T-1', 'Cyber zero trust support', '541512', 20);
         NXP_Saved_Search__c t = new NXP_Saved_Search__c(
