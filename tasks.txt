@@ -65,3 +65,7 @@ sf project delete source --metadata ApexClass:NXP_TechnoMilePushTarget --metadat
 git checkout main
 git pull
 sf project deploy start --source-dir "packages/nxp-core/main/default/layouts" --target-org staging --wait 10
+
+'Database.executeBatch(new NXP_NoticeEnrichBatch(), 20);' | Out-File -Encoding ascii enrich.apex
+sf apex run --file enrich.apex --target-org staging
+Remove-Item enrich.apex
