@@ -105,6 +105,7 @@ public without sharing class NXP_InitialMatchJob implements Queueable {
         Database.insert(byKey.values(), false, AccessLevel.SYSTEM_MODE);
 
         Boolean fetchStarted = requestSummaries(matched);
+        startFileDownload();
         if (!wantText.isEmpty() && !fetchStarted) {
             startDescriptionFetch(new Set<Id>());
         }
@@ -137,6 +138,19 @@ public without sharing class NXP_InitialMatchJob implements Queueable {
             return true;
         }
         return false;
+    }
+
+    /** Downloads SAM.gov attachments for the newly matched notices (NXP_SamFileJob, nxp-ingestion). */
+    private static void startFileDownload() {
+        Type t = Type.forName('NXP_SamFileJob');
+        if (t == null || Test.isRunningTest() || Limits.getQueueableJobs() >= Limits.getLimitQueueableJobs()) {
+            return;
+        }
+        try {
+            System.enqueueJob((Queueable) t.newInstance());
+        } catch (Exception e) {
+            NXP_Logger.warn('NXP_InitialMatchJob', 'Could not start the file download: ' + e.getMessage());
+        }
     }
 
     /**

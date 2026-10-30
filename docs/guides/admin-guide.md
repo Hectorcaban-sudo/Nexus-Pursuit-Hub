@@ -74,7 +74,16 @@ Files are read when attached (at most `Document_Max_Per_Notice` per notice autom
 
 When a read document disagrees with the notice (due date, NAICS, set-aside), the notice page shows a warning, the Match Inbox card gets a _document checks_ chip and the push dialog warns. **Mark as checked** records who checked it (`Checks_Reviewed__c`, `Checks_Reviewed_By__c`) and hides it for everyone until the file is read again.
 
-SAM.gov attachments are not downloaded automatically yet: add them to the notice from SAM.gov (download, then **Add documents**).
+### SAM.gov attachments
+
+The SAM.gov feed stores each notice's file links (`Resource_Links__c`). `NXP_SamFileJob` downloads them into Files on the notice, where the Document Reader reads the PDFs:
+
+- **Which notices:** those that match a saved search or score at least `Files_Min_Fit` (70), while `Files_Auto_Download` is true; and any notice where someone clicks **Get SAM.gov files** on the Documents card.
+- **When:** after each SAM.gov feed run and when a search is saved, one file per background job.
+- **Limits:** at most `Files_Max_Per_Notice` (10) files per notice; files over `Files_Max_MB` (6) are skipped and stay on SAM.gov. Each file is one SAM.gov call and uses file storage. Amendments download only new files.
+- **Status:** the Documents card shows what happened (`Files_Status__c`). An HTTP 429 stops downloading until the next feed run.
+
+Downloads go to `sam.gov` through the **NXP SAM.gov Files** Named Credential (same API key), which redirects to file storage. The **NXP_SAM_File_Storage** Remote Site Setting allows `https://s3.amazonaws.com`. If a notice's status says a file couldn't be downloaded and names another host (an "Unauthorized endpoint" error), add a Remote Site Setting for that host in Setup.
 
 ## Settings (`NXP_Setting__mdt`)
 
@@ -100,6 +109,8 @@ SAM.gov attachments are not downloaded automatically yet: add them to the notice
 | `Initial_Match_Max_Summaries`                              | 25                            | When a search is saved, AI summaries requested for at most this many existing matches                                                                                                                              |
 | `AI_Max_Calls_Per_Day`                                     | 500                           | Most AI prompt calls a day across summaries, change summaries, documents, eBuy and criteria drafts; then AI work waits for the next day (0 = no limit). Today's count is in Setup > Custom Settings > NXP AI Usage |
 | `Admin_Digest_Mode` / `Admin_Digest_Recipients`            | Problems / (blank)            | Daily problems e-mail at 07:00: Problems (only when something failed), Daily (always) or Off; blank recipients = active NXP_Admin users                                                                            |
+| `Files_Auto_Download` / `Files_Min_Fit`                    | true / 70                     | Download SAM.gov attachments automatically for matched notices and this fit or higher                                                                                                                              |
+| `Files_Max_Per_Notice` / `Files_Max_MB`                    | 10 / 6                        | Most files per notice; largest file in MB (keep at 8 or less)                                                                                                                                                      |
 | `Ebuy_Silence_Days`                                        | 3                             | The problems e-mail warns when no eBuy e-mail has arrived for this many days (0 = off)                                                                                                                             |
 | `Bypass_NXP_GovNoticeTriggerHandler`                       | (none)                        | Emergency trigger switch (set Value to true)                                                                                                                                                                       |
 

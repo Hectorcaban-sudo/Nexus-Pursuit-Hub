@@ -30,6 +30,13 @@ public with sharing class NXP_DocumentController {
         public List<DocumentRow> rows = new List<DocumentRow>();
         @AuraEnabled
         public Boolean enabled = false;
+        /** SAM.gov attachments listed for the notice, and what happened to them. */
+        @AuraEnabled
+        public Integer samFiles = 0;
+        @AuraEnabled
+        public Boolean samFilesPending = false;
+        @AuraEnabled
+        public String samFilesStatus;
     }
 
     @AuraEnabled
@@ -37,6 +44,16 @@ public with sharing class NXP_DocumentController {
         try {
             Documents out = new Documents();
             out.enabled = NXP_DocumentService.isEnabled();
+            for (NXP_Gov_Notice__c n : [
+                SELECT Resource_Links__c, Files_Pending__c, Files_Status__c
+                FROM NXP_Gov_Notice__c
+                WHERE Id = :noticeId
+                WITH USER_MODE
+            ]) {
+                out.samFiles = String.isBlank(n.Resource_Links__c) ? 0 : n.Resource_Links__c.split('\n').size();
+                out.samFilesPending = n.Files_Pending__c;
+                out.samFilesStatus = n.Files_Status__c;
+            }
             Map<Id, ContentDocumentLink> links = new Map<Id, ContentDocumentLink>();
             for (ContentDocumentLink l : [
                 SELECT
@@ -103,6 +120,39 @@ public with sharing class NXP_DocumentController {
                 throw new AuraHandledException('That file is not attached to this notice.');
             }
             return NXP_DocumentService.requestAnalysis(noticeId, documentId);
+        } catch (Exception e) {
+            throw handled(e);
+        }
+    }
+
+    /** Get SAM.gov files: downloads this notice's SAM.gov attachments in the background. */
+    @AuraEnabled
+    public static String requestSamFiles(Id noticeId) {
+        try {
+            List<NXP_Gov_Notice__c> rows = [
+                SELECT Id, Resource_Links__c
+                FROM NXP_Gov_Notice__c
+                WHERE Id = :noticeId
+                WITH USER_MODE
+            ];
+            if (rows.isEmpty()) {
+                throw new AuraHandledException('Notice not found or not visible to you.');
+            }
+            if (String.isBlank(rows[0].Resource_Links__c)) {
+                throw new AuraHandledException('SAM.gov lists no files for this notice.');
+            }
+            // Notices are read-only for most users; only the request flags are written.
+            Database.update(
+                new NXP_Gov_Notice__c(
+                    Id = noticeId,
+                    Files_Requested__c = true,
+                    Files_Pending__c = true,
+                    Files_Status__c = 'Getting the files from SAM.gov…'
+                ),
+                AccessLevel.SYSTEM_MODE
+            );
+            System.enqueueJob(new NXP_SamFileJob(new List<Id>{ noticeId }));
+            return 'Getting the files from SAM.gov. They appear here in a few minutes, one at a time.';
         } catch (Exception e) {
             throw handled(e);
         }

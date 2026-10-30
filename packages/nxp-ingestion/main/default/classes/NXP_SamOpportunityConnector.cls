@@ -96,6 +96,18 @@ public inherited sharing class NXP_SamOpportunityConnector implements NXP_FeedCo
         String description = (String) rec.values.get('Description__c');
         rec.put('Needs_Description__c', description != null && description.startsWithIgnoreCase('http'));
 
+        // Attachments: SAM.gov lists download links; NXP_SamFileJob downloads them for notices worth it.
+        List<String> links = new List<String>();
+        for (Object link : NXP_Json.toList(raw.get('resourceLinks'))) {
+            if (link instanceof String && ((String) link).startsWithIgnoreCase('https://')) {
+                links.add((String) link);
+            }
+        }
+        if (!links.isEmpty()) {
+            rec.put('Resource_Links__c', NXP_Text.truncate(String.join(links, '\n'), 32768));
+            rec.put('Files_Pending__c', true);
+        }
+
         for (Object poc : NXP_Json.toList(raw.get('pointOfContact'))) {
             NXP_IngestRecord.ContactInfo c = new NXP_IngestRecord.ContactInfo();
             c.fullName = NXP_Json.getString(poc, 'fullName');

@@ -17,6 +17,23 @@
             <template lwc:if={offNote}>
                 <p class="off" role="status">{offNote}</p>
             </template>
+            <template lwc:if={hasSamFiles}>
+                <div class="sam-files">
+                    <span class="sam-text">
+                        <strong>{samFilesLabel}</strong>
+                        <template lwc:if={samFilesStatus}><span class="meta"> {samFilesStatus}</span></template>
+                    </span>
+                    <template lwc:if={canGetSamFiles}>
+                        <lightning-button
+                            class="get-sam-files"
+                            label="Get SAM.gov files"
+                            icon-name="utility:download"
+                            disabled={gettingFiles}
+                            onclick={handleGetSamFiles}
+                        ></lightning-button>
+                    </template>
+                </div>
+            </template>
 
             <template lwc:if={hasRows}>
                 <ul class="docs">

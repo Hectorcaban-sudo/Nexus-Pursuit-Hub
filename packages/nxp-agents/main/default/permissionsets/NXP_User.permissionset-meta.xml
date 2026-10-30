@@ -567,6 +567,31 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Files_Fetched__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Files_Pending__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Files_Requested__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Files_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Resource_Links__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>NXP_Gov_Notice__c.Needs_Description__c</field>
         <readable>true</readable>
     </fieldPermissions>

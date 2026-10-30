@@ -67,6 +67,11 @@ public without sharing class NXP_FeedScheduler implements Schedulable {
             } catch (Exception e) {
                 NXP_Logger.warn('NXP_FeedScheduler', 'Could not start NXP_NoticeEnrichBatch: ' + e.getMessage());
             }
+            try {
+                NXP_SamFileJob.startIfNeeded();
+            } catch (Exception e) {
+                NXP_Logger.warn('NXP_FeedScheduler', 'Could not start NXP_SamFileJob: ' + e.getMessage());
+            }
         }
     }
 }

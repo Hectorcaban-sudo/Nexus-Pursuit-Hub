@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Files_Pending__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>SAM.gov listed attachments for this notice that may not be downloaded yet.</description>
+    <label>SAM.gov Files Pending</label>
+    <type>Checkbox</type>
+</CustomField>

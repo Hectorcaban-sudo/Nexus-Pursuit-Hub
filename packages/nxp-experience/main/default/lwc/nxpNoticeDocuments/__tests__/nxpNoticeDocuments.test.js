@@ -2,11 +2,15 @@ import { createElement } from 'lwc';
 import NxpNoticeDocuments from 'c/nxpNoticeDocuments';
 import getDocuments from '@salesforce/apex/NXP_DocumentController.getDocuments';
 import analyze from '@salesforce/apex/NXP_DocumentController.analyze';
+import requestSamFiles from '@salesforce/apex/NXP_DocumentController.requestSamFiles';
 
 jest.mock('@salesforce/apex/NXP_DocumentController.getDocuments', () => ({ default: jest.fn() }), {
     virtual: true
 });
 jest.mock('@salesforce/apex/NXP_DocumentController.analyze', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_DocumentController.requestSamFiles', () => ({ default: jest.fn() }), {
+    virtual: true
+});
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -113,5 +117,16 @@ describe('c-nxp-notice-documents', () => {
         const el = mount();
         await flush();
         expect(el.shadowRoot.querySelector('.empty').textContent).toContain('No documents yet');
+    });
+    it('offers to get the SAM.gov files', async () => {
+        getDocuments.mockResolvedValue({ ...DOCS, samFiles: 3, samFilesPending: true, samFilesStatus: null });
+        requestSamFiles.mockResolvedValue('Getting the files from SAM.gov.');
+        const el = mount();
+        await flush();
+        expect(el.shadowRoot.querySelector('.sam-text').textContent).toContain('SAM.gov lists 3 files.');
+        el.shadowRoot.querySelector('.get-sam-files').click();
+        await flush();
+        expect(requestSamFiles).toHaveBeenCalledWith({ noticeId: 'a01000000000011' });
+        expect(getDocuments).toHaveBeenCalledTimes(2);
     });
 });

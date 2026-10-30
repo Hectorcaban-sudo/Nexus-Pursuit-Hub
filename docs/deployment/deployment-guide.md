@@ -131,8 +131,9 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - the assistant ([agent manual build](../guides/agent-manual-build.md)).
 10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
 11. **Search templates:** as an `NXP_Admin` user, run `sf apex run --file scripts/apex/seed-search-templates.apex --target-org <alias>` to create the four starter templates under _Start from a template_ on My Searches (safe to run again; edit or delete them like any search).
-12. **Admin e-mail:** the daily problems e-mail goes to every active `NXP_Admin` user at 07:00. Set `Admin_Digest_Recipients` to send it elsewhere, or `Admin_Digest_Mode = Off`.
-13. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
+12. **SAM.gov attachments:** the `NXP_SAM_Files` Named Credential uses the same SAM.gov key, so nothing to enter. After the first SAM.gov run, click **Get SAM.gov files** on one notice and check its Documents card; if it reports an unauthorized endpoint, add a Remote Site Setting for the host it names ([admin guide](../guides/admin-guide.md#samgov-attachments)).
+13. **Admin e-mail:** the daily problems e-mail goes to every active `NXP_Admin` user at 07:00. Set `Admin_Digest_Recipients` to send it elsewhere, or `Admin_Digest_Mode = Off`.
+14. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
 
 ## SAM.gov API key
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<RemoteSiteSetting xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+    >Where SAM.gov file downloads redirect to (file storage). NXP_SamFileJob follows the redirect here. If the Files status on a notice names another host, add a Remote Site Setting for it.</description>
+    <disableProtocolSecurity>false</disableProtocolSecurity>
+    <isActive>true</isActive>
+    <url>https://s3.amazonaws.com</url>
+</RemoteSiteSetting>

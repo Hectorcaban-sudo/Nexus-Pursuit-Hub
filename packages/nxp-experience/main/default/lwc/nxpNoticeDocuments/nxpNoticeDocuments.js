@@ -2,6 +2,7 @@ import { LightningElement, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getDocuments from '@salesforce/apex/NXP_DocumentController.getDocuments';
 import analyze from '@salesforce/apex/NXP_DocumentController.analyze';
+import requestSamFiles from '@salesforce/apex/NXP_DocumentController.requestSamFiles';
 import { formatDate, toast, toastError } from 'c/nxpUtils';
 
 const STATUS = {
@@ -88,6 +89,7 @@ export default class NxpNoticeDocuments extends NavigationMixin(LightningElement
     @api recordId;
     docs;
     loading = true;
+    gettingFiles = false;
     busyId;
     openId;
 
@@ -107,6 +109,36 @@ export default class NxpNoticeDocuments extends NavigationMixin(LightningElement
             toastError(this, e, 'Could not load the documents');
         } finally {
             this.loading = false;
+        }
+    }
+
+    get hasSamFiles() {
+        return !!(this.docs && this.docs.samFiles > 0);
+    }
+
+    get samFilesLabel() {
+        const n = this.docs ? this.docs.samFiles : 0;
+        return n === 1 ? 'SAM.gov lists 1 file.' : `SAM.gov lists ${n} files.`;
+    }
+
+    get samFilesStatus() {
+        return this.docs ? this.docs.samFilesStatus : null;
+    }
+
+    get canGetSamFiles() {
+        return !!(this.docs && this.docs.samFilesPending);
+    }
+
+    async handleGetSamFiles() {
+        this.gettingFiles = true;
+        try {
+            const message = await requestSamFiles({ noticeId: this.recordId });
+            toast(this, 'Getting SAM.gov files', message);
+            await this.load();
+        } catch (e) {
+            toastError(this, e, 'Could not get the SAM.gov files');
+        } finally {
+            this.gettingFiles = false;
         }
     }
 

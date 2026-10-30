@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Files_Requested__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description
+    >Someone clicked Get SAM.gov files on the notice, so its files are downloaded even if it isn't matched or high-fit.</description>
+    <label>SAM.gov Files Requested</label>
+    <type>Checkbox</type>
+</CustomField>

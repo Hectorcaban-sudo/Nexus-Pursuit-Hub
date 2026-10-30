@@ -196,6 +196,13 @@ public without sharing class NXP_IngestionService {
                 skip.add('description__c');
                 skip.add('needs_description__c');
             }
+            // New SAM.gov attachments are saved even when no tracked field changed (no new version);
+            // unchanged links leave the files flags alone.
+            Boolean linksChanged = n.Resource_Links__c != null && n.Resource_Links__c != existing.Resource_Links__c;
+            if (!linksChanged) {
+                skip.add('resource_links__c');
+                skip.add('files_pending__c');
+            }
             NXP_Gov_Notice__c upd = new NXP_Gov_Notice__c(Id = existing.Id);
             NXP_Gov_Notice__c merged = existing.clone(true, true, false, false);
             Map<String, Object> populated = n.getPopulatedFieldsAsMap();
@@ -207,7 +214,7 @@ public without sharing class NXP_IngestionService {
             }
             String newHash = computeHash(merged);
             String lineage = appendLineage(existing.Source_Lineage__c, rec.sourceFeed);
-            if (newHash == existing.Content_Hash__c && lineage == existing.Source_Lineage__c) {
+            if (newHash == existing.Content_Hash__c && lineage == existing.Source_Lineage__c && !linksChanged) {
                 result.unchanged++;
                 result.results.add(recordResult(rec, 'Unchanged', existing.Id, null));
                 continue;
