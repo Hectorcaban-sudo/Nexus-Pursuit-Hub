@@ -131,9 +131,10 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - the assistant ([agent manual build](../guides/agent-manual-build.md)).
 10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
 11. **Search templates:** as an `NXP_Admin` user, run `sf apex run --file scripts/apex/seed-search-templates.apex --target-org <alias>` to create the four starter templates under _Start from a template_ on My Searches (safe to run again; edit or delete them like any search).
-12. **SAM.gov attachments:** the `NXP_SAM_Files` Named Credential uses the same SAM.gov key, so nothing to enter. After the first SAM.gov run, click **Get SAM.gov files** on one notice and check its Documents card; if it reports an unauthorized endpoint, add a Remote Site Setting for the host it names ([admin guide](../guides/admin-guide.md#samgov-attachments)).
-13. **Admin e-mail:** the daily problems e-mail goes to every active `NXP_Admin` user at 07:00. Set `Admin_Digest_Recipients` to send it elsewhere, or `Admin_Digest_Mode = Off`.
-14. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
+12. **E-mail:** Setup → Deliverability → _All email_ (a new sandbox is _System email only_, so no alert, digest or admin e-mail is sent). Optionally set an org-wide From address in `Alert_OrgWide_Email_Id`, and turn on Desktop and Mobile delivery for the _NXP Match Alert_ custom notification ([admin guide](../guides/admin-guide.md#e-mail-and-notifications)).
+13. **SAM.gov attachments:** the `NXP_SAM_Files` Named Credential uses the same SAM.gov key, so nothing to enter. After the first SAM.gov run, click **Get SAM.gov files** on one notice and check its Documents card; if it reports an unauthorized endpoint, add a Remote Site Setting for the host it names ([admin guide](../guides/admin-guide.md#samgov-attachments)).
+14. **Admin e-mail:** the daily problems e-mail goes to every active `NXP_Admin` user at 07:00. Set `Admin_Digest_Recipients` to send it elsewhere, or `Admin_Digest_Mode = Off`.
+15. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
 
 ## SAM.gov API key
 
@@ -219,6 +220,18 @@ The release script:
 
 Then [test](#test-after-a-deployment) and complete the [post-deployment checklist](post-deployment-checklist.md).
 
+### One-time steps when upgrading to the October 2026 release
+
+An org that already runs Nexus needs these once, after the release (new installs get them from [First install](#first-install-in-an-org)):
+
+1. Run `scripts/apex/seed-search-templates.apex` as an `NXP_Admin` user (the release already rescheduled the jobs, adding _NXP Admin Digest_).
+2. Check Setup → Deliverability is _All email_ where users should get alert e-mails.
+3. Tell users to open each saved search and click **Save search** once: that matches it against the notices already loaded. Searches saved after the release do this automatically.
+4. Click **Read again** on documents that matter, so the new disagreement checks are created for them (only documents read after the release have them).
+5. Notices loaded before the release have no SAM.gov file links; they get them the next time SAM.gov sends them (an amendment, or a run whose window includes them).
+6. Click **Get SAM.gov files** on one notice to confirm downloads work ([SAM.gov attachments](../guides/admin-guide.md#samgov-attachments)).
+7. Review the new settings: `AI_Max_Calls_Per_Day`, `Admin_Digest_Mode`, `Admin_Digest_Recipients`, `Description_Min_Fit`, `Files_Auto_Download`, `Files_Min_Fit`.
+
 <details>
 <summary>Manual equivalent (no scripts)</summary>
 
@@ -301,6 +314,8 @@ sf apex run --file scripts/post-deploy/unschedule-jobs.apex --target-org nxp-qa
 sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-qa
 scripts/load-sample-data.sh --org nxp-qa     # QA and INT only
 ```
+
+A refreshed sandbox's Deliverability is reset to _System email only_. Leave it there if test users shouldn't get alert e-mails; set it to _All email_ to test alerts and digests.
 
 The sandbox's `NXP_Ebuy_Inbox` e-mail address is different from production's, so real eBuy mail keeps going to production. To test eBuy in a sandbox, send test e-mails to the sandbox address (or run `scripts/apex/seed-ebuy-email.apex`), and check the vehicles' **Inbox Address** values copied from production.
 

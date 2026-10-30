@@ -10,7 +10,9 @@ Copy into the release ticket and tick each item.
 - [ ] Platform event subscribers running (Setup → Platform Events → NXP Gov Notice Changed → Subscriptions)
 - [ ] Feed Console: _Run now_ on SAM_Opportunities → run Succeeded, records read > 0
 - [ ] Smoke test: open a new notice → summary card renders; follow / unfollow works
-- [ ] Smoke test: preview a saved search; save; a match appears after the next run
+- [ ] Smoke test: save a search from a template → its open matches appear in the Match Inbox within a minute, with fit reasons on the cards
+- [ ] Smoke test: on a matched SAM.gov notice, the description is text (not **Load description**) and the Documents card lists the SAM.gov files
+- [ ] Smoke test: a Real Time search with the Email channel delivers an e-mail; a followed notice's change shows in the bell
 - [ ] Smoke test (UAT/prod): push one sample notice to Opportunity → record created, Push Log Success; delete the test record afterwards
 - [ ] Smoke test: Forecasts, Recompetes, Vehicle Portfolio and a vendor and agency page load with data
 - [ ] Smoke test (if eBuy is set up): send a test eBuy e-mail → **Inbound Emails** shows it _Ingested_ and the notice exists
@@ -32,7 +34,9 @@ Copy into the release ticket and tick each item.
 - [ ] eBuy (if used): `NXP_Ebuy_Inbox` address created with the integration user as context user; eBuy mail routed to it; `Ebuy_Allowed_Senders` set; auto-push search for eBuy RFQs created by a Power User (optional)
 - [ ] Report and dashboard folders shared: _Nexus Pursuit Hub_ with BD users, _Nexus Admin_ with admins and the project lead; subscriptions set up (optional)
 - [ ] GovWin parallel run: first GovWin export loaded with `load-govwin-export` (if the cut-over is in progress)
-- [ ] Custom notification _NXP Match Alert_ delivery enabled
+- [ ] Custom notification _NXP Match Alert_ delivery enabled (Desktop and Mobile)
+- [ ] Setup → Deliverability: _All email_ (sandboxes start at _System email only_, which drops every Nexus e-mail)
+- [ ] Remote Site Setting `NXP_SAM_File_Storage` active; one **Get SAM.gov files** succeeded (add a Remote Site Setting for any other host the Documents card names)
 - [ ] Search templates created (`seed-search-templates.apex`) and visible under _Start from a template_ to a BD user
 - [ ] Scheduled jobs include **NXP Admin Digest**; `Admin_Digest_Recipients` set if admins shouldn't get it
 - [ ] `AI_Max_Calls_Per_Day` set to fit your Einstein credits
@@ -45,5 +49,5 @@ Copy into the release ticket and tick each item.
 ## GovWin cut-over
 
 - [ ] Four-week parallel run complete: share of GovWin-alerted notices also caught meets the agreed target
-- [ ] Users trained (user guide), saved searches rebuilt
+- [ ] Users trained ([training guide](../guides/training-guide.md)), saved searches rebuilt
 - [ ] GovWin → Opportunity connector switched off after Nexus pushes are confirmed

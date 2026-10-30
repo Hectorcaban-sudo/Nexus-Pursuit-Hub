@@ -40,6 +40,13 @@
 | 24  | BD lead         | see trends in new notices, matches and pushes, and the high-fit notices about to be missed                                                      | Market and activity dashboard        |
 | 25  | Admin           | see feed, push, eBuy inbox and Document Reader health in one place                                                                              | Operations dashboard                 |
 | 26  | Project lead    | track adoption and how many GovWin alerts Nexus also caught during the parallel run                                                             | Adoption dashboard, GovWin load      |
+| 27  | BD user         | see why a notice scored what it did right on its card                                                                                           | Fit reasons                          |
+| 28  | BD user         | watch or dismiss several matches at once                                                                                                        | Match Inbox bulk actions             |
+| 29  | BD user         | start from a ready-made search and see what it finds before copying it                                                                          | Search templates                     |
+| 30  | BD user         | have matches found from words in the description, and read the description and SAM.gov files on any notice                                      | Description fetch, SAM.gov files     |
+| 31  | BD user         | be warned when a solicitation document disagrees with the notice, and record that it was checked                                                | Document checks                      |
+| 32  | Admin           | get one e-mail a day only when something failed (eBuy, feeds, pushes, documents, AI limit)                                                      | Admin problems e-mail                |
+| 33  | Admin           | cap AI calls per day                                                                                                                            | `AI_Max_Calls_Per_Day`               |
 
 ## GovWin IQ coverage
 

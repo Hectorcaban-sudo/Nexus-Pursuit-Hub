@@ -19,25 +19,27 @@ Government opportunity intelligence on Salesforce. Nexus Pursuit Hub replaces th
 
 ## What it does
 
-| Capability                                                                                                             | Where                                                                             |
-| ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| **Standard feeds:** SAM.gov opportunities, entities, forecasts and USAspending awards                                  | `nxp-ingestion` connectors on a Queueable pipeline or a scheduled batch           |
-| **Additional import channels:** Apex REST ingestion API, scheduled Apex batch, Apex callouts, Data Cloud Ingestion API | `/services/apexrest/nxp/v1/notices`, `NXP_FeedFetchBatch`, `datacloud/`           |
-| **GSA eBuy RFQs by e-mail** (eBuy has no API): parsed by rules, optional AI fill-in, admin log with Reprocess          | `NXP_Ebuy_Inbox` e-mail service, **Inbound Emails** tab (`nxpEmailLog`)           |
-| Dedupe across sources, amendment versioning, change events                                                             | `NXP_IngestionService`                                                            |
-| Rules-based fit score against the company profile                                                                      | `NXP_FitScoreService`, `NXP_Fit_Rule__mdt`                                        |
-| User-built saved searches with boolean keywords, live preview and a 13-week back-test                                  | **My Searches** tab (`nxpSearchBuilder`)                                          |
-| Real-time, daily and weekly alerts; follow alerts                                                                      | `NXP_SearchMatchService`, `NXP_AlertService`, `NXP_DigestBatch`                   |
-| Match Inbox: push, watch or dismiss                                                                                    | **Match Inbox** tab (`nxpMatchInbox`)                                             |
-| Push to Opportunity: manual, bulk, auto-push rules and post-push sync                                                  | `nxp-push`, `NXP_Push_Mapping__mdt`                                               |
-| Forecasts board and recompete timeline, with Watch                                                                     | **Forecasts** and **Recompetes** tabs                                             |
-| Vendor and agency profiles: awards, incumbents, what's coming, contacts                                                | Gov Vendor and Gov Agency record pages                                            |
-| Vehicle portfolio: vehicles we hold, their notices and expiry; notices that need a vehicle we lack                     | **Vehicle Portfolio** tab (`nxpVehiclePortfolio`)                                 |
-| Document Reader: AI reads notice PDFs (requirements, evaluation, dates, risks) and flags differences from the notice   | Documents card on the notice page (`nxpNoticeDocuments`)                          |
-| Nexus Pursuit Assistant (Agentforce) and AI summaries                                                                  | `nxp-agents`                                                                      |
-| Feed health and Run now for admins                                                                                     | **Feed Console** tab (`nxpFeedConsole`)                                           |
-| Admin-only e-mail log, settings and configuration                                                                      | **Inbound Emails** tab, `NXP_Setting__mdt`                                        |
-| Reports and dashboards: market and activity, operations, adoption and the GovWin parallel run                          | `nxp-analytics` ([reports and dashboards](docs/design/reports-and-dashboards.md)) |
+| Capability                                                                                                                                          | Where                                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Standard feeds:** SAM.gov opportunities, entities, forecasts and USAspending awards                                                               | `nxp-ingestion` connectors on a Queueable pipeline or a scheduled batch                  |
+| **Additional import channels:** Apex REST ingestion API, scheduled Apex batch, Apex callouts, Data Cloud Ingestion API                              | `/services/apexrest/nxp/v1/notices`, `NXP_FeedFetchBatch`, `datacloud/`                  |
+| **GSA eBuy RFQs by e-mail** (eBuy has no API): parsed by rules, optional AI fill-in, admin log with Reprocess                                       | `NXP_Ebuy_Inbox` e-mail service, **Inbound Emails** tab (`nxpEmailLog`)                  |
+| Dedupe across sources, amendment versioning, change events                                                                                          | `NXP_IngestionService`                                                                   |
+| Rules-based fit score against the company profile                                                                                                   | `NXP_FitScoreService`, `NXP_Fit_Rule__mdt`                                               |
+| User-built saved searches with boolean keywords, live preview and a 13-week back-test; org templates to copy; matching against open notices on save | **My Searches** tab (`nxpSearchBuilder`)                                                 |
+| Real-time (e-mail, bell), daily and weekly (e-mail) alerts; follow and watch alerts (bell); daily problems e-mail for admins                        | `NXP_SearchMatchService`, `NXP_AlertService`, `NXP_DigestBatch`, `NXP_AdminDigestJob`    |
+| Match Inbox: fit reasons; push, watch or dismiss, one card or in bulk                                                                               | **Match Inbox** tab (`nxpMatchInbox`)                                                    |
+| Push to Opportunity: manual, bulk, auto-push rules and post-push sync                                                                               | `nxp-push`, `NXP_Push_Mapping__mdt`                                                      |
+| Forecasts board and recompete timeline, with Watch                                                                                                  | **Forecasts** and **Recompetes** tabs                                                    |
+| Vendor and agency profiles: awards, incumbents, what's coming, contacts                                                                             | Gov Vendor and Gov Agency record pages                                                   |
+| Vehicle portfolio: vehicles we hold, their notices and expiry; notices that need a vehicle we lack                                                  | **Vehicle Portfolio** tab (`nxpVehiclePortfolio`)                                        |
+| SAM.gov description text and attachments fetched for matched and high-fit notices, or on request                                                    | `NXP_NoticeEnrichBatch`, `NXP_SamFileJob`                                                |
+| Document Reader: AI reads notice PDFs (requirements, evaluation, dates, risks) and flags differences from the notice                                | Documents card and warning on the notice page (`nxpNoticeDocuments`, `nxpNoticeSummary`) |
+| Daily AI-call limit                                                                                                                                 | `AI_Max_Calls_Per_Day`, `NXP_AI_Usage__c`                                                |
+| Nexus Pursuit Assistant (Agentforce) and AI summaries                                                                                               | `nxp-agents`                                                                             |
+| Feed health and Run now for admins                                                                                                                  | **Feed Console** tab (`nxpFeedConsole`)                                                  |
+| Admin-only e-mail log, settings and configuration                                                                                                   | **Inbound Emails** tab, `NXP_Setting__mdt`                                               |
+| Reports and dashboards: market and activity, operations, adoption and the GovWin parallel run                                                       | `nxp-analytics` ([reports and dashboards](docs/design/reports-and-dashboards.md))        |
 
 ## Repository layout
 
@@ -77,7 +79,7 @@ Windows PowerShell:
 .\scripts\dev-setup.ps1                    # or: .\scripts\dev-setup.ps1 -Org my-sandbox
 ```
 
-Then add your SAM.gov API key. In **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**, add an authentication parameter named `ApiKey` (details in the [admin guide](docs/guides/admin-guide.md#first-time-configuration)).
+Then add your SAM.gov API key. In **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**, add an authentication parameter named `ApiKey` (how to get one: [SAM.gov API key](docs/deployment/deployment-guide.md#samgov-api-key)).
 
 Test it with the sample data, then run the pre-PR checks:
 
@@ -92,23 +94,23 @@ Every script has a PowerShell twin; see [scripts/README.md](scripts/README.md). 
 
 Start at **[docs/README.md](docs/README.md)**. The most-used pages:
 
-| Audience      | Read                                                                                                                                                                      |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Everyone      | [Solution architecture](docs/architecture/solution-architecture.md) · [Functional design](docs/design/functional-design.md)                                               |
-| Developers    | [Developer guide](docs/guides/developer-guide.md) · [Technical architecture](docs/architecture/technical-architecture.md) · [Testing guide](docs/guides/testing-guide.md) |
-| Admins        | [Admin guide](docs/guides/admin-guide.md) · [Agent manual build](docs/guides/agent-manual-build.md)                                                                       |
-| Release leads | [Deployment guide](docs/deployment/deployment-guide.md) · [Post-deployment checklist](docs/deployment/post-deployment-checklist.md)                                       |
-| Integrators   | [REST ingestion API](docs/integration/rest-ingestion-api.md) · [Data Cloud ingestion](docs/integration/data-cloud-ingestion.md)                                           |
-| BD users      | [User guide](docs/guides/user-guide.md)                                                                                                                                   |
+| Audience      | Read                                                                                                                                                                                                   |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Everyone      | [Solution architecture](docs/architecture/solution-architecture.md) · [Functional design](docs/design/functional-design.md)                                                                            |
+| Developers    | [Developer guide](docs/guides/developer-guide.md) · [Technical architecture](docs/architecture/technical-architecture.md) · [Testing guide](docs/guides/testing-guide.md)                              |
+| Admins        | [How Nexus works](docs/guides/how-it-works.md) · [Admin guide](docs/guides/admin-guide.md) · [Training guide](docs/guides/training-guide.md) · [Agent manual build](docs/guides/agent-manual-build.md) |
+| Release leads | [Deployment guide](docs/deployment/deployment-guide.md) · [Post-deployment checklist](docs/deployment/post-deployment-checklist.md)                                                                    |
+| Integrators   | [REST ingestion API](docs/integration/rest-ingestion-api.md) · [Data Cloud ingestion](docs/integration/data-cloud-ingestion.md)                                                                        |
+| BD users      | [How Nexus works](docs/guides/how-it-works.md) · [User guide](docs/guides/user-guide.md)                                                                                                               |
 
 ## Status
 
-Version 1.0.0, first build:
+Version 1.0.x, October 2026:
 
 - **Checked here:**
-    - All Apex parses (prettier-plugin-apex).
+    - All Apex parses (prettier-plugin-apex) and passes a language-server check.
     - All XML is well-formed.
-    - 41 Jest tests pass (in several time zones) and ESLint is clean.
-    - Every bash and PowerShell script parses, and each was run against a stand-in `sf` CLI and REST endpoint to check its commands and results.
-- **Not yet run:** the code has not been deployed to an org from this repository. Run `scripts/validate.sh --org <org>` first; it compiles everything and runs every Apex test.
-- **Org-specific settings:** the push target and the Opportunity field mapping must be set per org. See the [admin guide](docs/guides/admin-guide.md#push-mapping). The eBuy e-mail address, prompt templates and AI switches are also set up per org after deployment.
+    - 51 Jest tests pass and ESLint is clean.
+    - Every bash and PowerShell script parses.
+- **Deployed to a sandbox** (staging) and the SAM.gov feed run there. Apex tests run in the org with `scripts/validate.sh --org <org>`.
+- **Org-specific settings:** the push target and the Opportunity field mapping must be set per org ([admin guide](docs/guides/admin-guide.md#push-mapping)). The eBuy e-mail address, prompt templates, AI switches, e-mail deliverability and Remote Site Settings for SAM.gov files are also set up per org after deployment.

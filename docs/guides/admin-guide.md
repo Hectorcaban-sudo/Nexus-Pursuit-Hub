@@ -1,5 +1,9 @@
 # Admin guide
 
+For admins who set up and run Nexus Pursuit Hub. Read [How Nexus works](how-it-works.md) first: it explains what each part does. Installing and releasing are in the [deployment guide](../deployment/deployment-guide.md).
+
+**Contents:** [First-time configuration](#first-time-configuration) · [Adding users](#adding-users) · [E-mail and notifications](#e-mail-and-notifications) · [Scheduled jobs](#scheduled-jobs) · [Your routine](#your-routine) · [Feeds](#feeds) · [Fit rules](#fit-rules) · [Push mapping](#push-mapping) · [Search templates](#search-templates) · [GSA eBuy e-mail](#gsa-ebuy-e-mail) · [Document Reader](#document-reader) · [AI](#ai) · [Settings](#settings-nxp_setting__mdt) · [Monitoring](#monitoring) · [Troubleshooting](#troubleshooting)
+
 ## First-time configuration
 
 1. **Assign permission sets:**
@@ -13,7 +17,72 @@
 5. **Push mapping:** see [Push mapping](#push-mapping).
 6. **Schedule jobs:** run `scripts/post-deploy/schedule-jobs.apex`, as an `NXP_Admin` user.
 7. **Activate the Gov Notice record page** if your org overrides it: Lightning App Builder → _Gov Notice Record Page_ → Activation. The Nexus Pursuit Hub app already assigns it.
-8. **Notifications:** Setup → Custom Notifications → _NXP Match Alert_ → enable desktop and mobile delivery. Users who want Slack or Teams alerts need the Salesforce for Slack or Teams integration to forward notifications.
+8. **Notifications and e-mail:** see [E-mail and notifications](#e-mail-and-notifications): turn on _NXP Match Alert_ delivery, check **Deliverability** and, optionally, set an org-wide From address.
+9. **Search templates:** run `scripts/apex/seed-search-templates.apex` as an `NXP_Admin` user to create the four starter templates, then adjust them ([Search templates](#search-templates)).
+10. **AI (optional):** prompt templates, `AI_Enabled`, the Document Reader and the daily limit ([AI](#ai)).
+11. **Contract vehicles:** create the vehicles you hold (tick **We Hold**, set expiry, ceiling and **Inbox Address**).
+
+## Adding users
+
+1. Create the Salesforce user (or use an existing one) and assign the **Nexus Pursuit Hub** app.
+2. Assign permission sets: `NXP_User` for everyone in BD; add `NXP_Power_User` for BD leads (sharing searches, templates, auto-push, bulk push); `NXP_Admin` for Nexus admins.
+3. Give them access to the assistant (agent access on their profile or permission set group), if you use it.
+4. Share the _Nexus Pursuit Hub_ report and dashboard folders with them.
+5. Point them to the [user guide](user-guide.md): their first step is a saved search, usually from a template.
+
+When someone leaves, deactivate the user and deal with their saved searches (App Launcher → **Saved Searches**): they keep matching, but alerts to an inactive user go nowhere. Change the owner if a team relied on one, or delete them. Templates they created stay available.
+
+## E-mail and notifications
+
+Nexus sends two kinds of message; who gets what is in [How Nexus works](how-it-works.md#4-alerts-and-notifications).
+
+**E-mail** (Real Time alerts with the Email channel, daily and weekly digests, the admin problems e-mail):
+
+1. **Setup → Deliverability → Access level = All email.** Sandboxes are created with _System email only_, which silently drops every Nexus e-mail. This is the usual reason "no alerts arrive" in a sandbox.
+2. Optional: create an **Organization-Wide Email Address** (for example `nexus-alerts@yourcompany.gov`), verify it, and put its Id in the `Alert_OrgWide_Email_Id` setting so alerts come from it instead of the admin who scheduled the jobs.
+3. Make sure users' e-mail addresses in Salesforce are correct; alerts go to the user's Salesforce e-mail.
+4. Daily and weekly digests are sent at 06:30 in the time zone of the user who ran `schedule-jobs.apex`.
+
+**Salesforce notifications** (bell and mobile; Real Time alerts with the Salesforce channel, followed and watched items, amended pushed notices):
+
+1. **Setup → Custom Notifications → NXP Match Alert → Edit**: tick **Desktop** and **Mobile**.
+2. Users need the Salesforce mobile app for phone notifications.
+3. Slack or Teams: only through the Salesforce for Slack or Teams integration forwarding Salesforce notifications; Nexus doesn't post to Slack or Teams directly.
+
+**Admin problems e-mail**: every active `NXP_Admin` user gets it at 07:00 when something failed. Change who with `Admin_Digest_Recipients` and when with `Admin_Digest_Mode` ([Monitoring](#monitoring)).
+
+## Scheduled jobs
+
+`scripts/post-deploy/schedule-jobs.apex` (run by `release` and `dev-setup`, or by hand as an `NXP_Admin` user) stops and reschedules all of them. They run as the user who scheduled them, so that user must keep `NXP_Admin` and stay active.
+
+| Job (Setup → Scheduled Jobs) | When           | Does                                                                                      |
+| ---------------------------- | -------------- | ----------------------------------------------------------------------------------------- |
+| NXP Feed Scheduler           | :05 every hour | Runs due feeds; after SAM.gov runs, fetches description text and attachments where needed |
+| NXP Notice Analyst :15 / :45 | twice an hour  | AI summaries, amendment summaries, documents waiting to be read (only when AI is on)      |
+| NXP Push Retry               | :20 every hour | Retries failed auto-pushes                                                                |
+| NXP Daily Digest             | 06:30          | Daily alert e-mails                                                                       |
+| NXP Weekly Digest            | 06:30 Monday   | Weekly alert e-mails                                                                      |
+| NXP Admin Digest             | 07:00          | Problems e-mail to admins                                                                 |
+
+Matching and Real Time alerts don't need a schedule: they run as notices arrive. To pause everything: `scripts/post-deploy/unschedule-jobs.apex`; to resume, `schedule-jobs.apex`.
+
+## Your routine
+
+**Daily** (a few minutes):
+
+1. Read the **problems e-mail** (07:00). No e-mail means nothing failed.
+2. Open **Inbound Emails**: fix and **Reprocess** eBuy messages marked _Needs Review_.
+3. Glance at the **Feed Console**: every active feed should be _Healthy_.
+
+**Weekly:**
+
+1. Open **Dashboards → Nexus: Operations** (feeds, pushes, eBuy inbox, Document Reader, errors) and **Nexus: Adoption** (who uses Nexus, pushes by source, GovWin catch rate).
+2. Check `NXP AI Usage` (Setup → Custom Settings) against `AI_Max_Calls_Per_Day` and your Einstein credits.
+3. Review dismissed matches' reasons (Match Outcomes report) with BD leads to tune templates and the Company Profile.
+
+**Every 90 days** (personal SAM.gov key only): replace the key before it expires ([SAM.gov API key](../deployment/deployment-guide.md#samgov-api-key)).
+
+**After each release:** run the [post-deployment checklist](../deployment/post-deployment-checklist.md).
 
 ## Feeds
 
@@ -43,6 +112,14 @@ Feeds are `NXP_Feed_Config__mdt` records. Change them through `env-config/<env>`
 4. Optional: map `Contract_Vehicle_Code__c` to the Opportunity's contract vehicle field, and `Notice_URL__c` to a link field if it has one. The shipped Description row uses `Push_Details__c` (source, IDs, vehicle, due date and link in one line).
 5. Decide sync behaviour per field: Update (due date), Alert Only (value, set-aside), Never (name, stage).
 6. Test in a sandbox: push a sample notice, check the record, then amend the notice (or re-run a feed) and check the sync.
+
+## Search templates
+
+Templates are saved searches with **Visibility = Org Template**. Everyone sees them under _Start from a template_ on My Searches with today's match count and how many people use them; **Use template** gives the user a private copy. Templates themselves never alert, match or auto-push (saving one as a template turns those off).
+
+- **Create**: as a Power User or admin, build the search on My Searches, set Visibility to _Org Template_, save. `scripts/apex/seed-search-templates.apex` creates four starters: _High fit, due in 30 days_; _eBuy RFQs (task orders by e-mail)_; _Early market research: sources sought and RFIs_; _Small-business set-asides over $1M_.
+- **Edit**: open it on My Searches (it's listed with your searches) and save. Copies already made don't change.
+- **Remove**: delete it; copies keep working.
 
 ## GSA eBuy e-mail
 
@@ -85,7 +162,18 @@ The SAM.gov feed stores each notice's file links (`Resource_Links__c`). `NXP_Sam
 
 Downloads go to `sam.gov` through the **NXP SAM.gov Files** Named Credential (same API key), which redirects to file storage. The **NXP_SAM_File_Storage** Remote Site Setting allows `https://s3.amazonaws.com`. If a notice's status says a file couldn't be downloaded and names another host (an "Unauthorized endpoint" error), add a Remote Site Setting for that host in Setup.
 
+## AI
+
+AI is optional; everything works without it. With it: AI summaries of matched notices, amendment summaries, the Document Reader, eBuy field extraction, better _Draft criteria_ and the assistant. Every call goes through the Einstein Trust Layer; confirm your ATO covers sending notice text and solicitation documents to the model.
+
+1. Create the prompt templates in Prompt Builder from `packages/nxp-agents/reference/genAiPromptTemplates/` ([agent manual build](agent-manual-build.md) lists them) and activate them.
+2. Set `AI_Enabled = true`. For the Document Reader also set `Document_Analysis_Enabled = true`.
+3. Set `AI_Max_Calls_Per_Day` to fit your Einstein credits (default 500). When it's used up, summaries and document reading wait for the next day and the problems e-mail says so. Today's count: Setup → Custom Settings → **NXP AI Usage** → Manage.
+4. The assistant is built by hand in Agentforce Builder: [agent manual build](agent-manual-build.md).
+
 ## Settings (`NXP_Setting__mdt`)
+
+Change settings in Setup → Custom Metadata Types → **NXP Setting** → Manage Records → Edit. Changes made there are overwritten by the next deployment of `env-config`, so record lasting changes in `env-config/<env>` too.
 
 | Key                                                        | Default                       | Purpose                                                                                                                                                                                                            |
 | ---------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -124,3 +212,20 @@ Downloads go to `sam.gov` through the **NXP SAM.gov Files** Named Credential (sa
 - Check reports on `NXP_Log__c` (Level = ERROR) and on `NXP_Push_Log__c` (Status = Failed).
 - Check platform event subscriber status after deployments.
 - To pause everything: `scripts/post-deploy/unschedule-jobs.apex`. To resume: `schedule-jobs.apex`.
+
+## Troubleshooting
+
+| Symptom                                                    | Check                                                                                                                                                          |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nobody gets alert e-mails                                  | Setup → Deliverability = _All email_; the search's alert setting and channels; the user's e-mail address. Digests go at 06:30 only when there are new matches. |
+| No bell notifications                                      | _NXP Match Alert_ delivery is on; the search has the _Salesforce_ channel (Real Time); for follows, the user followed the record                               |
+| A search shows matches in the preview but not in the inbox | The search was saved before this release: open it and **Save search** again to match existing notices                                                          |
+| SAM.gov feed _Failed_ with 401/403                         | API key wrong or expired, or the parameter isn't named exactly `ApiKey`                                                                                        |
+| SAM.gov feed _Failed_ with 429                             | The key's daily limit is used up; use a System Account key; untick **Active** on the feed and use **Run now** until then                                       |
+| **Run now** is greyed out                                  | The feed is paused: tick **Active** on its NXP Feed Config record                                                                                              |
+| Description shows only **Load description**                | Normal for unmatched, low-fit notices. If it fails, see **NXP Logs** for _Description fetch failed_                                                            |
+| SAM.gov files don't arrive                                 | The Documents card status. "Unauthorized endpoint" names a host: add a Remote Site Setting for it                                                              |
+| No AI summaries                                            | `AI_Enabled`, active prompt templates, the notice matched a search, Notice Analyst jobs scheduled, daily AI limit not reached                                  |
+| eBuy e-mail _Rejected_                                     | Sender not in `Ebuy_Allowed_Senders` (forwarding changes the sender: use redirect)                                                                             |
+| Push _Failed_                                              | The Push Log error: usually a required Opportunity field missing from the push mapping                                                                         |
+| Settings edit page shows only Label and Name               | The NXP custom metadata page layouts aren't deployed: deploy `packages/nxp-core`                                                                               |
