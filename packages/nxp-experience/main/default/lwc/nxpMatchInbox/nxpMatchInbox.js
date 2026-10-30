@@ -4,6 +4,7 @@ import LightningPrompt from 'lightning/prompt';
 import getMySearches from '@salesforce/apex/NXP_SearchController.getMySearches';
 import getInbox from '@salesforce/apex/NXP_SearchController.getInbox';
 import setMatchAction from '@salesforce/apex/NXP_SearchController.setMatchAction';
+import setMatchActions from '@salesforce/apex/NXP_SearchController.setMatchActions';
 import bulkPush from '@salesforce/apex/NXP_PushController.bulkPush';
 import NxpPushDialog from 'c/nxpPushDialog';
 import { formatMoney, dueLabel, daysUntil, toast, toastError, logUsage } from 'c/nxpUtils';
@@ -117,7 +118,20 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
     }
 
     get bulkLabel() {
-        return this.selected.size ? `Push ${this.selected.size} selected` : 'Push selected';
+        return this.selected.size ? `Push ${this.selected.size}` : 'Push';
+    }
+
+    get allSelected() {
+        return this.items.length > 0 && this.selected.size === this.items.length;
+    }
+
+    get selectAllLabel() {
+        return this.selected.size ? `${this.selected.size} selected` : 'Select all';
+    }
+
+    /** Match records behind the selected notice cards. */
+    get selectedMatchIds() {
+        return this.items.filter((i) => this.selected.has(i.notice.Id)).map((i) => i.matchId);
     }
 
     handleSelectSearch(event) {
@@ -143,6 +157,38 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
             next.delete(id);
         }
         this.selected = next;
+    }
+
+    handleSelectAll(event) {
+        this.selected = event.target.checked ? new Set(this.items.map((i) => i.notice.Id)) : new Set();
+    }
+
+    async handleBulkWatch() {
+        try {
+            const count = await setMatchActions({ matchIds: this.selectedMatchIds, action: 'Watching', reason: null });
+            toast(this, 'Watching', `${count} notices. You will be alerted when they change.`);
+            this.load();
+        } catch (e) {
+            toastError(this, e, 'Could not watch the selected notices');
+        }
+    }
+
+    async handleBulkDismiss() {
+        const reason = await LightningPrompt.open({
+            message: `Why are you dismissing these ${this.selected.size} notices? This helps tune your searches.`,
+            label: 'Dismiss notices',
+            defaultValue: 'Not a fit'
+        });
+        if (reason === null) {
+            return;
+        }
+        try {
+            const count = await setMatchActions({ matchIds: this.selectedMatchIds, action: 'Dismissed', reason });
+            toast(this, 'Dismissed', `${count} notices removed from the inbox.`);
+            this.load();
+        } catch (e) {
+            toastError(this, e, 'Could not dismiss the selected notices');
+        }
     }
 
     handleOpen(event) {

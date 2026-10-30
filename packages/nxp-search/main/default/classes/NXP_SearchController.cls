@@ -343,6 +343,56 @@ public with sharing class NXP_SearchController {
         }
     }
 
+    /** Watch or dismiss several matches at once (Match Inbox bulk actions). Returns how many changed. */
+    @AuraEnabled
+    public static Integer setMatchActions(List<Id> matchIds, String action, String reason) {
+        if (action != 'Watching' && action != 'Dismissed') {
+            throw new AuraHandledException('Unknown action ' + action);
+        }
+        if (matchIds == null || matchIds.isEmpty() || matchIds.size() > 200) {
+            throw new AuraHandledException('Select between 1 and 200 notices.');
+        }
+        List<NXP_Search_Match__c> updates = new List<NXP_Search_Match__c>();
+        Set<Id> noticeIds = new Set<Id>();
+        for (NXP_Search_Match__c m : [
+            SELECT Id, Gov_Notice__c
+            FROM NXP_Search_Match__c
+            WHERE Id IN :matchIds
+            WITH USER_MODE
+        ]) {
+            updates.add(
+                new NXP_Search_Match__c(
+                    Id = m.Id,
+                    User_Action__c = action,
+                    Dismiss_Reason__c = NXP_Text.truncate(reason, 255)
+                )
+            );
+            noticeIds.add(m.Gov_Notice__c);
+        }
+        update as user updates;
+        if (action == 'Watching' && !noticeIds.isEmpty()) {
+            Map<String, Id> byKey = new Map<String, Id>();
+            for (Id noticeId : noticeIds) {
+                byKey.put(String.valueOf(UserInfo.getUserId()) + '-' + String.valueOf(noticeId), noticeId);
+            }
+            Set<String> keys = byKey.keySet();
+            for (NXP_Follow__c f : [
+                SELECT Follow_Key__c
+                FROM NXP_Follow__c
+                WHERE Follow_Key__c IN :keys
+                WITH USER_MODE
+            ]) {
+                byKey.remove(f.Follow_Key__c);
+            }
+            List<NXP_Follow__c> follows = new List<NXP_Follow__c>();
+            for (String key : byKey.keySet()) {
+                follows.add(new NXP_Follow__c(Gov_Notice__c = byKey.get(key), Follow_Key__c = key));
+            }
+            insert as user follows;
+        }
+        return updates.size();
+    }
+
     @AuraEnabled
     public static void followNotice(Id noticeId, Boolean follow) {
         String key = String.valueOf(UserInfo.getUserId()) + '-' + String.valueOf(noticeId);

@@ -54,13 +54,43 @@
                         options={sortOptions}
                         onchange={handleSort}
                     ></lightning-combobox>
-                    <lightning-button
-                        label={bulkLabel}
-                        disabled={disableBulk}
-                        onclick={handleBulkPush}
-                    ></lightning-button>
                 </div>
             </div>
+
+            <template lwc:if={hasCards}>
+                <div class="bulk-bar" role="group" aria-label="Selected matches">
+                    <lightning-input
+                        class="select-all"
+                        type="checkbox"
+                        label={selectAllLabel}
+                        checked={allSelected}
+                        onchange={handleSelectAll}
+                    ></lightning-input>
+                    <lightning-button-group>
+                        <lightning-button
+                            class="bulk-watch"
+                            label="Watch"
+                            icon-name="utility:preview"
+                            disabled={disableBulk}
+                            onclick={handleBulkWatch}
+                        ></lightning-button>
+                        <lightning-button
+                            class="bulk-dismiss"
+                            label="Dismiss"
+                            icon-name="utility:close"
+                            disabled={disableBulk}
+                            onclick={handleBulkDismiss}
+                        ></lightning-button>
+                        <lightning-button
+                            class="bulk-push"
+                            label={bulkLabel}
+                            icon-name="utility:upload"
+                            disabled={disableBulk}
+                            onclick={handleBulkPush}
+                        ></lightning-button>
+                    </lightning-button-group>
+                </div>
+            </template>
 
             <template lwc:if={loading}>
                 <lightning-spinner alternative-text="Loading matches" size="medium"></lightning-spinner>
@@ -72,7 +102,7 @@
                         <div class="card-select">
                             <lightning-input
                                 type="checkbox"
-                                label="Select for bulk push"
+                                label="Select"
                                 variant="label-hidden"
                                 data-id={c.noticeId}
                                 checked={c.checked}

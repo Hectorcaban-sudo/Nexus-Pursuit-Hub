@@ -216,6 +216,22 @@ private class NXP_SearchTest {
         System.assert(NXP_SearchController.isFollowing(inbox[0].notice.Id));
         NXP_SearchController.followNotice(inbox[0].notice.Id, false);
         System.assert(!NXP_SearchController.isFollowing(inbox[0].notice.Id));
+        System.assertEquals(
+            1,
+            NXP_SearchController.setMatchActions(new List<Id>{ inbox[0].matchId }, 'Watching', null)
+        );
+        System.assert(NXP_SearchController.isFollowing(inbox[0].notice.Id), 'Bulk watch follows');
+        try {
+            NXP_SearchController.setMatchActions(new List<Id>(), 'Watching', null);
+            System.assert(false, 'expected: nothing selected');
+        } catch (AuraHandledException e) {
+            System.assert(true);
+        }
+        System.assertEquals(
+            1,
+            NXP_SearchController.setMatchActions(new List<Id>{ inbox[0].matchId }, 'Dismissed', 'Not a fit')
+        );
+        System.assertEquals(0, NXP_SearchController.getInbox(null, true).size());
         NXP_SearchController.setMatchAction(inbox[0].matchId, 'Dismissed', 'Not a fit');
         System.assertEquals(0, NXP_SearchController.getInbox(null, true).size());
         try {
