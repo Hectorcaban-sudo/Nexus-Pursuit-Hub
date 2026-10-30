@@ -3,20 +3,30 @@
  */
 public with sharing class NXP_CompareVersionsAction {
     public class Request {
-        @InvocableVariable(label='Gov Notice record Id' required=true)
+        @InvocableVariable(
+            label='Gov Notice record Id'
+            description='Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.'
+            required=true
+        )
         public Id noticeId;
-        @InvocableVariable(label='How many recent versions' description='Default 3')
+        @InvocableVariable(
+            label='How many recent versions'
+            description='How many recent amendments to compare. Use the number the user asked for; otherwise leave empty for 3.'
+        )
         public Integer versions;
     }
 
     public class Response {
-        @InvocableVariable(label='Changes')
+        @InvocableVariable(
+            label='Changes'
+            description='Field-by-field changes for each amendment, newest first, with the notice ID.'
+        )
         public String changes;
     }
 
     @InvocableMethod(
         label='NXP Compare Versions'
-        description='Lists what changed in the most recent amendments of a notice.'
+        description='Use when the user asks what changed in a notice, what an amendment did, or whether the due date moved.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

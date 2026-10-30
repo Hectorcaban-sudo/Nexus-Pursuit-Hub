@@ -5,24 +5,38 @@
  */
 public with sharing class NXP_PushToOpportunityAction {
     public class Request {
-        @InvocableVariable(label='Gov Notice record Id' required=true)
+        @InvocableVariable(
+            label='Gov Notice record Id'
+            description='Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no page is open, ask the user to open it. Must be the notice that was previewed. Never guess.'
+            required=true
+        )
         public Id noticeId;
-        @InvocableVariable(label='Preview token' description='From NXP Preview Push for this notice' required=true)
+        @InvocableVariable(
+            label='Preview token'
+            description='The Preview token output of NXP Preview Push for this same notice, from this conversation. Never make one up.'
+            required=true
+        )
         public String previewToken;
     }
 
     public class Response {
-        @InvocableVariable(label='Status' description='Success, Linked Existing or Failed')
+        @InvocableVariable(label='Status' description='Success, Linked Existing or Failed.')
         public String status;
-        @InvocableVariable(label='Opportunity record Id')
+        @InvocableVariable(
+            label='Opportunity record Id'
+            description='Id of the Opportunity created or linked. Offer to open it.'
+        )
         public Id recordId;
-        @InvocableVariable(label='Message')
+        @InvocableVariable(
+            label='Message'
+            description='What happened, including the reason if it failed. Tell the user.'
+        )
         public String message;
     }
 
     @InvocableMethod(
         label='NXP Push To Opportunity'
-        description='Creates or links the Opportunity record for a notice. Only after Preview Push and an explicit yes.'
+        description='Use only after NXP Preview Push has been shown for this notice and the user has said yes. Creates the Opportunity, or links the existing one.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

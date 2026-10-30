@@ -7,24 +7,33 @@ public with sharing class NXP_DraftSearchCriteriaAction {
     public class Request {
         @InvocableVariable(
             label='Request text'
-            description='What the user wants to be alerted about, in their words'
+            description='The user\'s own words describing what they want alerts about: agencies, NAICS codes, set-asides, keywords, value, due dates and how often. Pass them unchanged; do not summarize.'
             required=true
         )
         public String text;
     }
 
     public class Response {
-        @InvocableVariable(label='Criteria JSON' description='Draft criteria to pass to Preview Search')
+        @InvocableVariable(
+            label='Criteria JSON'
+            description='Machine-readable draft criteria. Do not show it to the user. Pass it unchanged to NXP Preview Search and then to NXP Save Search.'
+        )
         public String criteriaJson;
-        @InvocableVariable(label='Alert frequency' description='Real Time, Daily or Weekly when the user said so')
+        @InvocableVariable(
+            label='Alert frequency'
+            description='Real Time, Daily or Weekly when the user asked for one; empty otherwise. Pass it to NXP Save Search.'
+        )
         public String frequency;
-        @InvocableVariable(label='Summary' description='Readable summary of the criteria to show the user')
+        @InvocableVariable(
+            label='Summary'
+            description='Readable summary of the draft criteria. Show it so the user can correct anything before the preview.'
+        )
         public String summary;
     }
 
     @InvocableMethod(
         label='NXP Draft Search Criteria'
-        description='Turns a plain-English request into draft saved-search criteria. Does not save anything.'
+        description='Use first whenever the user describes a search or alert they want, or asks to change one. Turns their words into draft criteria. Saves nothing.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

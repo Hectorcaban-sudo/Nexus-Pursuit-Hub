@@ -4,18 +4,25 @@
  */
 public with sharing class NXP_NoticeDocumentsAction {
     public class Request {
-        @InvocableVariable(label='Gov Notice record Id' required=true)
+        @InvocableVariable(
+            label='Gov Notice record Id'
+            description='Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.'
+            required=true
+        )
         public Id noticeId;
     }
 
     public class Response {
-        @InvocableVariable(label='Documents')
+        @InvocableVariable(
+            label='Documents'
+            description='What the Document Reader found in each file: requirements, evaluation factors, dates, risks, and where a file disagrees with the notice; also files not read yet. Say it was read by AI and should be checked against the files.'
+        )
         public String documents;
     }
 
     @InvocableMethod(
         label='NXP Notice Documents'
-        description='Summarizes what the documents attached to a notice say: requirements, evaluation factors, key dates, risks and where they disagree with the notice.'
+        description='Use when the user asks what the solicitation documents say or require: requirements, evaluation factors, page limits, key dates, clearances, risks, or where a document disagrees with the notice.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

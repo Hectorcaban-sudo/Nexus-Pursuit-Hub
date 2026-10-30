@@ -3,18 +3,25 @@
  */
 public with sharing class NXP_ExplainFitScoreAction {
     public class Request {
-        @InvocableVariable(label='Gov Notice record Id' required=true)
+        @InvocableVariable(
+            label='Gov Notice record Id'
+            description='Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.'
+            required=true
+        )
         public Id noticeId;
     }
 
     public class Response {
-        @InvocableVariable(label='Explanation')
+        @InvocableVariable(
+            label='Explanation'
+            description='The score and the points each rule added, starting with the notice ID. Show it as given; do not recalculate or round.'
+        )
         public String explanation;
     }
 
     @InvocableMethod(
         label='NXP Explain Fit Score'
-        description='Explains how the fit score of a notice was calculated.'
+        description='Use when the user asks why a notice has its fit score, or what is helping or hurting the score.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {

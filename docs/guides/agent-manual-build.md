@@ -189,7 +189,7 @@ The [next section](#action-input-and-output-descriptions) gives the exact text a
 
 ### Action, input and output descriptions
 
-When you add an action, Builder copies the descriptions written in the Apex code into the instructions fields. Several inputs and outputs have no description in the code, and the agent relies on these instructions to decide what to pass and what to show. Replace every instructions field with the text below.
+When you add an action, Builder copies the descriptions written in the Apex code into the instructions fields. Several inputs and outputs have no description in the code, and the agent relies on these instructions to decide what to pass and what to show. Replace every instructions field with the text below. Since the October 30 update, the Apex code carries the same text, so Builder fills it in for you on actions added after you deploy that version. Each text is under 255 characters.
 
 For each action, Builder has these fields:
 
@@ -205,7 +205,7 @@ For each action, Builder has these fields:
 **Gov Notice record Id** appears on seven actions, with the same instructions each time (repeated in each table below so you can copy it from there):
 
 ```text
-The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id.
+Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.
 ```
 
 Settings for it: Require input **Yes**. Collect data from user **No**.
@@ -267,10 +267,10 @@ Agent action instructions:
 Use when the user asks why a notice has its fit score, or what is helping or hurting the score.
 ```
 
-| Kind   | Field                | Instructions                                                                                                                                                                                                                                                                      | Settings                         |
-| ------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Input  | Gov Notice record Id | The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id. | Require **Yes** · Collect **No** |
-| Output | Explanation          | The score and the points each rule added, starting with the notice ID. Show it as given; do not recalculate or round.                                                                                                                                                             | Show **Yes**                     |
+| Kind   | Field                | Instructions                                                                                                                                                                                                                  | Settings                         |
+| ------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id. | Require **Yes** · Collect **No** |
+| Output | Explanation          | The score and the points each rule added, starting with the notice ID. Show it as given; do not recalculate or round.                                                                                                         | Show **Yes**                     |
 
 #### NXP Compare Versions (Notice Briefing)
 
@@ -280,11 +280,11 @@ Agent action instructions:
 Use when the user asks what changed in a notice, what an amendment did, or whether the due date moved.
 ```
 
-| Kind   | Field                    | Instructions                                                                                                                                                                                                                                                                      | Settings                         |
-| ------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Input  | Gov Notice record Id     | The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id. | Require **Yes** · Collect **No** |
-| Input  | How many recent versions | How many recent amendments to compare. Use the number the user asked for; otherwise leave empty for 3.                                                                                                                                                                            | Require **No** · Collect **No**  |
-| Output | Changes                  | Field-by-field changes for each amendment, newest first, with the notice ID.                                                                                                                                                                                                      | Show **Yes**                     |
+| Kind   | Field                    | Instructions                                                                                                                                                                                                                  | Settings                         |
+| ------ | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id     | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id. | Require **Yes** · Collect **No** |
+| Input  | How many recent versions | How many recent amendments to compare. Use the number the user asked for; otherwise leave empty for 3.                                                                                                                        | Require **No** · Collect **No**  |
+| Output | Changes                  | Field-by-field changes for each amendment, newest first, with the notice ID.                                                                                                                                                  | Show **Yes**                     |
 
 #### NXP Notice Documents (Notice Briefing)
 
@@ -294,10 +294,10 @@ Agent action instructions:
 Use when the user asks what the solicitation documents say or require: requirements, evaluation factors, page limits, key dates, clearances, risks, or where a document disagrees with the notice.
 ```
 
-| Kind   | Field                | Instructions                                                                                                                                                                                                                                                                      | Settings                         |
-| ------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Input  | Gov Notice record Id | The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id. | Require **Yes** · Collect **No** |
-| Output | Documents            | What the Document Reader found in each file, by file name: requirements, evaluation factors, dates, risks, and checks where a file disagrees with the notice. Also lists files not read yet. Say the details were read by AI and should be checked against the files.             | Show **Yes**                     |
+| Kind   | Field                | Instructions                                                                                                                                                                                                                     | Settings                         |
+| ------ | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.    | Require **Yes** · Collect **No** |
+| Output | Documents            | What the Document Reader found in each file: requirements, evaluation factors, dates, risks, and where a file disagrees with the notice; also files not read yet. Say it was read by AI and should be checked against the files. | Show **Yes**                     |
 
 #### NXP Find Incumbent (Market Intel)
 
@@ -307,10 +307,10 @@ Agent action instructions:
 Use when the user asks who holds the work now, who the incumbent is, or what the previous award was for a notice.
 ```
 
-| Kind   | Field                | Instructions                                                                                                                                                                                                                                                                      | Settings                         |
-| ------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Input  | Gov Notice record Id | The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id. | Require **Yes** · Collect **No** |
-| Output | Answer               | The incumbent vendor, the predecessor award and its end date, or a statement that none was found. Do not add vendors that are not in it.                                                                                                                                          | Show **Yes**                     |
+| Kind   | Field                | Instructions                                                                                                                                                                                                                  | Settings                         |
+| ------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id. | Require **Yes** · Collect **No** |
+| Output | Answer               | The incumbent vendor, the predecessor award and its end date, or a statement that none was found. Do not add vendors that are not in it.                                                                                      | Show **Yes**                     |
 
 #### NXP Recompete Query (Market Intel)
 
@@ -336,12 +336,12 @@ Agent action instructions:
 Use first whenever the user wants to send a notice to Opportunity. Shows the values that would be sent and whether a matching Opportunity already exists. Sends nothing.
 ```
 
-| Kind   | Field                | Instructions                                                                                                                                                                                                                                                                      | Settings                         |
-| ------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Input  | Gov Notice record Id | The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id. | Require **Yes** · Collect **No** |
-| Output | Preview              | The values that will be sent to Opportunity and whether a matching record already exists. Show it in full before asking for a yes.                                                                                                                                                | Show **Yes**                     |
-| Output | Preview token        | Proof the user saw this preview. Do not show it. Pass it to NXP Push To Opportunity for this same notice.                                                                                                                                                                         | Show **No**                      |
-| Output | Existing record Id   | Set when a matching Opportunity already exists. The push will link to it instead of creating a new one; tell the user that.                                                                                                                                                       | Show **No**                      |
+| Kind   | Field                | Instructions                                                                                                                                                                                                                  | Settings                         |
+| ------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id. | Require **Yes** · Collect **No** |
+| Output | Preview              | The values that will be sent to Opportunity and whether a matching record already exists. Show it in full before asking for a yes.                                                                                            | Show **Yes**                     |
+| Output | Preview token        | Proof the user saw this preview. Do not show it. Pass it to NXP Push To Opportunity for this same notice.                                                                                                                     | Show **No**                      |
+| Output | Existing record Id   | Set when a matching Opportunity already exists. The push will link to it instead of creating a new one; tell the user that.                                                                                                   | Show **No**                      |
 
 #### NXP Push To Opportunity (Push)
 
@@ -351,13 +351,13 @@ Agent action instructions:
 Use only after NXP Preview Push has been shown for this notice and the user has said yes. Creates the Opportunity, or links the existing one.
 ```
 
-| Kind   | Field                 | Instructions                                                                                                                                                                                                                                                                                                                     | Settings                         |
-| ------ | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Input  | Gov Notice record Id  | The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id. It must be the same notice that was previewed. | Require **Yes** · Collect **No** |
-| Input  | Preview token         | The Preview token output of NXP Preview Push for this same notice, from this conversation. Never make one up.                                                                                                                                                                                                                    | Require **Yes** · Collect **No** |
-| Output | Status                | Success, Linked Existing or Failed.                                                                                                                                                                                                                                                                                              | Show **Yes**                     |
-| Output | Opportunity record Id | Id of the Opportunity created or linked. Offer to open it.                                                                                                                                                                                                                                                                       | Show **Yes**                     |
-| Output | Message               | What happened, including the reason if it failed. Tell the user.                                                                                                                                                                                                                                                                 | Show **Yes**                     |
+| Kind   | Field                 | Instructions                                                                                                                                                                                                                                            | Settings                         |
+| ------ | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id  | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no page is open, ask the user to open it. Must be the notice that was previewed. Never guess. | Require **Yes** · Collect **No** |
+| Input  | Preview token         | The Preview token output of NXP Preview Push for this same notice, from this conversation. Never make one up.                                                                                                                                           | Require **Yes** · Collect **No** |
+| Output | Status                | Success, Linked Existing or Failed.                                                                                                                                                                                                                     | Show **Yes**                     |
+| Output | Opportunity record Id | Id of the Opportunity created or linked. Offer to open it.                                                                                                                                                                                              | Show **Yes**                     |
+| Output | Message               | What happened, including the reason if it failed. Tell the user.                                                                                                                                                                                        | Show **Yes**                     |
 
 #### NXP Push Status (Push)
 
@@ -367,10 +367,10 @@ Agent action instructions:
 Use when the user asks whether a notice was pushed, whether a push failed, or why.
 ```
 
-| Kind   | Field                | Instructions                                                                                                                                                                                                                                                                      | Settings                         |
-| ------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Input  | Gov Notice record Id | The Salesforce record Id of the Gov Notice (15 or 18 characters), taken from the notice record page the user has open. This is not the SAM.gov notice ID or the solicitation number. If no notice page is open, ask the user to open the notice and ask again. Never guess an Id. | Require **Yes** · Collect **No** |
-| Output | Status               | Up to the five most recent pushes of the notice, newest first: time, how it was pushed, result, record and any error. Or a note that it was never pushed.                                                                                                                         | Show **Yes**                     |
+| Kind   | Field                | Instructions                                                                                                                                                                                                                  | Settings                         |
+| ------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id. | Require **Yes** · Collect **No** |
+| Output | Status               | Up to the five most recent pushes of the notice, newest first: time, how it was pushed, result, record and any error. Or a note that it was never pushed.                                                                     | Show **Yes**                     |
 
 #### NXP Set Auto-Push Rule (Push)
 

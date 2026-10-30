@@ -4,18 +4,25 @@
  */
 public with sharing class NXP_FindIncumbentAction {
     public class Request {
-        @InvocableVariable(label='Gov Notice record Id' required=true)
+        @InvocableVariable(
+            label='Gov Notice record Id'
+            description='Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.'
+            required=true
+        )
         public Id noticeId;
     }
 
     public class Response {
-        @InvocableVariable(label='Answer')
+        @InvocableVariable(
+            label='Answer'
+            description='The incumbent vendor, the predecessor award and its end date, or a statement that none was found. Do not add vendors that are not in it.'
+        )
         public String answer;
     }
 
     @InvocableMethod(
         label='NXP Find Incumbent'
-        description='Finds the incumbent vendor and predecessor award for a notice from award data.'
+        description='Use when the user asks who holds the work now, who the incumbent is, or what the previous award was for a notice.'
         category='Nexus Pursuit Hub'
     )
     public static List<Response> run(List<Request> requests) {
