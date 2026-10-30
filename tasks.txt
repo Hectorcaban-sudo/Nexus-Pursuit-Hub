@@ -56,3 +56,7 @@ sf project deploy start --source-dir packages/nxp-core packages/nxp-ingestion pa
 sf project deploy start --source-dir packages/nxp-analytics --target-org staging --wait 30
 
 sf project delete source --metadata ApexClass:NXP_TechnoMilePushTarget --metadata ApexClass:NXP_PushToTechnoMileAction --metadata CustomMetadata:NXP_Push_Mapping.TM_Amount --metadata CustomMetadata:NXP_Push_Mapping.TM_CloseDate --metadata CustomMetadata:NXP_Push_Mapping.TM_Description --metadata CustomMetadata:NXP_Push_Mapping.TM_Name --metadata CustomMetadata:NXP_Push_Mapping.TM_Stage --target-org staging --no-prompt
+
+   git checkout main
+   git pull
+   sf project deploy start --source-dir packages/nxp-agents --target-org staging --wait 30
