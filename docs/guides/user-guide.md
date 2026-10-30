@@ -11,7 +11,7 @@ Nexus Pursuit Hub finds government opportunities for you and sends the good ones
     - Value, _Due within_ days, _Minimum fit score_.
 3. Watch **Live preview**: today's match count, matches per week over the last 13 weeks, and the top 20. Too many? Add a filter. None? Remove one.
 4. Choose alerts: **Daily** digest (recommended), **Weekly**, **Real Time** (for narrow, urgent searches) or **None**.
-5. Click **Save search**.
+5. Click **Save search**. Open notices that match it now appear in your Match Inbox within a minute, without alert e-mails. From then on, new and changed notices are matched as they arrive and alerted as you chose.
 
 ## 2. Work the Match Inbox
 
@@ -34,7 +34,7 @@ Every new match lands in **Match Inbox**, best fit first. Each card shows:
 Open a notice title to see:
 
 - Days to respond and the fit score, with _why it scores_ rule by rule.
-- The AI summary (check it against the solicitation), the full description and contacts.
+- The AI summary (check it against the solicitation), the full description and contacts. SAM.gov sends only a link to the description; it is fetched automatically for notices that match a search or score high. For others, click **Load description**. Summaries are written for notices that match a saved search.
 - Version history: every amendment and what changed.
 - Push history, plus **Open on SAM.gov** and **Follow**.
 - **Documents**: the notice's files. Add the solicitation documents with **Add documents** (eBuy RFQs bring theirs). Each PDF is read by AI, which lists requirements, deliverables, evaluation factors, submission rules (due date, page limit), key dates, clearance and risks, and flags where the document disagrees with the notice (for example a different due date). It's a head start for the capture team, not the bid decision: check it against the file. **Analyze** reads a file now; **Read again** after a new version. Word and Excel files are listed but not read.

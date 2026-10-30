@@ -34,7 +34,8 @@ Every channel hands records to `NXP_IngestionService`, so dedupe, versioning, fi
 2. **Normalize.** `NXP_FeedMapper` applies `NXP_Feed_Mapping__mdt` (source path, target field, transform `None|Date|DateTime|Number|Upper|Truncate`). The connector adds anything mapping can't express: notice type, status, agency path, place of performance, contacts.
 3. **Match and version.** Records are matched on Notice ID, then solicitation number. If the hash of tracked fields changed, the service writes a Notice Version with field-level diffs and sets the change type (Due date, Set-aside, Classification, Scope, Status, Value, …).
 4. **Enrich.** The service resolves the agency hierarchy (SAM.gov code path when available), contract vehicle and contacts, and links a matching forecast. The trigger computes the fit score.
-5. **Publish.** It publishes `NXP_Gov_Notice_Changed__e`. After SAM.gov runs, `NXP_NoticeEnrichBatch` replaces description links with the text.
+5. **Publish.** It publishes `NXP_Gov_Notice_Changed__e`.
+6. **Description text.** SAM.gov's search returns a link for each description, not the text. Fetching the text costs one more SAM.gov API call per notice, against the key's daily limit, so it isn't done for every notice. After each SAM.gov run, `NXP_NoticeEnrichBatch` fetches it for notices that matched a saved search and for notices scoring at least `Description_Min_Fit` (default 50). Users can fetch any other notice's text with **Load description** on the notice page. The AI summary waits up to two hours for the text before it runs without it.
 
 ## Adding a feed
 

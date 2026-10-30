@@ -172,7 +172,7 @@ Do this in every org, after the packages are deployed:
     - **Value:** the key
 4. **Save**.
 
-Users who run feeds need access to that principal. The `NXP_Admin` permission set grants it. The scheduled feed job runs as the user who scheduled it, so that user needs `NXP_Admin` too.
+Users who run feeds need access to that principal. The `NXP_Admin` permission set grants it. The scheduled feed job runs as the user who scheduled it, so that user needs `NXP_Admin` too. `NXP_User` also grants it, for **Load description** on a notice and the description fetch after a user saves a search.
 
 ### 3. Check it works
 

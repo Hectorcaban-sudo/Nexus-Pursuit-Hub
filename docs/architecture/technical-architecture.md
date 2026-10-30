@@ -44,19 +44,20 @@ The capture app behind the Opportunity records is not a code dependency. The pus
 
 ## Events and asynchronous work
 
-| Trigger                                           | Runs                                                                                       | Purpose                                                                                |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `NXP_FeedScheduler` (hourly at :05)               | Queueable or batch per due feed                                                            | Feed runs                                                                              |
-| Feed run finishes (SAM feeds)                     | `NXP_NoticeEnrichBatch`                                                                    | Replace description links with text                                                    |
-| `NXP_Gov_Notice_Changed__e`                       | `NXP_GovNoticeChangedTrigger` (batch size 200)                                             | Matching, alerts, follow alerts, AI request, listeners                                 |
-| `NXP_Gov_Notice_Changed__e`                       | `NXP_PostPushSyncTrigger`                                                                  | Sync records already pushed                                                            |
-| New auto-push matches                             | `NXP_AutoPushJob` (Queueable)                                                              | Push as search owner                                                                   |
-| `NXP Daily Digest` / `NXP Weekly Digest`          | `NXP_DigestBatch`                                                                          | Digest e-mails                                                                         |
-| `NXP Notice Analyst :15` and `:45`                | `NXP_NoticeAnalystJob`                                                                     | AI summaries and amendment summaries, then the Document Reader for files still waiting |
-| Inbound e-mail to `NXP_Ebuy_Inbox`                | `NXP_EbuyEmailHandler` → `NXP_EbuyExtractJob` (Queueable)                                  | Record the e-mail, read the RFQ, ingest the notice                                     |
-| File attached to a notice (`ContentDocumentLink`) | `NXP_ContentDocumentLinkTrigger` → `NXP_DocumentAnalysisJob` (Queueable, one file per job) | Read PDFs with the Document Reader                                                     |
-| New awards (`NXP_AwardSummaryTrigger`)            | `NXP_WatchService`                                                                         | Vendor and recompete watch alerts                                                      |
-| `NXP Push Retry` (:20)                            | `NXP_PushRetryJob`                                                                         | Retry failed auto-pushes                                                               |
+| Trigger                                           | Runs                                                                                       | Purpose                                                                                  |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `NXP_FeedScheduler` (hourly at :05)               | Queueable or batch per due feed                                                            | Feed runs                                                                                |
+| Feed run finishes (SAM feeds)                     | `NXP_NoticeEnrichBatch`                                                                    | Replace description links with text, for matched notices and fit ≥ `Description_Min_Fit` |
+| Saved search created or saved                     | `NXP_InitialMatchJob` (Queueable)                                                          | Match the search against open notices already loaded; no alerts or auto-push             |
+| `NXP_Gov_Notice_Changed__e`                       | `NXP_GovNoticeChangedTrigger` (batch size 200)                                             | Matching, alerts, follow alerts, AI request, listeners                                   |
+| `NXP_Gov_Notice_Changed__e`                       | `NXP_PostPushSyncTrigger`                                                                  | Sync records already pushed                                                              |
+| New auto-push matches                             | `NXP_AutoPushJob` (Queueable)                                                              | Push as search owner                                                                     |
+| `NXP Daily Digest` / `NXP Weekly Digest`          | `NXP_DigestBatch`                                                                          | Digest e-mails                                                                           |
+| `NXP Notice Analyst :15` and `:45`                | `NXP_NoticeAnalystJob`                                                                     | AI summaries and amendment summaries, then the Document Reader for files still waiting   |
+| Inbound e-mail to `NXP_Ebuy_Inbox`                | `NXP_EbuyEmailHandler` → `NXP_EbuyExtractJob` (Queueable)                                  | Record the e-mail, read the RFQ, ingest the notice                                       |
+| File attached to a notice (`ContentDocumentLink`) | `NXP_ContentDocumentLinkTrigger` → `NXP_DocumentAnalysisJob` (Queueable, one file per job) | Read PDFs with the Document Reader                                                       |
+| New awards (`NXP_AwardSummaryTrigger`)            | `NXP_WatchService`                                                                         | Vendor and recompete watch alerts                                                        |
+| `NXP Push Retry` (:20)                            | `NXP_PushRetryJob`                                                                         | Retry failed auto-pushes                                                                 |
 
 ## Governor-limit design
 

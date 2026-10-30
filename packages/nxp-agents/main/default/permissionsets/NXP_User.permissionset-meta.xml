@@ -101,6 +101,10 @@
         <name>NXP_Setting__mdt</name>
     </customMetadataTypeAccesses>
     <description>Everyone in BD: search, save own searches, follow, push manually, use the assistant.</description>
+    <externalCredentialPrincipalAccesses>
+        <enabled>true</enabled>
+        <externalCredentialPrincipal>NXP_SAM_Gov-Default</externalCredentialPrincipal>
+    </externalCredentialPrincipalAccesses>
     <fieldPermissions>
         <editable>false</editable>
         <field>NXP_Gov_Notice__c.Fit_Band__c</field>

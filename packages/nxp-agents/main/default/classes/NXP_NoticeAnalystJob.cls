@@ -46,11 +46,17 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
                 ]
             );
         }
+        // Wait for the SAM.gov description text (NXP_NoticeEnrichBatch) so the summary reads the notice,
+        // not a link. After two hours without it, summarize from what is there.
+        Datetime waitUntil = Datetime.now().addHours(-2);
         return Database.getQueryLocator(
             [
                 SELECT Id
                 FROM NXP_Gov_Notice__c
-                WHERE AI_Summary_Status__c = 'Pending'
+                WHERE
+                    AI_Summary_Status__c = 'Pending'
+                    AND (Needs_Description__c = FALSE
+                    OR LastModifiedDate < :waitUntil)
                 ORDER BY LastModifiedDate DESC
                 LIMIT 2000
             ]

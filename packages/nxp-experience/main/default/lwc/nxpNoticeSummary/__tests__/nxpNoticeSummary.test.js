@@ -1,8 +1,12 @@
 import { createElement } from 'lwc';
 import NxpNoticeSummary from 'c/nxpNoticeSummary';
 import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
+import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
 
 jest.mock('@salesforce/apex/NXP_NoticeController.getDetail', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_NoticeController.loadDescription', () => ({ default: jest.fn() }), {
+    virtual: true
+});
 jest.mock('@salesforce/apex/NXP_SearchController.followNotice', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('c/nxpPushDialog', () => ({ __esModule: true, default: { open: jest.fn() } }));
 
@@ -42,5 +46,35 @@ describe('c-nxp-notice-summary', () => {
         expect(el.shadowRoot.querySelector('.tile').className).toContain('tile_warn');
         expect(el.shadowRoot.querySelector('.rule-score').textContent).toBe('30 / 30');
         expect(el.shadowRoot.querySelector('.v-name').textContent).toContain('Amendment 1');
+    });
+    it('loads a SAM.gov description on request', async () => {
+        const base = {
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            following: false,
+            sources: ['SAM_Opportunities']
+        };
+        getDetail.mockResolvedValueOnce({
+            ...base,
+            notice: { Id: 'n2', Needs_Description__c: true, Description__c: 'https://api.sam.gov/x' }
+        });
+        getDetail.mockResolvedValueOnce({
+            ...base,
+            notice: { Id: 'n2', Needs_Description__c: false, Description__c: 'Help desk support' }
+        });
+        loadDescription.mockResolvedValue('Help desk support');
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n2';
+        document.body.appendChild(el);
+        await flush();
+        expect(el.shadowRoot.querySelector('details')).toBeNull();
+        el.shadowRoot.querySelector('.load-description-button').click();
+        await flush();
+        await flush();
+        expect(loadDescription).toHaveBeenCalledWith({ noticeId: 'n2' });
+        expect(el.shadowRoot.querySelector('.load-description-button')).toBeNull();
+        expect(el.shadowRoot.querySelector('details')).not.toBeNull();
     });
 });

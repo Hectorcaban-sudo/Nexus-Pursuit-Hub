@@ -338,6 +338,10 @@ private class NXP_IngestionTest {
     static void enrichBatchFetchesDescriptionText() {
         Test.setMock(HttpCalloutMock.class, new Router());
         NXP_IngestionService.ingest(samRecords());
+        // Matched notices (AI summary requested) qualify even with a low fit score.
+        NXP_Gov_Notice__c matched = [SELECT Id FROM NXP_Gov_Notice__c WHERE Notice_Id__c = 'abc123'];
+        matched.AI_Summary_Status__c = 'Pending';
+        update matched;
         Test.startTest();
         Database.executeBatch(new NXP_NoticeEnrichBatch(), 20);
         Test.stopTest();
@@ -348,6 +352,35 @@ private class NXP_IngestionTest {
         ];
         System.assertEquals(false, n.Needs_Description__c);
         System.assert(n.Description__c.contains('Hello world & friends'), n.Description__c);
+    }
+
+    @IsTest
+    static void enrichBatchSkipsUnmatchedLowFitNotices() {
+        Test.setMock(HttpCalloutMock.class, new Router());
+        NXP_IngestionService.ingest(samRecords());
+        Test.startTest();
+        Database.executeBatch(new NXP_NoticeEnrichBatch(), 20);
+        Test.stopTest();
+        NXP_Gov_Notice__c n = [
+            SELECT Description__c, Needs_Description__c
+            FROM NXP_Gov_Notice__c
+            WHERE Notice_Id__c = 'abc123'
+        ];
+        System.assertEquals(true, n.Needs_Description__c, 'No match and fit below Description_Min_Fit');
+        System.assert(n.Description__c.startsWith('http'), n.Description__c);
+    }
+
+    @IsTest
+    static void enrichBatchForChosenNotices() {
+        Test.setMock(HttpCalloutMock.class, new Router());
+        NXP_IngestionService.ingest(samRecords());
+        NXP_Gov_Notice__c n = [SELECT Id FROM NXP_Gov_Notice__c WHERE Notice_Id__c = 'abc123'];
+        Test.startTest();
+        Database.executeBatch(new NXP_NoticeEnrichBatch(new Set<Id>{ n.Id }), 20);
+        Test.stopTest();
+        n = [SELECT Description__c, Needs_Description__c FROM NXP_Gov_Notice__c WHERE Id = :n.Id];
+        System.assertEquals(false, n.Needs_Description__c);
+        System.assert(n.Description__c.contains('Hello world'), n.Description__c);
     }
 
     @IsTest
