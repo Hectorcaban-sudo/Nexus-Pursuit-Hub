@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gov_Notice__c</fullName>
+    <description>The notice the document is attached to.</description>
+    <label>Gov Notice</label>
+    <referenceTo>NXP_Gov_Notice__c</referenceTo>
+    <relationshipLabel>Document Analyses</relationshipLabel>
+    <relationshipName>Document_Analyses</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>true</writeRequiresMasterRead>
+</CustomField>

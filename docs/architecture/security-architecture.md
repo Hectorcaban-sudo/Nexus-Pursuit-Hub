@@ -12,6 +12,7 @@ Government notice data is public, so intel records are readable by every Nexus P
 | Search Match                                                                                    | Controlled by parent (master-detail to Saved Search) |                                                                                                                                                          |
 | Follow                                                                                          | Private                                              |                                                                                                                                                          |
 | Push Log, Feed Run, NXP Log                                                                     | Public Read/Write                                    | Users read push logs; feed runs and logs are admin-only by permission set                                                                                |
+| Document Analysis                                                                               | Controlled by parent (Gov Notice)                    | What AI read from a notice's files; written by the Document Reader (system mode), read by whoever reads the notice                                       |
 | Inbound Email                                                                                   | Private                                              | eBuy e-mail as received (sender, body, attachments). Only `NXP_Admin` grants access (View All); the Inbound Emails screen also checks `NXP_Admin_Access` |
 
 ## Permission sets
@@ -28,6 +29,7 @@ Government notice data is public, so intel records are readable by every Nexus P
 - Controllers, selectors used by UI, and agent actions run in **user mode** (`WITH USER_MODE`, `AccessLevel.USER_MODE`, `as user` DML).
 - Ingestion, matching, alerts, auto-push, retry and sync run in **system mode** as background work, and each such class is marked `without sharing` with a comment.
 - The REST API rejects callers without the `NXP_Integration_Access` custom permission (HTTP 403).
+- Solicitation documents are untrusted: the Document Reader template only returns field values, `NXP_DocumentAnalysisParser` keeps known keys, cleans text and validates dates, and nothing acts on the content.
 - The eBuy e-mail handler accepts only senders in `Ebuy_Allowed_Senders` (set the same list in the e-mail address's _Accept Email From_), drops executable and HTML attachments, and treats e-mail text as untrusted: the AI template may only return field values, which code validates; the RFQ number, which decides which notice is updated, is never taken from AI.
 - Push and Save Search from the assistant require an HMAC **preview token**, issued by the matching preview action for the same user and subject today, so the model cannot skip the preview.
 - Auto-push and team/org sharing check the `NXP_Power_User` custom permission server-side.

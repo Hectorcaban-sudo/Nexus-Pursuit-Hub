@@ -55,10 +55,27 @@ email.plainTextBody = String.join(
     },
     '\n'
 );
-Messaging.InboundEmail.TextAttachment sow = new Messaging.InboundEmail.TextAttachment();
-sow.fileName = 'Statement of Work (SAMPLE).txt';
-sow.body = '[SAMPLE DATA] Statement of work: tier 1 and tier 2 help desk, knowledge base migration, monthly SLA reports.';
-email.textAttachments = new List<Messaging.InboundEmail.TextAttachment>{ sow };
+// A small PDF statement of work, so the Document Reader has something to read.
+String sowText =
+    '<h2>[SAMPLE DATA] Statement of Work - Help Desk Modernization (RFQ9990001)</h2>' +
+    '<p>This is a made-up document for testing Nexus Pursuit Hub.</p>' +
+    '<p><b>Scope.</b> Tier 1 and tier 2 help desk support 7:00 AM to 7:00 PM Eastern, Monday to Friday; ' +
+    'migration of about 1,200 knowledge base articles to the agency ITSM tool within 90 days; monthly service-level reports.</p>' +
+    '<p><b>Period of performance.</b> One 12-month base period and two 12-month option periods.</p>' +
+    '<p><b>Place of performance.</b> Remote; staff must be in the United States.</p>' +
+    '<p><b>Security.</b> All staff need a Public Trust (Tier 2) background investigation before starting.</p>' +
+    '<p><b>Evaluation.</b> Technical approach, then past performance, then price. Award to the best value.</p>' +
+    '<p><b>Submission.</b> Quotes are due ' + closes + ' 2:00 PM Eastern through eBuy. Technical volume limited to 10 pages. ' +
+    'Questions are due five days before the close date.</p>';
+Messaging.InboundEmail.BinaryAttachment sow = new Messaging.InboundEmail.BinaryAttachment();
+sow.fileName = 'Statement of Work (SAMPLE).pdf';
+try {
+    sow.body = Blob.toPdf(sowText);
+} catch (Exception e) {
+    sow.fileName = 'Statement of Work (SAMPLE).txt';
+    sow.body = Blob.valueOf(sowText.stripHtmlTags());
+}
+email.binaryAttachments = new List<Messaging.InboundEmail.BinaryAttachment>{ sow };
 
 Messaging.InboundEnvelope envelope = new Messaging.InboundEnvelope();
 envelope.fromAddress = email.fromAddress;

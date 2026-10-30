@@ -465,6 +465,33 @@ try {
     fails++;
 }
 
+// 7h. Document Reader (files on notices -> NXP_Document_Analysis__c) ------------------------------
+try {
+    List<NXP_Document_Analysis__c> docs = [
+        SELECT File_Name__c, Status__c, Status_Detail__c
+        FROM NXP_Document_Analysis__c
+        WHERE Gov_Notice__r.Notice_Id__c = 'EBUY:RFQ9990001'
+    ];
+    Boolean readerOn = NXP_DocumentService.isEnabled();
+    if (docs.isEmpty()) {
+        out.add('FAIL|Document reader|the sample eBuy notice has no document rows (is the eBuy e-mail processed?)');
+        fails++;
+    } else if (docs[0].Status__c == 'Complete') {
+        out.add('PASS|Document reader|' + docs[0].File_Name__c + ' read');
+    } else if (docs[0].Status__c == 'Failed') {
+        out.add('FAIL|Document reader|' + docs[0].File_Name__c + ': ' + docs[0].Status_Detail__c);
+        fails++;
+    } else {
+        out.add(
+            (readerOn ? 'WARN' : 'SKIP') + '|Document reader|' + docs[0].File_Name__c + ' is ' + docs[0].Status__c +
+            (readerOn ? '; re-run in a minute' : ' (Document_Analysis_Enabled or AI_Enabled is off)')
+        );
+    }
+} catch (Exception e) {
+    out.add('FAIL|Document reader|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();

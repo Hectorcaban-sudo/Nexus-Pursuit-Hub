@@ -42,4 +42,61 @@ private class NXP_NoticeControllerTest {
             System.assert(true);
         }
     }
+
+    private class AnalyzerMock implements NXP_DocumentAnalyzer {
+        public Boolean active = true;
+        public Set<Id> queued = new Set<Id>();
+        public Boolean isEnabled() {
+            return active;
+        }
+        public void enqueue(Set<Id> analysisIds) {
+            queued.addAll(analysisIds);
+        }
+    }
+
+    @IsTest
+    static void documentsCardListsFilesAndAnalyzes() {
+        AnalyzerMock mock = new AnalyzerMock();
+        mock.active = false;
+        NXP_DocumentService.analyzerOverride = mock;
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(Notice_Id__c = 'EXP-DOC', Title__c = 'Docs', Status__c = 'Active');
+        insert n;
+        // Attached while the Document Reader was bypassed, as files attached before it existed.
+        NXP_TriggerHandler.bypass(NXP_DocumentService.HANDLER);
+        ContentVersion v = new ContentVersion(
+            Title = 'SOW',
+            PathOnClient = 'SOW.pdf',
+            VersionData = Blob.valueOf('%PDF-1.4 test'),
+            FirstPublishLocationId = n.Id
+        );
+        insert v;
+        NXP_TriggerHandler.clearBypass(NXP_DocumentService.HANDLER);
+        Id docId = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :v.Id].ContentDocumentId;
+
+        NXP_DocumentController.Documents d = NXP_DocumentController.getDocuments(n.Id);
+        System.assert(!d.enabled);
+        System.assertEquals(1, d.rows.size());
+        System.assertEquals('SOW.pdf', d.rows[0].fileName);
+        System.assertEquals('Not read', d.rows[0].status);
+
+        try {
+            NXP_DocumentController.analyze(n.Id, docId);
+            System.assert(false, 'expected: reading is off');
+        } catch (AuraHandledException e) {
+            System.assert(e.getMessage().contains('off'), e.getMessage());
+        }
+        mock.active = true;
+        System.assert(NXP_DocumentController.analyze(n.Id, docId).startsWith('Reading'));
+        System.assertEquals(1, mock.queued.size());
+        d = NXP_DocumentController.getDocuments(n.Id);
+        System.assertEquals('Pending', d.rows[0].status);
+        System.assert(d.enabled);
+
+        try {
+            NXP_DocumentController.analyze(n.Id, UserInfo.getUserId());
+            System.assert(false, 'expected: not attached');
+        } catch (AuraHandledException e) {
+            System.assert(e.getMessage().contains('not attached'));
+        }
+    }
 }

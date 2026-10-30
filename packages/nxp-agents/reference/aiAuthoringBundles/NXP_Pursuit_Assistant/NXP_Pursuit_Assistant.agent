@@ -74,10 +74,13 @@ subagent notice_briefing:
         instructions: ->
             | Identify the notice from the page context or ask for the notice ID.
             | For "what changed", use compare_versions. For "why this score", use explain_fit_score.
+            | For what the solicitation documents require (SOW, PWS, RFQ files), use notice_documents.
+            | Say that document details were read by AI and should be checked against the files.
             | Cite the notice ID in every answer.
         actions:
             explain: @actions.explain_fit_score
             compare: @actions.compare_versions
+            documents: @actions.notice_documents
     actions:
         explain_fit_score:
             description: "Explains how a notice's fit score was calculated."
@@ -85,6 +88,9 @@ subagent notice_briefing:
         compare_versions:
             description: "Lists what changed in the most recent amendments of a notice."
             target: "apex://NXP_CompareVersionsAction"
+        notice_documents:
+            description: "Summarizes what the documents attached to a notice say: requirements, evaluation factors, key dates, risks and where they disagree with the notice."
+            target: "apex://NXP_NoticeDocumentsAction"
 
 subagent market_intel:
     description: "Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts."

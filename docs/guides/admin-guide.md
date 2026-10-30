@@ -62,25 +62,39 @@ What is kept and who sees it:
 - The raw e-mail, sender addresses and the extraction log are on the Inbound Email record, which only `NXP_Admin` can open.
 - The notice is readable by every Nexus user, like all notices. Attachments are linked to it unless `Ebuy_Share_Files_With_Notice = false`, in which case only admins (on the Inbound Email) can open them.
 
+## Document Reader
+
+Reads PDF files attached to notices (eBuy attachments and uploads on the notice page's **Documents** card) with the `NXP_Document_Analysis` prompt template, and stores the result on an `NXP_Document_Analysis__c` row per file, readable by everyone who can read the notice.
+
+1. In Prompt Builder, create `NXP_Document_Analysis` (Flex) from `packages/nxp-agents/reference/genAiPromptTemplates/`. Add a second input: **File**, API name `Document`, and insert it in the template where it says "the attached document". Choose a model that reads PDF files (Prompt Builder shows each model's file limits). Activate it.
+2. Set `AI_Enabled = true` and `Document_Analysis_Enabled = true`.
+3. Open a notice with a PDF and click **Analyze**. In a sandbox, check a few results against the documents before you rely on them.
+
+Files are read when attached (at most `Document_Max_Per_Notice` per notice automatically; the rest with Analyze), one per background job; files waiting when analysis couldn't start are picked up by the next Notice Analyst run. PDFs over `Document_Max_MB` and non-PDF files are listed but not read. Each read is one AI call through the Einstein Trust Layer; confirm your ATO allows sending solicitation documents to the model. The model only returns field values, which code checks; it can't change records. Turn the trigger off in an emergency with `Bypass_NXP_DocumentService = true`.
+
+SAM.gov attachments are not downloaded automatically yet: add them to the notice from SAM.gov (download, then **Add documents**).
+
 ## Settings (`NXP_Setting__mdt`)
 
-| Key                                               | Default                      | Purpose                                                                         |
-| ------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
-| `AI_Enabled`                                      | false                        | Turns on AI summaries and the AI criteria draft (needs active prompt templates) |
-| `Max_Searches_Per_User` / `Max_RealTime_Searches` | 50 / 20                      | Bound matching load                                                             |
-| `Inbox_Days`                                      | 30                           | Match Inbox window                                                              |
-| `Push_Mapping_Set`                                | TechnoMile_Default           | Active push mapping set                                                         |
-| `Push_Max_Attempts`                               | 3                            | Auto-push retries                                                               |
-| `Match_Listeners`                                 | NXP_AutoPushListener         | Classes called on new matches                                                   |
-| `Http_Max_Attempts`, `Http_Timeout_Ms`            | 3, 60000                     | Callout retry and timeout                                                       |
-| `Batch_Max_Pages`, `Queue_Max_Pages`              | 200, 50                      | Pages per run                                                                   |
-| `Rest_Max_Records`                                | 200                          | REST batch limit                                                                |
-| `Ebuy_Allowed_Senders`                            | gsa.gov                      | Addresses or domains the eBuy inbox accepts                                     |
-| `Ebuy_Default_Vehicle`                            | GSA-MAS-IT                   | Vehicle for eBuy e-mail that isn't sent to a vehicle's Inbox Address            |
-| `Ebuy_AI_Template` / `Ebuy_AI_Read_Attachments`   | NXP_Ebuy_RFQ_Extract / false | AI extraction template; whether it also reads the first PDF                     |
-| `Ebuy_Share_Files_With_Notice`                    | true                         | Link eBuy attachments to the notice (false: admins only)                        |
-| `Alert_OrgWide_Email_Id`                          | (none)                       | Org-wide address alerts come from                                               |
-| `Bypass_NXP_GovNoticeTriggerHandler`              | (none)                       | Emergency trigger switch (set Value to true)                                    |
+| Key                                                        | Default                       | Purpose                                                                         |
+| ---------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------- |
+| `AI_Enabled`                                               | false                         | Turns on AI summaries and the AI criteria draft (needs active prompt templates) |
+| `Max_Searches_Per_User` / `Max_RealTime_Searches`          | 50 / 20                       | Bound matching load                                                             |
+| `Inbox_Days`                                               | 30                            | Match Inbox window                                                              |
+| `Push_Mapping_Set`                                         | TechnoMile_Default            | Active push mapping set                                                         |
+| `Push_Max_Attempts`                                        | 3                             | Auto-push retries                                                               |
+| `Match_Listeners`                                          | NXP_AutoPushListener          | Classes called on new matches                                                   |
+| `Http_Max_Attempts`, `Http_Timeout_Ms`                     | 3, 60000                      | Callout retry and timeout                                                       |
+| `Batch_Max_Pages`, `Queue_Max_Pages`                       | 200, 50                       | Pages per run                                                                   |
+| `Rest_Max_Records`                                         | 200                           | REST batch limit                                                                |
+| `Ebuy_Allowed_Senders`                                     | gsa.gov                       | Addresses or domains the eBuy inbox accepts                                     |
+| `Ebuy_Default_Vehicle`                                     | GSA-MAS-IT                    | Vehicle for eBuy e-mail that isn't sent to a vehicle's Inbox Address            |
+| `Ebuy_AI_Template` / `Ebuy_AI_Read_Attachments`            | NXP_Ebuy_RFQ_Extract / false  | AI extraction template; whether it also reads the first PDF                     |
+| `Document_Analysis_Enabled` / `Document_Analysis_Template` | false / NXP_Document_Analysis | Document Reader on notice PDFs (needs `AI_Enabled`)                             |
+| `Document_Max_MB` / `Document_Max_Per_Notice`              | 10 / 5                        | Largest PDF sent to the model; files read automatically per notice              |
+| `Ebuy_Share_Files_With_Notice`                             | true                          | Link eBuy attachments to the notice (false: admins only)                        |
+| `Alert_OrgWide_Email_Id`                                   | (none)                        | Org-wide address alerts come from                                               |
+| `Bypass_NXP_GovNoticeTriggerHandler`                       | (none)                        | Emergency trigger switch (set Value to true)                                    |
 
 ## Monitoring
 

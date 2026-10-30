@@ -273,4 +273,68 @@ private class NXP_AgentsTest {
         System.assertEquals('{"title":"X"}', ai.extract(em.Id, null));
         System.assert(Type.forName('NXP_EbuyAiExtract').newInstance() instanceof NXP_EbuyAiExtractor);
     }
+
+    @IsTest
+    static void documentReaderReadsAttachedPdfs() {
+        NXP_Settings.setForTest('Document_Analysis_Enabled', 'true');
+        NXP_Settings.setForTest('Document_Analysis_Template', 'NXP_Document_Analysis');
+        NXP_AiService.responsesForTest = new Map<String, String>{
+            'NXP_Document_Analysis' => '{"summary":"Help desk support.","documentType":"SOW",' +
+            '"requirements":["Tier 1 coverage"],"evaluationFactors":["Price"],' +
+            '"submission":{"dueDate":"2026-11-12"},"keyDates":[{"label":"Questions due","date":"2026-11-05"}]}'
+        };
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Notice_Id__c = 'T-DOC-AG',
+            Title__c = 'Help desk',
+            Status__c = 'Active',
+            Response_Due__c = Datetime.newInstanceGmt(2026, 11, 20, 19, 0, 0)
+        );
+        insert n;
+        Test.startTest();
+        insert new ContentVersion(
+            Title = 'SOW',
+            PathOnClient = 'SOW.pdf',
+            VersionData = Blob.valueOf('%PDF-1.4 test'),
+            FirstPublishLocationId = n.Id
+        );
+        Test.stopTest();
+
+        NXP_Document_Analysis__c a = [
+            SELECT Status__c, Result_Json__c
+            FROM NXP_Document_Analysis__c
+            WHERE Gov_Notice__c = :n.Id
+        ];
+        System.assertEquals('Complete', a.Status__c);
+        System.assert(a.Result_Json__c.contains('Tier 1 coverage'));
+        System.assert(a.Result_Json__c.contains('responses are due 2026-11-12'), 'differs from the notice');
+
+        String text = NXP_NoticeDocumentsAction.run(new List<NXP_NoticeDocumentsAction.Request>{ request(n.Id) })[0]
+            .documents;
+        System.assert(text.contains('SOW.pdf (SOW): Help desk support.'), text);
+        System.assert(text.contains('Requirements: Tier 1 coverage'), text);
+        System.assert(text.contains('Date: Questions due 2026-11-05'), text);
+
+        // A model that answers with prose marks the row Failed and keeps going.
+        NXP_AiService.responsesForTest.put('NXP_Document_Analysis', 'Sorry, I cannot read that.');
+        update new NXP_Document_Analysis__c(
+            Id = [SELECT Id FROM NXP_Document_Analysis__c WHERE Gov_Notice__c = :n.Id]
+            .Id,
+            Status__c = 'Pending'
+        );
+        new NXP_DocumentAnalysisJob(null).execute(null);
+        System.assertEquals(
+            'Failed',
+            [SELECT Status__c FROM NXP_Document_Analysis__c WHERE Gov_Notice__c = :n.Id].Status__c
+        );
+        System.assert(
+            NXP_NoticeDocumentsAction.run(new List<NXP_NoticeDocumentsAction.Request>{ request(n.Id) })[0]
+                .documents.contains('Failed')
+        );
+    }
+
+    private static NXP_NoticeDocumentsAction.Request request(Id noticeId) {
+        NXP_NoticeDocumentsAction.Request r = new NXP_NoticeDocumentsAction.Request();
+        r.noticeId = noticeId;
+        return r;
+    }
 }

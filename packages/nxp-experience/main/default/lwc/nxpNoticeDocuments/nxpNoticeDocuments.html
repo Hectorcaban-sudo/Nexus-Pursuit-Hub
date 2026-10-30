@@ -1,0 +1,103 @@
+<template>
+    <lightning-card title="Documents" icon-name="standard:file">
+        <lightning-button-icon
+            slot="actions"
+            icon-name="utility:refresh"
+            alternative-text="Refresh"
+            onclick={handleRefresh}
+        ></lightning-button-icon>
+        <div class="body">
+            <template lwc:if={loading}>
+                <lightning-spinner alternative-text="Loading documents" size="small"></lightning-spinner>
+            </template>
+            <p class="note">
+                AI reads each PDF and lists what it asks for. It is a head start for the capture team, not the decision:
+                check against the document.
+            </p>
+            <template lwc:if={offNote}>
+                <p class="off" role="status">{offNote}</p>
+            </template>
+
+            <template lwc:if={hasRows}>
+                <ul class="docs">
+                    <template for:each={rows} for:item="r">
+                        <li key={r.documentId} class="doc">
+                            <div class="doc-head">
+                                <span class="doc-name">
+                                    <a href="#" class="file" data-id={r.documentId} onclick={handleOpenFile}
+                                        >{r.fileName}</a
+                                    >
+                                    <span class="meta"> {r.sizeLabel}</span>
+                                    <template lwc:if={r.docType}>
+                                        <span class="chip">{r.docType}</span>
+                                    </template>
+                                </span>
+                                <span class={r.statusClass}>{r.statusLabel}</span>
+                            </div>
+                            <template lwc:if={r.hasDetail}>
+                                <p class="meta">{r.statusDetail}</p>
+                            </template>
+                            <template lwc:if={r.summary}>
+                                <p class="summary">{r.summary}</p>
+                            </template>
+                            <template lwc:if={r.hasChecks}>
+                                <ul class="checks" aria-label="Checks against the notice">
+                                    <template for:each={r.checks} for:item="c">
+                                        <li key={c.key} class="check">{c.text}</li>
+                                    </template>
+                                </ul>
+                            </template>
+                            <template lwc:if={r.open}>
+                                <div class="sections">
+                                    <template for:each={r.sections} for:item="s">
+                                        <section key={s.key} class="section">
+                                            <h3 class="section-title">{s.label}</h3>
+                                            <ul class="items">
+                                                <template for:each={s.items} for:item="i">
+                                                    <li key={i.key}>{i.text}</li>
+                                                </template>
+                                            </ul>
+                                        </section>
+                                    </template>
+                                </div>
+                            </template>
+                            <div class="doc-actions">
+                                <span class="meta">{r.analyzedLabel}</span>
+                                <template lwc:if={r.hasResult}>
+                                    <lightning-button
+                                        class="toggle"
+                                        variant="base"
+                                        label={r.toggleLabel}
+                                        data-id={r.documentId}
+                                        onclick={handleToggle}
+                                    ></lightning-button>
+                                </template>
+                                <template lwc:if={r.canAnalyze}>
+                                    <lightning-button
+                                        class="analyze"
+                                        label={r.analyzeLabel}
+                                        data-id={r.documentId}
+                                        disabled={r.analyzeDisabled}
+                                        onclick={handleAnalyze}
+                                    ></lightning-button>
+                                </template>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="meta empty">{emptyMessage}</p>
+            </template>
+
+            <lightning-file-upload
+                label="Add documents"
+                name="noticeDocuments"
+                accept=".pdf,.docx,.doc,.xlsx,.xls,.txt"
+                record-id={recordId}
+                multiple
+                onuploadfinished={handleUploaded}
+            ></lightning-file-upload>
+        </div>
+    </lightning-card>
+</template>

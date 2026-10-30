@@ -37,6 +37,7 @@ Open a notice title to see:
 - The AI summary (check it against the solicitation), the full description and contacts.
 - Version history: every amendment and what changed.
 - Push history, plus **Open on SAM.gov** and **Follow**.
+- **Documents**: the notice's files. Add the solicitation documents with **Add documents** (eBuy RFQs bring theirs). Each PDF is read by AI, which lists requirements, deliverables, evaluation factors, submission rules (due date, page limit), key dates, clearance and risks, and flags where the document disagrees with the notice (for example a different due date). It's a head start for the capture team, not the bid decision: check it against the file. **Analyze** reads a file now; **Read again** after a new version. Word and Excel files are listed but not read.
 
 ## 4. Look ahead: forecasts, recompetes and competitors
 
@@ -58,6 +59,7 @@ Open the Agentforce panel and ask, for example:
 - "Alert me daily on Army cloud migration, 541519, 8(a), over $5M"
 - "Why is the fit score on this notice 72?"
 - "What changed in the latest amendment?"
+- "What does the statement of work require?"
 - "Which VA recompetes over $10M expire in the next 18 months?"
 - "Push this to TechnoMile"
 

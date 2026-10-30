@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Analysis_Key__c</fullName>
+    <caseSensitive>true</caseSensitive>
+    <description>Notice Id : ContentDocument Id, so each file is analysed once per notice.</description>
+    <externalId>true</externalId>
+    <label>Analysis Key</label>
+    <length>40</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

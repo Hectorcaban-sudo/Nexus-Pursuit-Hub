@@ -3,6 +3,7 @@
  *   SUMMARIES - Notice Analyst: AI summary for notices that matched a saved search
  *               (AI_Summary_Status__c = Pending, set by NXP_SearchMatchService)
  *   CHANGES   - Amendment Watch: plain-English impact summary for new Notice Versions
+ *   then      - Document Reader (NXP_DocumentAnalysisJob) for notice files still waiting
  * Schedule once with NXP_NoticeAnalystJob.scheduleDefaults(); each run does summaries, then changes.
  */
 public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<SObject>, Database.AllowsCallouts, Schedulable {
@@ -66,8 +67,18 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
     }
 
     public void finish(Database.BatchableContext context) {
-        if (mode == SUMMARIES && !Test.isRunningTest()) {
+        if (Test.isRunningTest()) {
+            return;
+        }
+        if (mode == SUMMARIES) {
             Database.executeBatch(new NXP_NoticeAnalystJob(CHANGES), 5);
+        } else {
+            // Document Reader: files registered while analysis could not start (for example, attached
+            // inside another background job) are picked up here.
+            NXP_DocumentAnalysisJob reader = new NXP_DocumentAnalysisJob();
+            if (reader.isEnabled() && !NXP_DocumentAnalysisJob.pendingIds().isEmpty()) {
+                System.enqueueJob(reader);
+            }
         }
     }
 
