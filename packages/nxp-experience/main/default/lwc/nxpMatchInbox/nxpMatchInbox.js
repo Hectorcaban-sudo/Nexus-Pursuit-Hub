@@ -88,6 +88,8 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
                 isChange: !!i.changeType && i.changeType !== 'New' && i.changeType !== 'Already open',
                 changeType: i.changeType,
                 watching: i.userAction === 'Watching',
+                hasChecks: i.openChecks > 0,
+                checksLabel: i.openChecks === 1 ? '1 document check' : `${i.openChecks} document checks`,
                 searchName: i.searchName,
                 matchedTerms: i.matchedTerms,
                 checked: this.selected.has(n.Id),

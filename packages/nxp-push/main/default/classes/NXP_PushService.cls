@@ -54,6 +54,9 @@ public without sharing class NXP_PushService {
         public String existingRecordName;
         @AuraEnabled
         public Integer documentCount = 0;
+        /** Points where a read document disagrees with the notice, not yet marked checked. */
+        @AuraEnabled
+        public Integer openChecks = 0;
         @AuraEnabled
         public String token;
     }
@@ -101,6 +104,8 @@ public without sharing class NXP_PushService {
             }
         }
         p.documentCount = [SELECT COUNT() FROM ContentDocumentLink WHERE LinkedEntityId = :n.Id];
+        Map<Id, Integer> checks = NXP_DocumentService.openCheckCounts(new Set<Id>{ n.Id });
+        p.openChecks = checks.containsKey(n.Id) ? checks.get(n.Id) : 0;
         p.token = NXP_PreviewToken.issue('push', String.valueOf(n.Id));
         return p;
     }

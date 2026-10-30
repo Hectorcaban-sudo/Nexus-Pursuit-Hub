@@ -13,6 +13,9 @@
         </template>
         <template lwc:if={preview}>
             <div class={bannerClass} role="status">{bannerText}</div>
+            <template lwc:if={checksText}>
+                <div class="banner banner_warn checks-warning" role="alert">{checksText}</div>
+            </template>
             <h2 class="slds-text-heading_small slds-m-top_medium slds-m-bottom_x-small">Values that will be sent</h2>
             <div class="table-wrap">
                 <table class="slds-table slds-table_bordered slds-table_cell-buffer">

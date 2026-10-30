@@ -43,6 +43,39 @@ private class NXP_NoticeControllerTest {
         }
     }
 
+    @IsTest
+    static void documentChecksShowUntilMarkedChecked() {
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Notice_Id__c = 'EXP-CHK',
+            Title__c = 'Checks',
+            Status__c = 'Active'
+        );
+        insert n;
+        NXP_Document_Analysis__c a = new NXP_Document_Analysis__c(
+            Gov_Notice__c = n.Id,
+            Content_Document_Id__c = '069000000000001',
+            Analysis_Key__c = 'chk-1',
+            File_Name__c = 'SOW.pdf',
+            Status__c = 'Complete',
+            Check_Count__c = 1,
+            Result_Json__c = '{"checkItems":[{"field":"Response due","notice":"2026-11-19","document":"2026-11-12",' +
+                '"text":"The document says responses are due 2026-11-12; the notice says 2026-11-19."}]}'
+        );
+        insert a;
+
+        NXP_NoticeController.Detail d = NXP_NoticeController.getDetail(n.Id);
+        System.assertEquals(1, d.checks.size());
+        System.assertEquals('Response due', d.checks[0].field);
+        System.assertEquals('2026-11-12', d.checks[0].documentValue);
+        System.assertEquals('SOW.pdf', d.checks[0].fileName);
+
+        NXP_DocumentController.markChecked(a.Id);
+        a = [SELECT Checks_Reviewed__c, Checks_Reviewed_By__c FROM NXP_Document_Analysis__c WHERE Id = :a.Id];
+        System.assertNotEquals(null, a.Checks_Reviewed__c);
+        System.assertEquals(UserInfo.getUserId(), a.Checks_Reviewed_By__c);
+        System.assertEquals(0, NXP_NoticeController.getDetail(n.Id).checks.size());
+    }
+
     private class DescriptionMock implements HttpCalloutMock {
         public HttpResponse respond(HttpRequest req) {
             HttpResponse res = new HttpResponse();

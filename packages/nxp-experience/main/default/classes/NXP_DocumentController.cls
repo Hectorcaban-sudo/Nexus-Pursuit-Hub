@@ -108,6 +108,31 @@ public with sharing class NXP_DocumentController {
         }
     }
 
+    /**
+     * Records that someone checked where this document disagrees with the notice, so the warning
+     * on the notice page goes away for everyone. Reading the file again brings it back if it still
+     * disagrees.
+     */
+    @AuraEnabled
+    public static void markChecked(Id analysisId) {
+        try {
+            if ([SELECT COUNT() FROM NXP_Document_Analysis__c WHERE Id = :analysisId WITH USER_MODE] == 0) {
+                throw new AuraHandledException('Document not found or not visible to you.');
+            }
+            // Analyses are read-only for most users; only these two fields are written.
+            Database.update(
+                new NXP_Document_Analysis__c(
+                    Id = analysisId,
+                    Checks_Reviewed__c = Datetime.now(),
+                    Checks_Reviewed_By__c = UserInfo.getUserId()
+                ),
+                AccessLevel.SYSTEM_MODE
+            );
+        } catch (Exception e) {
+            throw handled(e);
+        }
+    }
+
     private static Exception handled(Exception e) {
         if (e instanceof AuraHandledException) {
             return e;

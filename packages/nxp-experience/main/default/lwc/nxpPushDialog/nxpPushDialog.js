@@ -58,6 +58,15 @@ export default class NxpPushDialog extends LightningModal {
         return `No existing ${this.preview.targetObject} record found. A new one will be created.`;
     }
 
+    /** Read documents disagree with the notice and nobody has marked it checked. */
+    get checksText() {
+        const n = this.preview ? this.preview.openChecks : 0;
+        if (!n) {
+            return '';
+        }
+        return `The solicitation documents disagree with this notice on ${n} point${n === 1 ? '' : 's'} (for example the due date). Check them on the notice page; the values below come from the notice.`;
+    }
+
     get documentLabel() {
         const n = this.preview ? this.preview.documentCount : 0;
         return `Link the ${n} solicitation document${n === 1 ? '' : 's'} to the record`;

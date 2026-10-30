@@ -120,6 +120,11 @@
     background: #fff1e0;
     color: #8a4b00;
 }
+.chip_bad {
+    background: #fdecec;
+    color: #8e1b1b;
+    font-weight: 600;
+}
 .title {
     font-size: 1.0625rem;
     font-weight: 700;

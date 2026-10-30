@@ -138,6 +138,13 @@ private class NXP_DocumentServiceTest {
         System.assert(all.contains('NAICS 541512'), all);
         System.assert(all.contains('set-aside'), all);
         System.assert(all.contains('Clearance requirement: Secret'), all);
+        List<Map<String, Object>> items = (List<Map<String, Object>>) r.get('checkItems');
+        System.assertEquals(3, items.size(), 'Clearance is information, not a disagreement');
+        System.assertEquals('Response due', items[0].get('field'));
+        System.assertEquals('2026-11-19', items[0].get('notice'));
+        System.assertEquals('2026-11-12', items[0].get('document'));
+        System.assertEquals('NAICS', items[1].get('field'));
+        System.assertEquals('Set-aside', items[2].get('field'));
 
         try {
             NXP_DocumentAnalysisParser.parse('I could not open the file.', n);
@@ -148,5 +155,35 @@ private class NXP_DocumentServiceTest {
         System.assert(
             !NXP_DocumentAnalysisParser.parse('{"naics":"5415","clearance":"None"}', n).containsKey('checks')
         );
+    }
+
+    @IsTest
+    static void openCheckCountsSkipReviewedAndUnread() {
+        NXP_Gov_Notice__c n = notice();
+        insert new List<NXP_Document_Analysis__c>{
+            new NXP_Document_Analysis__c(
+                Gov_Notice__c = n.Id,
+                Content_Document_Id__c = '069000000000001',
+                Analysis_Key__c = 'k1',
+                Status__c = 'Complete',
+                Check_Count__c = 2
+            ),
+            new NXP_Document_Analysis__c(
+                Gov_Notice__c = n.Id,
+                Content_Document_Id__c = '069000000000002',
+                Analysis_Key__c = 'k2',
+                Status__c = 'Complete',
+                Check_Count__c = 1,
+                Checks_Reviewed__c = Datetime.now()
+            ),
+            new NXP_Document_Analysis__c(
+                Gov_Notice__c = n.Id,
+                Content_Document_Id__c = '069000000000003',
+                Analysis_Key__c = 'k3',
+                Status__c = 'Pending'
+            )
+        };
+        System.assertEquals(2, NXP_DocumentService.openCheckCounts(new Set<Id>{ n.Id }).get(n.Id));
+        System.assert(NXP_DocumentService.openCheckCounts(new Set<Id>()).isEmpty());
     }
 }

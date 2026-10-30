@@ -17,6 +17,28 @@ public with sharing class NXP_NoticeController {
         public Boolean following = false;
         @AuraEnabled
         public List<String> sources = new List<String>();
+        /** Points where a read document disagrees with the notice and nobody has checked them yet. */
+        @AuraEnabled
+        public List<DocumentCheck> checks = new List<DocumentCheck>();
+    }
+
+    public class DocumentCheck {
+        @AuraEnabled
+        public String key;
+        @AuraEnabled
+        public Id analysisId;
+        @AuraEnabled
+        public Id documentId;
+        @AuraEnabled
+        public String fileName;
+        @AuraEnabled
+        public String field;
+        @AuraEnabled
+        public String noticeValue;
+        @AuraEnabled
+        public String documentValue;
+        @AuraEnabled
+        public String text;
     }
 
     @AuraEnabled
@@ -53,7 +75,52 @@ public with sharing class NXP_NoticeController {
         ];
         d.pushLogs = NXP_PushController.getPushLogs(noticeId);
         d.following = NXP_SearchController.isFollowing(noticeId);
+        d.checks = openChecks(noticeId);
         return d;
+    }
+
+    @TestVisible
+    private static List<DocumentCheck> openChecks(Id noticeId) {
+        List<DocumentCheck> out = new List<DocumentCheck>();
+        for (NXP_Document_Analysis__c a : [
+            SELECT Id, Content_Document_Id__c, File_Name__c, Result_Json__c
+            FROM NXP_Document_Analysis__c
+            WHERE
+                Gov_Notice__c = :noticeId
+                AND Status__c = 'Complete'
+                AND Check_Count__c > 0
+                AND Checks_Reviewed__c = NULL
+            WITH USER_MODE
+            ORDER BY Analyzed__c DESC
+            LIMIT 20
+        ]) {
+            if (String.isBlank(a.Result_Json__c)) {
+                continue;
+            }
+            Map<String, Object> result;
+            try {
+                result = (Map<String, Object>) JSON.deserializeUntyped(a.Result_Json__c);
+            } catch (Exception e) {
+                continue;
+            }
+            List<Object> items = result.get('checkItems') instanceof List<Object>
+                ? (List<Object>) result.get('checkItems')
+                : new List<Object>();
+            for (Object o : items) {
+                Map<String, Object> item = (Map<String, Object>) o;
+                DocumentCheck c = new DocumentCheck();
+                c.key = a.Id + '-' + out.size();
+                c.analysisId = a.Id;
+                c.documentId = Id.valueOf(a.Content_Document_Id__c);
+                c.fileName = a.File_Name__c;
+                c.field = (String) item.get('field');
+                c.noticeValue = (String) item.get('notice');
+                c.documentValue = (String) item.get('document');
+                c.text = (String) item.get('text');
+                out.add(c);
+            }
+        }
+        return out;
     }
 
     /**

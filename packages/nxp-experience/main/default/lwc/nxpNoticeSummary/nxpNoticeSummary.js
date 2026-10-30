@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import followNotice from '@salesforce/apex/NXP_SearchController.followNotice';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
+import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
 import NxpPushDialog from 'c/nxpPushDialog';
 import { daysUntil, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
@@ -100,6 +101,47 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
             toastError(this, e, 'Could not load the description');
         } finally {
             this.loadingDescription = false;
+        }
+    }
+
+    get checks() {
+        return this.detail && this.detail.checks ? this.detail.checks : [];
+    }
+
+    get hasChecks() {
+        return this.checks.length > 0;
+    }
+
+    get checksTitle() {
+        const n = this.checks.length;
+        return n === 1
+            ? 'The documents disagree with this notice on 1 point'
+            : `The documents disagree with this notice on ${n} points`;
+    }
+
+    get dueDisputed() {
+        return this.checks.some((c) => c.field === 'Response due');
+    }
+
+    handleOpenDocument(event) {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__namedPage',
+            attributes: { pageName: 'filePreview' },
+            state: { selectedRecordId: event.currentTarget.dataset.id }
+        });
+    }
+
+    async handleMarkChecked(event) {
+        try {
+            await markChecked({ analysisId: event.currentTarget.dataset.id });
+            toast(
+                this,
+                'Marked as checked',
+                'The warning is hidden for everyone. Reading the file again brings it back.'
+            );
+            await this.load();
+        } catch (e) {
+            toastError(this, e, 'Could not mark it as checked');
         }
     }
 

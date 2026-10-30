@@ -172,6 +172,32 @@ public without sharing class NXP_DocumentService {
         return 'Reading the document. This usually takes under a minute.';
     }
 
+    /**
+     * Notice Id -> number of open document checks: points where a read document disagrees with the
+     * notice and nobody has marked them checked yet. Only notices the running user can see.
+     */
+    public static Map<Id, Integer> openCheckCounts(Set<Id> noticeIds) {
+        Map<Id, Integer> counts = new Map<Id, Integer>();
+        if (noticeIds == null || noticeIds.isEmpty()) {
+            return counts;
+        }
+        for (AggregateResult r : [
+            SELECT Gov_Notice__c notice, SUM(Check_Count__c) total
+            FROM NXP_Document_Analysis__c
+            WHERE
+                Gov_Notice__c IN :noticeIds
+                AND Status__c = 'Complete'
+                AND Check_Count__c > 0
+                AND Checks_Reviewed__c = NULL
+            WITH USER_MODE
+            GROUP BY Gov_Notice__c
+        ]) {
+            Object total = r.get('total');
+            counts.put((Id) r.get('notice'), total == null ? 0 : ((Decimal) total).intValue());
+        }
+        return counts;
+    }
+
     public static Boolean isEnabled() {
         NXP_DocumentAnalyzer a = analyzer();
         return a != null && a.isEnabled();

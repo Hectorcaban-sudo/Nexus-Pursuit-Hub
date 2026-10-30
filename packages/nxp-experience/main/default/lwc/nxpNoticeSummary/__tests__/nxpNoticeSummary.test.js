@@ -2,9 +2,13 @@ import { createElement } from 'lwc';
 import NxpNoticeSummary from 'c/nxpNoticeSummary';
 import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
+import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
 
 jest.mock('@salesforce/apex/NXP_NoticeController.getDetail', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.loadDescription', () => ({ default: jest.fn() }), {
+    virtual: true
+});
+jest.mock('@salesforce/apex/NXP_DocumentController.markChecked', () => ({ default: jest.fn() }), {
     virtual: true
 });
 jest.mock('@salesforce/apex/NXP_SearchController.followNotice', () => ({ default: jest.fn() }), { virtual: true });
@@ -76,5 +80,44 @@ describe('c-nxp-notice-summary', () => {
         expect(loadDescription).toHaveBeenCalledWith({ noticeId: 'n2' });
         expect(el.shadowRoot.querySelector('.load-description-button')).toBeNull();
         expect(el.shadowRoot.querySelector('details')).not.toBeNull();
+    });
+    it('warns where documents disagree and marks them checked', async () => {
+        const base = {
+            notice: { Id: 'n3', Response_Due__c: new Date(Date.now() + 9 * 86400000).toISOString() },
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            following: false,
+            sources: []
+        };
+        getDetail.mockResolvedValueOnce({
+            ...base,
+            checks: [
+                {
+                    key: 'a1-0',
+                    analysisId: 'a1',
+                    documentId: '069x',
+                    fileName: 'SOW.pdf',
+                    field: 'Response due',
+                    noticeValue: '2026-11-19',
+                    documentValue: '2026-11-12'
+                }
+            ]
+        });
+        getDetail.mockResolvedValueOnce({ ...base, checks: [] });
+        markChecked.mockResolvedValue(undefined);
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n3';
+        document.body.appendChild(el);
+        await flush();
+        expect(el.shadowRoot.querySelector('.checks-title').textContent).toContain('1 point');
+        expect(el.shadowRoot.querySelector('.check-doc').textContent).toBe('2026-11-12');
+        expect(el.shadowRoot.querySelector('.tile-flag')).not.toBeNull();
+        el.shadowRoot.querySelector('.mark-checked').click();
+        await flush();
+        await flush();
+        expect(markChecked).toHaveBeenCalledWith({ analysisId: 'a1' });
+        expect(el.shadowRoot.querySelector('.checks')).toBeNull();
     });
 });

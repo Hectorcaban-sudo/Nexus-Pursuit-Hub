@@ -120,6 +120,11 @@
                                     ><span class="chip chip_warn">Changed: {c.changeType}</span></template
                                 >
                                 <template lwc:if={c.watching}><span class="chip chip_light">Watching</span></template>
+                                <template lwc:if={c.hasChecks}
+                                    ><span class="chip chip_bad" title="The documents disagree with the notice"
+                                        >{c.checksLabel}</span
+                                    ></template
+                                >
                             </div>
                             <a href="#" class="title" data-id={c.noticeId} onclick={handleOpen}>{c.title}</a>
                             <div class="meta">

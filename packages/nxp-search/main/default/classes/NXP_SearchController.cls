@@ -83,6 +83,9 @@ public with sharing class NXP_SearchController {
         public Datetime matchedAt;
         @AuraEnabled
         public NXP_Gov_Notice__c notice;
+        /** Points where a read document disagrees with the notice, not yet marked checked. */
+        @AuraEnabled
+        public Integer openChecks = 0;
     }
 
     private static final Integer PREVIEW_ROWS = 2000;
@@ -306,6 +309,7 @@ public with sharing class NXP_SearchController {
             new NXP_GovNoticeSelector(AccessLevel.USER_MODE).byIds(noticeIds)
         );
 
+        Map<Id, Integer> checks = NXP_DocumentService.openCheckCounts(noticeIds);
         // One card per notice: the first (most recent) match wins.
         Map<Id, InboxItem> byNotice = new Map<Id, InboxItem>();
         for (NXP_Search_Match__c m : matches) {
@@ -322,6 +326,7 @@ public with sharing class NXP_SearchController {
             item.userAction = m.User_Action__c;
             item.matchedAt = m.Matched_At__c;
             item.notice = n;
+            item.openChecks = checks.containsKey(n.Id) ? checks.get(n.Id) : 0;
             byNotice.put(n.Id, item);
         }
         return byNotice.values();

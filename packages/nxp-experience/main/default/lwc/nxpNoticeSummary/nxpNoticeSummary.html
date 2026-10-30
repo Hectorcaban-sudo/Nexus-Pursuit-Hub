@@ -9,6 +9,7 @@
                     <div class={dueClass}>
                         <span class="tile-value">{daysLabel}</span>
                         <span class="tile-caption">{daysCaption}</span>
+                        <template lwc:if={dueDisputed}><span class="tile-flag">Check the date below</span></template>
                     </div>
                     <c-nxp-fit-badge score={notice.Fit_Score__c}></c-nxp-fit-badge>
                 </div>
@@ -51,6 +52,44 @@
                     ></lightning-button>
                 </div>
             </section>
+
+            <template lwc:if={hasChecks}>
+                <section class="checks" role="alert" aria-label="Document checks">
+                    <div class="checks-head">
+                        <lightning-icon icon-name="utility:warning" size="small" variant="error"></lightning-icon>
+                        <strong class="checks-title">{checksTitle}</strong>
+                        <span class="checks-note"
+                            >Check before you plan the response. The notice's fields are not changed.</span
+                        >
+                    </div>
+                    <template for:each={checks} for:item="c">
+                        <div key={c.key} class="check">
+                            <span class="check-field">{c.field}</span>
+                            <span class="check-value">
+                                <span class="check-label">Notice says</span>
+                                <strong>{c.noticeValue}</strong>
+                            </span>
+                            <span class="check-value">
+                                <span class="check-label">{c.fileName} says</span>
+                                <strong class="check-doc">{c.documentValue}</strong>
+                            </span>
+                            <span class="check-actions">
+                                <lightning-button
+                                    label="Open document"
+                                    data-id={c.documentId}
+                                    onclick={handleOpenDocument}
+                                ></lightning-button>
+                                <lightning-button
+                                    class="mark-checked"
+                                    label="Mark as checked"
+                                    data-id={c.analysisId}
+                                    onclick={handleMarkChecked}
+                                ></lightning-button>
+                            </span>
+                        </div>
+                    </template>
+                </section>
+            </template>
 
             <div class="columns">
                 <section class="card summary" aria-label="AI summary">

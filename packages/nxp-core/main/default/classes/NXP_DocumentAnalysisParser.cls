@@ -99,6 +99,10 @@ public inherited sharing class NXP_DocumentAnalysisParser {
             out.put('submission', submission);
         }
 
+        List<Map<String, Object>> items = disagreements(out, notice);
+        if (!items.isEmpty()) {
+            out.put('checkItems', items);
+        }
         List<String> checks = compare(out, notice);
         if (!checks.isEmpty()) {
             out.put('checks', checks);
@@ -106,12 +110,27 @@ public inherited sharing class NXP_DocumentAnalysisParser {
         return out;
     }
 
-    /** Where the document and the notice disagree, in plain words. */
+    /** Where the document and the notice disagree, in plain words, plus any clearance requirement. */
     @TestVisible
     private static List<String> compare(Map<String, Object> doc, NXP_Gov_Notice__c n) {
         List<String> checks = new List<String>();
-        if (n == null) {
-            return checks;
+        for (Map<String, Object> item : disagreements(doc, n)) {
+            checks.add((String) item.get('text'));
+        }
+        if (n != null && doc.containsKey('clearance') && !((String) doc.get('clearance')).containsIgnoreCase('none')) {
+            checks.add('Clearance requirement: ' + ((String) doc.get('clearance')).left(120) + '.');
+        }
+        return checks;
+    }
+
+    /**
+     * Fields where the document and the notice disagree, for the warning on the notice page:
+     * field, notice (what the notice says), document (what the file says) and text (one sentence).
+     */
+    public static List<Map<String, Object>> disagreements(Map<String, Object> doc, NXP_Gov_Notice__c n) {
+        List<Map<String, Object>> items = new List<Map<String, Object>>();
+        if (n == null || doc == null) {
+            return items;
         }
         Map<String, Object> submission = (Map<String, Object>) doc.get('submission');
         String due = submission == null ? null : (String) submission.get('dueDate');
@@ -119,29 +138,61 @@ public inherited sharing class NXP_DocumentAnalysisParser {
             Date docDue = Date.valueOf(due.left(10));
             Date noticeDue = n.Response_Due__c.dateGmt();
             if (Math.abs(docDue.daysBetween(noticeDue)) > 1) {
-                checks.add(
-                    'The document says responses are due ' +
-                        due.left(10) +
-                        '; the notice says ' +
-                        String.valueOf(noticeDue) +
-                        '.'
+                items.add(
+                    item(
+                        'Response due',
+                        String.valueOf(noticeDue),
+                        due.left(10),
+                        'The document says responses are due ' +
+                            due.left(10) +
+                            '; the notice says ' +
+                            String.valueOf(noticeDue) +
+                            '.'
+                    )
                 );
             }
         } else if (due != null && n.Response_Due__c == null) {
-            checks.add('The notice has no due date; the document says ' + due.left(10) + '.');
+            items.add(
+                item(
+                    'Response due',
+                    'No due date',
+                    due.left(10),
+                    'The notice has no due date; the document says ' + due.left(10) + '.'
+                )
+            );
         }
         String naics = (String) doc.get('naics');
         if (naics != null && String.isNotBlank(n.NAICS_Code__c) && naics != n.NAICS_Code__c) {
-            checks.add('The document names NAICS ' + naics + '; the notice has ' + n.NAICS_Code__c + '.');
+            items.add(
+                item(
+                    'NAICS',
+                    n.NAICS_Code__c,
+                    naics,
+                    'The document names NAICS ' + naics + '; the notice has ' + n.NAICS_Code__c + '.'
+                )
+            );
         }
         String setAside = (String) doc.get('setAside');
         if (setAside != null && String.isBlank(n.Set_Aside__c) && !setAside.containsIgnoreCase('none')) {
-            checks.add('The document mentions a set-aside (' + setAside.left(80) + '); the notice has none.');
+            items.add(
+                item(
+                    'Set-aside',
+                    'None',
+                    setAside.left(80),
+                    'The document mentions a set-aside (' + setAside.left(80) + '); the notice has none.'
+                )
+            );
         }
-        if (doc.containsKey('clearance') && !((String) doc.get('clearance')).containsIgnoreCase('none')) {
-            checks.add('Clearance requirement: ' + ((String) doc.get('clearance')).left(120) + '.');
-        }
-        return checks;
+        return items;
+    }
+
+    private static Map<String, Object> item(String field, String noticeValue, String documentValue, String text) {
+        return new Map<String, Object>{
+            'field' => field,
+            'notice' => noticeValue,
+            'document' => documentValue,
+            'text' => text
+        };
     }
 
     private static void putIf(Map<String, Object> m, String key, Object value) {

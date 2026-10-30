@@ -91,6 +91,10 @@ public without sharing class NXP_DocumentAnalysisJob implements Queueable, Datab
             a.Result_Json__c = NXP_Text.truncate(JSON.serializePretty(result), 32768);
             a.Status__c = 'Complete';
             a.Status_Detail__c = null;
+            Object items = result.get('checkItems');
+            a.Check_Count__c = items == null ? 0 : ((List<Map<String, Object>>) items).size();
+            a.Checks_Reviewed__c = null;
+            a.Checks_Reviewed_By__c = null;
         } catch (NXP_AiService.AiLimitException e) {
             // Daily limit used up: stays Pending and is picked up by a later sweep.
             NXP_Logger.warn('NXP_DocumentAnalysisJob', e.getMessage());
