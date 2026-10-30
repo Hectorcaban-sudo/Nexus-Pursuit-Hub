@@ -8,7 +8,9 @@ export default class LightningModal extends LightningElement {
 
     static open = jest.fn(() => Promise.resolve());
 
+    /** Tests can listen for "modalclose" to see what the modal resolved to. */
     close(result) {
         this.closeResult = result;
+        this.dispatchEvent(new CustomEvent('modalclose', { detail: result }));
     }
 }

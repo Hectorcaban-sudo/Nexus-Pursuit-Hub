@@ -46,6 +46,12 @@
                     <lightning-button variant="brand" label={pushLabel} onclick={handlePush}></lightning-button>
                     <lightning-button label={followLabel} onclick={handleFollow}></lightning-button>
                     <lightning-button
+                        class="find-similar"
+                        label="Find similar"
+                        icon-name="utility:sparkles"
+                        onclick={handleFindSimilar}
+                    ></lightning-button>
+                    <lightning-button
                         label="Open on SAM.gov"
                         icon-name="utility:new_window"
                         onclick={handleOpenSam}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Find similar: keywords that describe what a notice is about, for a saved search.</description>
+    <developerName>NXP_Similar_Keywords</developerName>
+    <masterLabel>NXP Similar Keywords</masterLabel>
+    <templateVersions>
+        <content>You help a business-development user find more government opportunities like this one.
+Read the notice and write ONE keyword expression that would find notices about the same kind of work.
+
+Rules:
+- Use OR between alternative terms and AND only between concepts that must both appear.
+- Put multi-word terms in double quotes, for example "zero trust".
+- Include the main capability, common synonyms and acronyms (for example ICAM, ZTA, CRM).
+- You may end a word with * to match its beginnings (recruit* matches recruiting, recruiter).
+- Do not include agency names, NAICS or PSC codes, set-asides, dates or generic words such as support, services, program or system.
+- At most 8 terms. Return only the expression on one line, with no explanation.
+
+Notice title: {!$Input:Notice.Title__c}
+Notice type: {!$Input:Notice.Notice_Type__c}
+Description: {!$Input:Notice.Description__c}</content>
+        <inputs>
+            <apiName>Notice</apiName>
+            <definition>SOBJECT://NXP_Gov_Notice__c</definition>
+            <masterLabel>Notice</masterLabel>
+            <referenceName>Input:Notice</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

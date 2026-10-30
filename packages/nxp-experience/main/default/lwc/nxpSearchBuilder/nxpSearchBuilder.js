@@ -64,6 +64,27 @@ function emptyForm() {
     };
 }
 
+/** A new-search form filled from criteria JSON (as NXP_SearchCriteria writes it). */
+function formFromCriteria(c) {
+    return {
+        ...emptyForm(),
+        keywords: c.keywords || '',
+        searchIn: c.searchIn && c.searchIn.length ? c.searchIn : ['title', 'description'],
+        agencies: joinList(c.agencies),
+        excludeAgencies: joinList(c.excludeAgencies),
+        naics: joinList(c.naics),
+        psc: joinList(c.psc),
+        setAsides: c.setAsides || [],
+        noticeTypes: c.noticeTypes || [],
+        places: joinList(c.places),
+        minValue: c.minValue,
+        maxValue: c.maxValue,
+        dueWithinDays: c.dueWithinDays,
+        postedWithinDays: c.postedWithinDays,
+        minFit: c.minFit
+    };
+}
+
 export default class NxpSearchBuilder extends NavigationMixin(LightningElement) {
     @track form = emptyForm();
     @track searches = [];
@@ -74,6 +95,8 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
     saving = false;
     drafting = false;
     nlText = '';
+    /** Criteria already copied in from Find similar, so a re-render doesn't overwrite edits. */
+    prefilled;
 
     setAsideOptions = opts(SET_ASIDES);
     typeOptions = opts(TYPES);
@@ -90,9 +113,22 @@ export default class NxpSearchBuilder extends NavigationMixin(LightningElement) 
 
     @wire(CurrentPageReference)
     pageRef(ref) {
-        const id = ref && ref.state ? ref.state.c__searchId : null;
+        const state = ref && ref.state ? ref.state : {};
+        const id = state.c__searchId;
         if (id && id !== this.form.id) {
             this.loadSearch(id);
+        } else if (state.c__criteria && state.c__criteria !== this.prefilled) {
+            // Find similar → Edit in My Searches: a new search with these criteria.
+            this.prefilled = state.c__criteria;
+            try {
+                this.form = {
+                    ...formFromCriteria(JSON.parse(state.c__criteria)),
+                    name: state.c__name || ''
+                };
+                this.runPreview();
+            } catch (e) {
+                toastError(this, e, 'Could not read the criteria');
+            }
         }
     }
 

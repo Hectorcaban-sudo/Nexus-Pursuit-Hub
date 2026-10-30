@@ -1,0 +1,113 @@
+<template>
+    <lightning-modal-header label="Find notices like this">
+        <template lwc:if={draft}>
+            <p class="slds-text-color_weak">
+                Based on <strong>{draft.noticeTitle}</strong>. Untick anything that shouldn't count.
+            </p>
+        </template>
+    </lightning-modal-header>
+    <lightning-modal-body>
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Reading the notice" size="small"></lightning-spinner>
+        </template>
+        <template lwc:if={error}>
+            <div class="error" role="alert">{error}</div>
+        </template>
+        <template lwc:if={draft}>
+            <div class="columns">
+                <div class="choices">
+                    <template for:each={groups} for:item="g">
+                        <div key={g.key} class="group">
+                            <template lwc:if={g.single}>
+                                <lightning-radio-group
+                                    class="pick"
+                                    name={g.key}
+                                    label={g.label}
+                                    options={g.options}
+                                    value={g.value}
+                                    data-key={g.key}
+                                    type="button"
+                                    onchange={handlePick}
+                                ></lightning-radio-group>
+                            </template>
+                            <template lwc:else>
+                                <lightning-checkbox-group
+                                    class="pick"
+                                    name={g.key}
+                                    label={g.label}
+                                    options={g.options}
+                                    value={g.value}
+                                    data-key={g.key}
+                                    onchange={handlePick}
+                                ></lightning-checkbox-group>
+                            </template>
+                            <template lwc:if={g.helpText}><p class="hint">{g.helpText}</p></template>
+                        </div>
+                    </template>
+                    <lightning-textarea
+                        class="keywords"
+                        label="Keywords"
+                        value={keywords}
+                        onchange={handleKeywords}
+                    ></lightning-textarea>
+                    <p class="hint keywords-note">{keywordsNote}</p>
+                </div>
+
+                <aside class="preview" aria-label="Preview">
+                    <div class="count-box">
+                        <span class="count">{countLabel}</span>
+                        <span class="count-text">open notices like this now</span>
+                        <span class="hint">{weeklyLabel}</span>
+                    </div>
+                    <template lwc:if={previewError}>
+                        <p class="error" role="alert">{previewError}</p>
+                    </template>
+                    <template lwc:if={hasTop}>
+                        <h3 class="slds-text-heading_small">Most similar</h3>
+                        <ul class="top">
+                            <template for:each={topRows} for:item="n">
+                                <li key={n.id} class="top-row">
+                                    <c-nxp-fit-badge score={n.fit} size="small"></c-nxp-fit-badge>
+                                    <span class="top-text">
+                                        <span class="top-title">{n.title}</span>
+                                        <span class="hint">{n.meta}</span>
+                                    </span>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                </aside>
+            </div>
+        </template>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <div class="footer">
+            <div class="footer-fields">
+                <lightning-input class="name" label="Search name" value={name} onchange={handleName}></lightning-input>
+                <lightning-combobox
+                    class="frequency"
+                    label="Alerts"
+                    options={frequencyOptions}
+                    value={frequency}
+                    onchange={handleFrequency}
+                ></lightning-combobox>
+            </div>
+            <div class="footer-buttons">
+                <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button
+                    class="edit"
+                    label="Edit in My Searches"
+                    disabled={loading}
+                    onclick={handleEdit}
+                ></lightning-button>
+                <lightning-button
+                    class="save"
+                    variant="brand"
+                    label="Save search"
+                    disabled={disableSave}
+                    onclick={handleSave}
+                ></lightning-button>
+            </div>
+        </div>
+    </lightning-modal-footer>
+</template>

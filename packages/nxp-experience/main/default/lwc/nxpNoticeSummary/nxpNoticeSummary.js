@@ -5,6 +5,7 @@ import followNotice from '@salesforce/apex/NXP_SearchController.followNotice';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
 import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
 import NxpPushDialog from 'c/nxpPushDialog';
+import NxpFindSimilar from 'c/nxpFindSimilar';
 import { daysUntil, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
 export default class NxpNoticeSummary extends NavigationMixin(LightningElement) {
@@ -226,6 +227,30 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
             this.load();
         } catch (e) {
             toastError(this, e);
+        }
+    }
+
+    async handleFindSimilar() {
+        const result = await NxpFindSimilar.open({
+            noticeId: this.recordId,
+            size: 'large',
+            label: 'Find notices like this'
+        });
+        if (!result) {
+            return;
+        }
+        if (result.action === 'saved') {
+            toast(
+                this,
+                'Search saved',
+                `"${result.name}": open notices like this appear in your Match Inbox in about a minute.`
+            );
+        } else if (result.action === 'edit') {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__navItemPage',
+                attributes: { apiName: 'NXP_Search_Builder' },
+                state: { c__criteria: result.criteriaJson, c__name: result.name }
+            });
         }
     }
 

@@ -243,6 +243,18 @@ public with sharing class NXP_SearchController {
         return p;
     }
 
+    /** Find similar: the starting point for a search built from one notice. */
+    @AuraEnabled
+    public static NXP_SimilarSearchService.Draft draftSimilar(Id noticeId) {
+        try {
+            return NXP_SimilarSearchService.draft(noticeId);
+        } catch (AuraHandledException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     /** Org templates anyone can copy, with today's match count. */
     @AuraEnabled
     public static List<TemplateSummary> getTemplates() {

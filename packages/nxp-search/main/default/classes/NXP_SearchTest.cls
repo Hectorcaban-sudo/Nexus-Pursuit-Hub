@@ -244,6 +244,56 @@ private class NXP_SearchTest {
         System.assertEquals(0, [SELECT COUNT() FROM NXP_Saved_Search__c]);
     }
 
+    private class FakeSuggester implements NXP_KeywordSuggester {
+        public String answer;
+        public Boolean isEnabled() {
+            return true;
+        }
+        public String suggest(Id noticeId) {
+            return answer;
+        }
+    }
+
+    @IsTest
+    static void findSimilarBuildsChoicesAndKeywords() {
+        NXP_Gov_Notice__c n = notice('SIM-1', 'Zero Trust Architecture Engineering Support', '541512', 20);
+        n.PSC_Code__c = 'DA01';
+        insert n;
+
+        NXP_SimilarSearchService.Draft d = NXP_SearchController.draftSimilar(n.Id);
+        System.assertEquals('Like: Zero Trust Architecture Engineering Support', d.name);
+        Map<String, NXP_SimilarSearchService.ChoiceGroup> byKey = new Map<String, NXP_SimilarSearchService.ChoiceGroup>();
+        for (NXP_SimilarSearchService.ChoiceGroup g : d.groups) {
+            byKey.put(g.key, g);
+        }
+        System.assertEquals('Customs and Border Protection', byKey.get('buyer').choices[0].value);
+        System.assert(byKey.get('buyer').choices[0].selected);
+        System.assertEquals('Homeland Security', byKey.get('buyer').choices[1].value);
+        System.assertEquals('5415*', byKey.get('naics').choices[1].value);
+        System.assert(byKey.get('naics').choices[1].selected, 'The NAICS family by default');
+        System.assertEquals('DA01', byKey.get('psc').choices[0].value);
+        System.assertEquals('Small Business', byKey.get('setAside').choices[0].value);
+        System.assert(byKey.get('noticeTypes').multiple);
+        System.assertEquals('Title', d.keywordsSource);
+        System.assertEquals('zero AND trust AND architecture', d.keywords);
+
+        FakeSuggester ai = new FakeSuggester();
+        ai.answer = '```\n"zero trust" OR ICAM OR microsegmentation\n```';
+        NXP_SimilarSearchService.suggesterOverride = ai;
+        d = NXP_SearchController.draftSimilar(n.Id);
+        System.assertEquals('AI', d.keywordsSource);
+        System.assertEquals('"zero trust" OR ICAM OR microsegmentation', d.keywords);
+
+        ai.answer = '(broken AND';
+        d = NXP_SearchController.draftSimilar(n.Id);
+        System.assertEquals('Title', d.keywordsSource, 'An invalid AI answer falls back to the title');
+        System.assertNotEquals(null, d.note);
+
+        System.assertEquals(null, NXP_SimilarSearchService.titleKeywords('Support Services'));
+        System.assertEquals('8(a)', NXP_SimilarSearchService.setAsideValue('8(a) Set-Aside (FAR 19.8)'));
+        System.assertEquals(null, NXP_SimilarSearchService.setAsideValue('No Set aside used'));
+    }
+
     @IsTest
     static void keywordsOnlyInTheDescriptionAreFetchedAndMatchedAgain() {
         NXP_Gov_Notice__c n = notice('DESC-1', 'Recruiting support services', '541512', 20);
