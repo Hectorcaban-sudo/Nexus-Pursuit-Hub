@@ -76,6 +76,7 @@ Invoke-ApexFile 'scripts/post-deploy/schedule-jobs.apex' $Alias
 Write-Host ''
 Write-Host 'Done. Next:' -ForegroundColor Green
 Write-Host '  1. Setup > Named Credentials > External Credentials > NXP SAM.gov > Principals > Default:'
-Write-Host '     add an Authentication Parameter named ApiKey with your SAM.gov API key.'
+Write-Host '     add an Authentication Parameter named ApiKey with your SAM.gov API key'
+Write-Host '     (how to get one: docs/deployment/deployment-guide.md#samgov-api-key).'
 Write-Host "  2. Test it:  .\scripts\test-functional.ps1 -Org $Alias"
 Write-Host "  3. Open it:  sf org open --target-org $Alias --path /lightning/n/NXP_Match_Inbox"

@@ -7,7 +7,7 @@
     - `NXP_Power_User` as well, for BD leads.
     - `NXP_Admin` to admins and to the user who schedules jobs.
     - `NXP_Integration` to the REST integration user only (also the context user of the eBuy e-mail service).
-2. **SAM.gov API key:** go to Setup → Named Credentials → External Credentials → **NXP SAM.gov** → Principals → _Default_ → Authentication Parameters → add `ApiKey` with the key from your SAM.gov account (System Account key for higher limits). Users who run feeds need the principal, which `NXP_Admin` grants.
+2. **SAM.gov API key:** go to Setup → Named Credentials → External Credentials → **NXP SAM.gov** → Principals → _Default_ → Authentication Parameters → add `ApiKey` with the key from your SAM.gov account (System Account key for higher limits). Users who run feeds need the principal, which `NXP_Admin` grants. How to get the key, which kind to use and how to replace an expired one: [SAM.gov API key](../deployment/deployment-guide.md#samgov-api-key).
 3. **Forecast endpoint:** edit Named Credential **NXP Agency Forecasts** to your forecast API URL and adjust the `FC_*` feed mappings to its field names.
 4. **Company profile:** create one active **Company Profile**, with your NAICS (prefix `5415*` allowed), PSC, set-asides you qualify for, target agencies (names as they appear in agency paths), capability keywords and value range. Then run `scripts/apex/rescore-notices.apex`.
 5. **Push mapping:** see [Push mapping](#push-mapping).

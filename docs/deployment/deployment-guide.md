@@ -10,14 +10,15 @@ How to install, release, test, roll back and remove Nexus Pursuit Hub with scrip
 2. [Scripts at a glance](#scripts-at-a-glance)
 3. [Prerequisites](#prerequisites)
 4. [First install in an org](#first-install-in-an-org)
-5. [Release with source deploy](#release-with-source-deploy)
-6. [Release with unlocked packages](#release-with-unlocked-packages)
-7. [Test after a deployment](#test-after-a-deployment)
-8. [Sandbox refresh](#sandbox-refresh)
-9. [Rollback](#rollback)
-10. [Agent release](#agent-release)
-11. [Uninstall](#uninstall)
-12. [Troubleshooting](#troubleshooting)
+5. [SAM.gov API key](#samgov-api-key)
+6. [Release with source deploy](#release-with-source-deploy)
+7. [Release with unlocked packages](#release-with-unlocked-packages)
+8. [Test after a deployment](#test-after-a-deployment)
+9. [Sandbox refresh](#sandbox-refresh)
+10. [Rollback](#rollback)
+11. [Agent release](#agent-release)
+12. [Uninstall](#uninstall)
+13. [Troubleshooting](#troubleshooting)
 
 ## Choose a release path
 
@@ -116,7 +117,7 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     sf org assign permset --name NXP_User --name NXP_Admin --target-org nxp-uat --on-behalf-of admin@example.gov
     ```
 
-3. **SAM.gov API key:** **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**: add an authentication parameter named `ApiKey` with the key from your SAM.gov account (a System Account key for production; personal keys expire every 90 days). Only `NXP_Admin` users can call SAM.gov.
+3. **SAM.gov API key:** get a key from SAM.gov and store it on the **NXP SAM.gov** external credential. Step-by-step: [SAM.gov API key](#samgov-api-key).
 4. **Forecasts endpoint:** set the URL on the `NXP_Forecasts` Named Credential and check the `FC_*` Feed Mapping records against your forecast source.
 5. **Company Profile:** create one active **Company Profile** (NAICS, PSC, set-asides, target agencies, keywords, value range), then score existing notices: `sf apex run --file scripts/apex/rescore-notices.apex --target-org <alias>`.
 6. **Push mapping:** point the `NXP_Push_Mapping` records at the Opportunity object and fields ([admin guide](../guides/admin-guide.md#push-mapping)).
@@ -130,6 +131,63 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - the assistant ([agent manual build](../guides/agent-manual-build.md)).
 10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
 11. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
+
+## SAM.gov API key
+
+The SAM.gov feed needs an API key. The key is stored on the **NXP SAM.gov** external credential in each org. It never goes in source control or `env-config`.
+
+### Which key to use
+
+| Org               | Key                                                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Dev, INT, scratch | Optional. Sample data works without one.                                                                                        |
+| QA, UAT           | A personal key from a user linked to your company's entity in SAM.gov.                                                          |
+| Production        | A **System Account** key. It has higher daily limits and doesn't expire every 90 days. Request it weeks ahead: GSA approves it. |
+
+Check the current limits on SAM.gov before go-live. A personal key with no company role allows only a handful of calls a day, and the feed calls SAM.gov every hour, so it hits the limit within hours. Personal keys expire every 90 days; put a reminder on the calendar.
+
+### 1. Get the key from SAM.gov
+
+**Personal key:**
+
+1. Sign in at [sam.gov](https://sam.gov) with Login.gov.
+2. Open your profile menu → **Account Details**.
+3. Under **Public API Key**, choose **Request API Key** (or **View** if you already have one) and enter your password.
+4. Copy the key right away. It stays visible only until you leave the page.
+
+**System Account key (production):**
+
+1. In SAM.gov, go to **Workspace → System Accounts → New System Account**. Your SAM.gov account needs a role with your company's entity to see this.
+2. Ask for read access to **public** Contract Opportunities data. That is all the feed uses.
+3. After GSA approves it, open the system account and generate its API key.
+
+### 2. Store the key in Salesforce
+
+Do this in every org, after the packages are deployed:
+
+1. **Setup → Named Credentials → External Credentials** tab → **NXP SAM.gov**.
+2. **Principals → Default → Edit**.
+3. Under **Authentication Parameters**, add:
+    - **Name:** `ApiKey` (exactly; it is case-sensitive)
+    - **Value:** the key
+4. **Save**.
+
+Users who run feeds need access to that principal. The `NXP_Admin` permission set grants it. The scheduled feed job runs as the user who scheduled it, so that user needs `NXP_Admin` too.
+
+### 3. Check it works
+
+Open the **Feed Console** → **SAM_Opportunities** → **Run now**, then refresh after a minute.
+
+| Result                         | Meaning                                                                                                        |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Succeeded, records read > 0    | The key works.                                                                                                 |
+| Failed, HTTP 401 or 403        | The key is wrong or expired, or the parameter name is not exactly `ApiKey`.                                    |
+| Failed, HTTP 429               | Daily or hourly limit reached. SAM.gov unblocks the key at the next hour or day. Use a key with higher limits. |
+| Failed, no principal or access | The user running the feed lacks `NXP_Admin`.                                                                   |
+
+### Replacing an expired key
+
+Repeat steps 1 and 2 with the new key: edit the `ApiKey` parameter's value, don't add a second parameter. Then **Run now** to check. Feeds that failed while the key was expired catch up on the next run, because each run starts a day before the last success.
 
 ## Release with source deploy
 
@@ -236,7 +294,7 @@ A refreshed sandbox is a copy of production, including its SAM.gov key and sched
 sf org login web --alias nxp-qa --instance-url https://<my-domain>--qa.sandbox.my.salesforce.com
 sf apex run --file scripts/post-deploy/unschedule-jobs.apex --target-org nxp-qa
 (cd env-config/qa && sf project deploy start --source-dir force-app --target-org nxp-qa --api-version 68.0)
-# Replace the SAM.gov ApiKey with a test key (Setup > Named Credentials > External Credentials > NXP SAM.gov)
+# Replace the SAM.gov ApiKey with a test key (see "SAM.gov API key" in this guide)
 sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-qa
 scripts/load-sample-data.sh --org nxp-qa     # QA and INT only
 ```
@@ -305,6 +363,8 @@ If a step fails, the error names the component that is still in use. Remove that
 
 | Symptom                                                                                 | Cause and fix                                                                                                                                                                                                                                                                                                             |
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SAM.gov feed fails with HTTP 401 or 403                                                 | The API key is wrong, expired (personal keys last 90 days), or the parameter isn't named exactly `ApiKey`. See [SAM.gov API key](#samgov-api-key).                                                                                                                                                                        |
+| SAM.gov feed fails with HTTP 429                                                        | The key's daily or hourly limit is used up. Use a System Account key, or a personal key from a user with a company role. See [Which key to use](#which-key-to-use).                                                                                                                                                       |
 | `... is not supported for API version 68.0` or `Invalid version specified`              | The org is on an older Salesforce release. Wait for the org's upgrade; don't lower the API version.                                                                                                                                                                                                                       |
 | `This Apex class is referenced by a scheduled job` / `pending or in progress Apex jobs` | Turn on **Allow deployments of components when corresponding Apex jobs are pending or in progress** (Setup → Deployment Settings), or run `unschedule-jobs.apex` before the release and `schedule-jobs.apex` after.                                                                                                       |
 | `NXP_PushTest` or `NXP_AgentsTest` fail during validation                               | Opportunity validation rules or required fields in that org. See [testing guide](../guides/testing-guide.md#notes-for-org-specific-failures).                                                                                                                                                                             |
