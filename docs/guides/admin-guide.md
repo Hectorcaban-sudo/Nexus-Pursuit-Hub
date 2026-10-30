@@ -76,25 +76,27 @@ SAM.gov attachments are not downloaded automatically yet: add them to the notice
 
 ## Settings (`NXP_Setting__mdt`)
 
-| Key                                                        | Default                       | Purpose                                                                         |
-| ---------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------- |
-| `AI_Enabled`                                               | false                         | Turns on AI summaries and the AI criteria draft (needs active prompt templates) |
-| `Max_Searches_Per_User` / `Max_RealTime_Searches`          | 50 / 20                       | Bound matching load                                                             |
-| `Inbox_Days`                                               | 30                            | Match Inbox window                                                              |
-| `Push_Mapping_Set`                                         | Opportunity_Default           | Active push mapping set                                                         |
-| `Push_Max_Attempts`                                        | 3                             | Auto-push retries                                                               |
-| `Match_Listeners`                                          | NXP_AutoPushListener          | Classes called on new matches                                                   |
-| `Http_Max_Attempts`, `Http_Timeout_Ms`                     | 3, 60000                      | Callout retry and timeout                                                       |
-| `Batch_Max_Pages`, `Queue_Max_Pages`                       | 200, 50                       | Pages per run                                                                   |
-| `Rest_Max_Records`                                         | 200                           | REST batch limit                                                                |
-| `Ebuy_Allowed_Senders`                                     | gsa.gov                       | Addresses or domains the eBuy inbox accepts                                     |
-| `Ebuy_Default_Vehicle`                                     | GSA-MAS-IT                    | Vehicle for eBuy e-mail that isn't sent to a vehicle's Inbox Address            |
-| `Ebuy_AI_Template` / `Ebuy_AI_Read_Attachments`            | NXP_Ebuy_RFQ_Extract / false  | AI extraction template; whether it also reads the first PDF                     |
-| `Document_Analysis_Enabled` / `Document_Analysis_Template` | false / NXP_Document_Analysis | Document Reader on notice PDFs (needs `AI_Enabled`)                             |
-| `Document_Max_MB` / `Document_Max_Per_Notice`              | 10 / 5                        | Largest PDF sent to the model; files read automatically per notice              |
-| `Ebuy_Share_Files_With_Notice`                             | true                          | Link eBuy attachments to the notice (false: admins only)                        |
-| `Alert_OrgWide_Email_Id`                                   | (none)                        | Org-wide address alerts come from                                               |
-| `Bypass_NXP_GovNoticeTriggerHandler`                       | (none)                        | Emergency trigger switch (set Value to true)                                    |
+| Key                                                        | Default                       | Purpose                                                                                                                   |
+| ---------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `AI_Enabled`                                               | false                         | Turns on AI summaries and the AI criteria draft (needs active prompt templates)                                           |
+| `Max_Searches_Per_User` / `Max_RealTime_Searches`          | 50 / 20                       | Bound matching load                                                                                                       |
+| `Inbox_Days`                                               | 30                            | Match Inbox window                                                                                                        |
+| `Push_Mapping_Set`                                         | Opportunity_Default           | Active push mapping set                                                                                                   |
+| `Push_Max_Attempts`                                        | 3                             | Auto-push retries                                                                                                         |
+| `Match_Listeners`                                          | NXP_AutoPushListener          | Classes called on new matches                                                                                             |
+| `Http_Max_Attempts`, `Http_Timeout_Ms`                     | 3, 60000                      | Callout retry and timeout                                                                                                 |
+| `Batch_Max_Pages`, `Queue_Max_Pages`                       | 200, 50                       | Pages per run                                                                                                             |
+| `Rest_Max_Records`                                         | 200                           | REST batch limit                                                                                                          |
+| `Ebuy_Allowed_Senders`                                     | gsa.gov                       | Addresses or domains the eBuy inbox accepts                                                                               |
+| `Ebuy_Default_Vehicle`                                     | GSA-MAS-IT                    | Vehicle for eBuy e-mail that isn't sent to a vehicle's Inbox Address                                                      |
+| `Ebuy_AI_Template` / `Ebuy_AI_Read_Attachments`            | NXP_Ebuy_RFQ_Extract / false  | AI extraction template; whether it also reads the first PDF                                                               |
+| `Document_Analysis_Enabled` / `Document_Analysis_Template` | false / NXP_Document_Analysis | Document Reader on notice PDFs (needs `AI_Enabled`)                                                                       |
+| `Document_Max_MB` / `Document_Max_Per_Notice`              | 10 / 5                        | Largest PDF sent to the model; files read automatically per notice                                                        |
+| `Ebuy_Share_Files_With_Notice`                             | true                          | Link eBuy attachments to the notice (false: admins only)                                                                  |
+| `Alert_OrgWide_Email_Id`                                   | (none)                        | Org-wide address alerts come from                                                                                         |
+| `Description_Min_Fit`                                      | 50                            | Fetch SAM.gov description text automatically only for matched notices and this fit or higher (one API call each; 0 = all) |
+| `Initial_Match_Max_Summaries`                              | 25                            | When a search is saved, AI summaries requested for at most this many existing matches                                     |
+| `Bypass_NXP_GovNoticeTriggerHandler`                       | (none)                        | Emergency trigger switch (set Value to true)                                                                              |
 
 ## Monitoring
 

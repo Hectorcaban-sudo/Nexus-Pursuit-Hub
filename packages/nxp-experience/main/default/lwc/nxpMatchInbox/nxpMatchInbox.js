@@ -83,7 +83,7 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
                 dueSoon: daysUntil(n.Response_Due__c) !== null && daysUntil(n.Response_Due__c) <= 7,
                 summary: summary ? summary.substring(0, 280) + (summary.length > 280 ? '…' : '') : '',
                 hasSummary: !!summary,
-                isChange: i.changeType && i.changeType !== 'New',
+                isChange: !!i.changeType && i.changeType !== 'New' && i.changeType !== 'Already open',
                 changeType: i.changeType,
                 watching: i.userAction === 'Watching',
                 searchName: i.searchName,

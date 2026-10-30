@@ -229,6 +229,53 @@ private class NXP_SearchTest {
     }
 
     @IsTest
+    static void savingASearchMatchesOpenNoticesQuietly() {
+        insert new List<NXP_Gov_Notice__c>{
+            notice('OPEN-1', 'Cyber zero trust support', '541512', 20),
+            notice('OPEN-2', 'Office furniture', '337214', 20)
+        };
+        NXP_Saved_Search__c s = new NXP_Saved_Search__c(
+            Name = 'S',
+            Criteria_JSON__c = criteria(),
+            Alert_Frequency__c = 'Real Time',
+            Channels__c = 'Email',
+            Active__c = true
+        );
+        insert s;
+
+        System.assertEquals(1, NXP_InitialMatchJob.run(s.Id));
+        NXP_Search_Match__c m = [
+            SELECT Change_Type__c, Alert_Status__c, User_Action__c, Gov_Notice__r.Notice_Id__c
+            FROM NXP_Search_Match__c
+        ];
+        System.assertEquals('OPEN-1', m.Gov_Notice__r.Notice_Id__c);
+        System.assertEquals(NXP_InitialMatchJob.CHANGE_TYPE, m.Change_Type__c);
+        System.assertEquals('Suppressed', m.Alert_Status__c, 'Existing notices never send alerts');
+        System.assertEquals('None', m.User_Action__c);
+        System.assertEquals(
+            'Pending',
+            [SELECT AI_Summary_Status__c FROM NXP_Gov_Notice__c WHERE Notice_Id__c = 'OPEN-1'].AI_Summary_Status__c
+        );
+        System.assertNotEquals(
+            'Pending',
+            [SELECT AI_Summary_Status__c FROM NXP_Gov_Notice__c WHERE Notice_Id__c = 'OPEN-2'].AI_Summary_Status__c
+        );
+        System.assertEquals(0, NXP_InitialMatchJob.run(s.Id), 'Already matched');
+        System.assertEquals(1, NXP_SearchController.getInbox(s.Id, false).size());
+
+        Test.startTest();
+        NXP_SearchController.SearchInput input = new NXP_SearchController.SearchInput();
+        input.id = s.Id;
+        input.name = 'S';
+        input.criteriaJson = criteria();
+        input.frequency = 'Daily';
+        NXP_SearchController.saveSearch(input);
+        System.assertEquals(1, Limits.getQueueableJobs(), 'Saving queues the initial match');
+        Test.stopTest();
+        System.assertEquals(1, [SELECT COUNT() FROM NXP_Search_Match__c]);
+    }
+
+    @IsTest
     static void changeEventsAlertFollowersAndChangedMatches() {
         NXP_Gov_Notice__c n = notice('A', 'Cyber zero trust support', '541512', 10);
         insert n;

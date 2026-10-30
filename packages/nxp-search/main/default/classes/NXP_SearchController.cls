@@ -267,6 +267,10 @@ public with sharing class NXP_SearchController {
         );
         upsert as user s;
         NXP_SearchSharingService.apply(new List<NXP_Saved_Search__c>{ s });
+        // Open notices already in Nexus that match go to the Match Inbox now, not only future ones.
+        if (s.Active__c && Limits.getQueueableJobs() < Limits.getLimitQueueableJobs()) {
+            System.enqueueJob(new NXP_InitialMatchJob(s.Id));
+        }
         return s.Id;
     }
 

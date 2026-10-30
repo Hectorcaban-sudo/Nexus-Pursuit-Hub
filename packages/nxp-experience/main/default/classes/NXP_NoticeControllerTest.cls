@@ -43,6 +43,37 @@ private class NXP_NoticeControllerTest {
         }
     }
 
+    private class DescriptionMock implements HttpCalloutMock {
+        public HttpResponse respond(HttpRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setStatusCode(200);
+            res.setBody('{"description":"<p>Help desk <b>tier 1</b> support</p>"}');
+            return res;
+        }
+    }
+
+    @IsTest
+    static void loadDescriptionFetchesTextOnce() {
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Notice_Id__c = 'EXP-DESC',
+            Title__c = 'Help desk',
+            Status__c = 'Active',
+            Description__c = 'https://api.sam.gov/prod/opportunities/v1/noticedesc?noticeid=EXP-DESC',
+            Needs_Description__c = true
+        );
+        insert n;
+        Test.setMock(HttpCalloutMock.class, new DescriptionMock());
+        Test.startTest();
+        String text = NXP_NoticeController.loadDescription(n.Id);
+        Test.stopTest();
+        System.assert(text.contains('Help desk tier 1 support'), text);
+        n = [SELECT Description__c, Needs_Description__c FROM NXP_Gov_Notice__c WHERE Id = :n.Id];
+        System.assertEquals(false, n.Needs_Description__c);
+        System.assertEquals(text, n.Description__c);
+        // Already fetched: returns the text without another call.
+        System.assertEquals(text, NXP_NoticeController.loadDescription(n.Id));
+    }
+
     private class AnalyzerMock implements NXP_DocumentAnalyzer {
         public Boolean active = true;
         public Set<Id> queued = new Set<Id>();

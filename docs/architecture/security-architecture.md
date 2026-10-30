@@ -37,6 +37,7 @@ Government notice data is public, so intel records are readable by every Nexus P
 
 ## Credentials
 
+- `NXP_User` also has the SAM.gov credential principal, so **Load description** and the description fetch started when a user saves a search can call SAM.gov as that user. Users can't send their own requests: only the app's Apex uses the credential, and only Feed Console users (`NXP_Admin_Access`) can start feeds.
 - The SAM.gov API key is never in code or metadata. It lives on the `NXP_SAM_Gov` External Credential principal (parameter `ApiKey`) and is sent as the `X-Api-Key` header by the Named Credential.
 - USAspending and forecast endpoints use the `NXP_Public_API` External Credential: Custom protocol with a `Default` named principal and no parameters, so no key is sent. The running user needs access to the `NXP_Public_API-Default` principal (in `NXP_Admin`), the same as for SAM.gov.
 - The REST integration uses OAuth 2.0 client credentials (External Client App or connected app) mapped to a dedicated integration user with only `NXP_Integration`.

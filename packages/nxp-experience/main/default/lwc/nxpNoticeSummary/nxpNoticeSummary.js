@@ -2,6 +2,7 @@ import { LightningElement, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import followNotice from '@salesforce/apex/NXP_SearchController.followNotice';
+import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
 import NxpPushDialog from 'c/nxpPushDialog';
 import { daysUntil, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
 
@@ -9,6 +10,7 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     @api recordId;
     detail;
     loading = true;
+    loadingDescription = false;
 
     connectedCallback() {
         logUsage('Notice');
@@ -81,6 +83,24 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     get descriptionText() {
         const d = this.notice.Description__c;
         return d && !d.startsWith('http') ? d : null;
+    }
+
+    /** SAM.gov sent only a link; the text is fetched for matched or high-fit notices, or on request. */
+    get canLoadDescription() {
+        const d = this.notice.Description__c;
+        return !!(this.notice.Needs_Description__c && d && d.startsWith('http'));
+    }
+
+    async handleLoadDescription() {
+        this.loadingDescription = true;
+        try {
+            await loadDescription({ noticeId: this.recordId });
+            await this.load();
+        } catch (e) {
+            toastError(this, e, 'Could not load the description');
+        } finally {
+            this.loadingDescription = false;
+        }
     }
 
     get breakdown() {

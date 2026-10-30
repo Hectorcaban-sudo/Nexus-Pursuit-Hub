@@ -59,6 +59,21 @@
                     <template lwc:else>
                         <p class="slds-text-color_weak">{summaryNote}</p>
                     </template>
+                    <template lwc:if={canLoadDescription}>
+                        <div class="slds-m-top_medium load-description">
+                            <lightning-button
+                                class="load-description-button"
+                                label="Load description"
+                                icon-name="utility:download"
+                                disabled={loadingDescription}
+                                onclick={handleLoadDescription}
+                            ></lightning-button>
+                            <p class="slds-text-color_weak slds-text-body_small">
+                                Fetched from SAM.gov on request. It loads automatically for notices that match a saved
+                                search or score high.
+                            </p>
+                        </div>
+                    </template>
                     <template lwc:if={descriptionText}>
                         <details class="slds-m-top_medium">
                             <summary>Full description</summary>
