@@ -23,7 +23,8 @@ Copy into the release ticket and tick each item.
 
 - [ ] Setup → Deployment Settings: _Allow deployments of components when corresponding Apex jobs are pending or in progress_ on
 - [ ] Permission sets assigned: NXP_User, NXP_Power_User, NXP_Admin, NXP_Integration
-- [ ] SAM.gov `ApiKey` set on the NXP SAM.gov principal
+- [ ] SAM.gov `ApiKey` set on the NXP SAM.gov principal (System Account key in production) and _Run now_ on SAM_Opportunities succeeds ([steps](deployment-guide.md#samgov-api-key))
+- [ ] Personal key only: reminder set to replace it before it expires (90 days)
 - [ ] Forecast Named Credential URL and `FC_*` mappings set
 - [ ] Active Company Profile created; `rescore-notices.apex` run
 - [ ] Push mapping points at the Opportunity object; duplicate field added and mapped; `Contract_Vehicle_Code__c` mapped if the Opportunity has a vehicle field

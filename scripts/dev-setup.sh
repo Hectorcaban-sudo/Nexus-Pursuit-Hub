@@ -64,7 +64,8 @@ cat <<MSG
 
 Done. Next:
   1. Setup > Named Credentials > External Credentials > NXP SAM.gov > Principals > Default:
-     add an Authentication Parameter named ApiKey with your SAM.gov API key.
+     add an Authentication Parameter named ApiKey with your SAM.gov API key
+     (how to get one: docs/deployment/deployment-guide.md#samgov-api-key).
   2. Test it:  scripts/test-functional.sh --org $ALIAS
   3. Open it:  sf org open --target-org $ALIAS --path /lightning/n/NXP_Match_Inbox
 MSG

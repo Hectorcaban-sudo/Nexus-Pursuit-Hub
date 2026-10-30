@@ -49,4 +49,6 @@ sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org "$ORG"
 cat <<MSG
 Release finished. Complete docs/deployment/post-deployment-checklist.md:
   credentials, permission sets, agent activation, smoke test.
+  First release in this org? Add the SAM.gov API key: Setup > Named Credentials > External Credentials >
+  NXP SAM.gov > Principals > Default > parameter ApiKey. Steps: docs/deployment/deployment-guide.md#samgov-api-key
 MSG

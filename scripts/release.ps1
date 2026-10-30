@@ -85,3 +85,5 @@ Invoke-ApexFile 'scripts/post-deploy/schedule-jobs.apex' $Org
 Write-Host ''
 Write-Host 'Release finished. Complete docs/deployment/post-deployment-checklist.md:' -ForegroundColor Green
 Write-Host '  credentials, permission sets, agent activation, smoke test (.\scripts\test-functional.ps1 in dev/QA).'
+Write-Host '  First release in this org? Add the SAM.gov API key: Setup > Named Credentials > External Credentials >'
+Write-Host '  NXP SAM.gov > Principals > Default > parameter ApiKey. Steps: docs/deployment/deployment-guide.md#samgov-api-key'
