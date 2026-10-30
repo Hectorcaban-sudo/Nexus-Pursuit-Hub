@@ -44,3 +44,9 @@ git pull
 Remove-Item packages\nxp-analytics\main\default\reports\NXP_Reports\NXP_Matches_By_Search.report-meta.xml -ErrorAction SilentlyContinue
 git status
 sf project deploy start --source-dir packages/nxp-analytics --target-org staging --api-version 68.0 --wait 30
+
+
+git pull
+Remove-Item -Recurse -Force .sf\orgs\*\localSourceTracking -ErrorAction SilentlyContinue
+sf project deploy start --source-dir packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-agents packages/nxp-integration packages/nxp-experience --target-org staging --wait 30
+sf project deploy start --source-dir packages/nxp-analytics --target-org staging --wait 30
