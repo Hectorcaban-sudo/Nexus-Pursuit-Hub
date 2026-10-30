@@ -39,3 +39,8 @@ sf project deploy start --source-dir packages/nxp-analytics --target-org staging
 .\scripts\load-sample-data.ps1 -Org staging
 # wait about a minute
 .\scripts\test-functional.ps1 -Org staging
+
+git pull
+Remove-Item packages\nxp-analytics\main\default\reports\NXP_Reports\NXP_Matches_By_Search.report-meta.xml -ErrorAction SilentlyContinue
+git status
+sf project deploy start --source-dir packages/nxp-analytics --target-org staging --api-version 68.0 --wait 30
