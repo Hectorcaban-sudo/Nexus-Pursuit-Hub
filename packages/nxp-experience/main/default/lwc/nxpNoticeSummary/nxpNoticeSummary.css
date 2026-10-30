@@ -147,3 +147,7 @@
 .contact {
     margin-top: 0.5rem;
 }
+.header-reasons {
+    flex-basis: 100%;
+    order: 10;
+}

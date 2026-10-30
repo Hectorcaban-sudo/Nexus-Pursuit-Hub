@@ -187,6 +187,13 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
         }
     }
 
+    handleShowBreakdown() {
+        const section = this.template.querySelector('[aria-label="Fit breakdown"]');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
     handleOpenSam() {
         if (this.notice.Notice_URL__c) {
             this[NavigationMixin.Navigate]({

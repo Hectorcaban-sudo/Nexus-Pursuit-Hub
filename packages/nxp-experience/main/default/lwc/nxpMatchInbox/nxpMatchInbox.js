@@ -74,6 +74,7 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
                 noticeId: n.Id,
                 title: n.Title__c || n.Name,
                 fit: n.Fit_Score__c,
+                breakdown: n.Fit_Breakdown__c,
                 type: n.Notice_Type__c,
                 setAside: n.Set_Aside__c,
                 hasSetAside: !!n.Set_Aside__c,

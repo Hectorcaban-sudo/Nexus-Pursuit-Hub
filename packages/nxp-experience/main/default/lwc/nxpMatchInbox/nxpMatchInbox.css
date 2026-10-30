@@ -160,3 +160,7 @@
     padding: 2rem;
     text-align: center;
 }
+.fit-reasons {
+    display: block;
+    margin-top: 0.25rem;
+}

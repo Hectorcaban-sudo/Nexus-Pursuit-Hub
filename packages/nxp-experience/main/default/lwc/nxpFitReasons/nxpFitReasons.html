@@ -1,0 +1,15 @@
+<template>
+    <template lwc:if={hasReasons}>
+        <div class="reasons" role="list" aria-label="Why this fit score">
+            <span class="lead">{lead}</span>
+            <template for:each={reasons} for:item="r">
+                <span key={r.key} class={r.className} role="listitem" title={r.title}
+                    ><strong>{r.label}</strong> {r.text}</span
+                >
+            </template>
+            <template lwc:if={showAll}>
+                <a href="#" class="all" onclick={handleAll}>All rules</a>
+            </template>
+        </div>
+    </template>
+</template>

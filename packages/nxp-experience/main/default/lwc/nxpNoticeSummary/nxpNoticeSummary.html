@@ -34,6 +34,13 @@
                         <dd>{sourcesText}</dd>
                     </div>
                 </dl>
+                <c-nxp-fit-reasons
+                    class="header-reasons"
+                    breakdown={notice.Fit_Breakdown__c}
+                    score={notice.Fit_Score__c}
+                    show-all={hasBreakdown}
+                    onshowall={handleShowBreakdown}
+                ></c-nxp-fit-reasons>
                 <div class="actions">
                     <lightning-button variant="brand" label={pushLabel} onclick={handlePush}></lightning-button>
                     <lightning-button label={followLabel} onclick={handleFollow}></lightning-button>

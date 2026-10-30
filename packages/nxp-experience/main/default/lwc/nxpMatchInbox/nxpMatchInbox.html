@@ -97,6 +97,11 @@
                                 <template lwc:if={c.dueSoon}><strong class="due due_soon">{c.due}</strong></template>
                                 <template lwc:else><strong class="due">{c.due}</strong></template>
                             </div>
+                            <c-nxp-fit-reasons
+                                class="fit-reasons"
+                                breakdown={c.breakdown}
+                                score={c.fit}
+                            ></c-nxp-fit-reasons>
                             <template lwc:if={c.hasSummary}><p class="summary">{c.summary}</p></template>
                             <div class="why">
                                 Matched <strong>{c.searchName}</strong

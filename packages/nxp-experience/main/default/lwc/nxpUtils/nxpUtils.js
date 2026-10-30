@@ -100,6 +100,54 @@ export function fitTier(score) {
     return score >= 60 ? 'medium' : 'low';
 }
 
+/**
+ * The two rules that added the most points and the one that cost the most, from a notice's
+ * Fit_Breakdown__c (JSON text or a parsed list). Kind: good (full points), part, bad (none).
+ */
+export function fitReasons(breakdown) {
+    let rules = breakdown;
+    if (typeof rules === 'string') {
+        try {
+            rules = JSON.parse(rules);
+        } catch (e) {
+            return [];
+        }
+    }
+    if (!Array.isArray(rules)) {
+        return [];
+    }
+    rules = rules.filter((r) => r && Number(r.weight) > 0);
+    const gains = rules
+        .filter((r) => Number(r.points) > 0)
+        .sort((a, b) => Number(b.points) - Number(a.points))
+        .slice(0, 2);
+    const losses = rules
+        .filter((r) => !gains.includes(r) && Number(r.points) < Number(r.weight))
+        .sort((a, b) => b.weight - b.points - (a.weight - a.points))
+        .slice(0, 1);
+    return [...gains, ...losses].map((r, i) => {
+        const points = Math.round(Number(r.points) || 0);
+        const weight = Math.round(Number(r.weight));
+        let kind = 'part';
+        let label = `+${points} of ${weight}`;
+        if (points >= weight) {
+            kind = 'good';
+            label = `+${points}`;
+        } else if (points === 0) {
+            kind = 'bad';
+            label = `0 of ${weight}`;
+        }
+        return {
+            key: `reason${i}`,
+            kind,
+            className: `reason reason_${kind}`,
+            label,
+            text: r.reason || r.rule,
+            title: `${r.rule}: ${points} of ${weight} points`
+        };
+    });
+}
+
 /** "a, b , c" -> ['a','b','c'] */
 export function splitList(text) {
     return (text || '')
