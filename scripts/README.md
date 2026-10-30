@@ -19,11 +19,11 @@ Windows: if PowerShell refuses to run scripts, run `Set-ExecutionPolicy -Scope C
 
 ## Folders
 
-| Folder         | Contents                                                                                                                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `lib/`         | Shared helpers: `common.sh` and `common.ps1` (package order, API version, running anonymous Apex, production check)                                                      |
-| `apex/`        | Anonymous Apex: sample data (`seed-*`, `refresh-sample-dates`, `delete-sample-data`), `smoke-test`, and admin helpers (`run-feed-now`, `feed-health`, `rescore-notices`) |
-| `post-deploy/` | `schedule-jobs.apex` and `unschedule-jobs.apex`                                                                                                                          |
-| `uninstall/`   | `pre-uninstall.apex`: stops NXP jobs and removes NXP permission set assignments                                                                                          |
+| Folder         | Contents                                                                                                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `lib/`         | Shared helpers: `common.sh` and `common.ps1` (package order, API version, running anonymous Apex, production check)                                                                                                |
+| `apex/`        | Anonymous Apex: sample data (`seed-profile`, `seed-searches`, `seed-ebuy-email`, `refresh-sample-dates`, `delete-sample-data`), `smoke-test`, and admin helpers (`run-feed-now`, `feed-health`, `rescore-notices`) |
+| `post-deploy/` | `schedule-jobs.apex` and `unschedule-jobs.apex`                                                                                                                                                                    |
+| `uninstall/`   | `pre-uninstall.apex`: stops NXP jobs and removes NXP permission set assignments                                                                                                                                    |
 
 Run any anonymous Apex file on its own with `sf apex run --file scripts/apex/<file>.apex --target-org <alias>`.

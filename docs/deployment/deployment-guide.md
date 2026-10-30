@@ -105,24 +105,30 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
 1. **Deploy:** `scripts/release.sh <env> <alias>` or `.\scripts\release.ps1 -Environment <env> -Org <alias>`. This deploys the packages and `env-config/<env>` and schedules the jobs.
 2. **Permission sets:** assign them to people.
 
-    | Permission set    | Who                                                                    |
-    | ----------------- | ---------------------------------------------------------------------- |
-    | `NXP_User`        | Every BD user                                                          |
-    | `NXP_Power_User`  | Capture leads (bulk push, auto-push, team searches); add to `NXP_User` |
-    | `NXP_Admin`       | Nexus administrators (Feed Console run now, settings, all records)     |
-    | `NXP_Integration` | The REST integration user only                                         |
+    | Permission set    | Who                                                                                               |
+    | ----------------- | ------------------------------------------------------------------------------------------------- |
+    | `NXP_User`        | Every BD user                                                                                     |
+    | `NXP_Power_User`  | Capture leads (bulk push, auto-push, team searches); add to `NXP_User`                            |
+    | `NXP_Admin`       | Nexus administrators (Feed Console run now, Inbound Emails, vehicles held, settings, all records) |
+    | `NXP_Integration` | The REST integration user, also the context user of the eBuy e-mail service                       |
 
     ```bash
     sf org assign permset --name NXP_User --name NXP_Admin --target-org nxp-uat --on-behalf-of admin@example.gov
     ```
 
-3. **SAM.gov API key:** **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**: add an authentication parameter named `ApiKey`.
+3. **SAM.gov API key:** **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**: add an authentication parameter named `ApiKey` with the key from your SAM.gov account (a System Account key for production; personal keys expire every 90 days). Only `NXP_Admin` users can call SAM.gov.
 4. **Forecasts endpoint:** set the URL on the `NXP_Forecasts` Named Credential and check the `FC_*` Feed Mapping records against your forecast source.
 5. **Company Profile:** create one active **Company Profile** (NAICS, PSC, set-asides, target agencies, keywords, value range), then score existing notices: `sf apex run --file scripts/apex/rescore-notices.apex --target-org <alias>`.
 6. **Push mapping:** point the `NXP_Push_Mapping` records at the TechnoMile object and fields ([admin guide](../guides/admin-guide.md#push-mapping)).
 7. **Jobs:** already scheduled by `release` / `dev-setup`. To run it alone: `sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org <alias>`, as an `NXP_Admin` user.
-8. **Optional channels:** REST integration user and External Client App ([REST API](../integration/rest-ingestion-api.md)); Data Cloud connector ([Data Cloud ingestion](../integration/data-cloud-ingestion.md)); prompt templates and `AI_Enabled`; the assistant ([agent manual build](../guides/agent-manual-build.md)).
-9. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
+8. **Contract vehicles:** create the vehicles you hold (tick **We Hold**, set expiry, ceiling and the address eBuy mail is sent to in **Inbox Address**), or list their codes in the Company Profile's _Vehicles We Hold_.
+9. **Optional channels:**
+    - REST integration user and External Client App ([REST API](../integration/rest-ingestion-api.md));
+    - GSA eBuy e-mail: create the `NXP_Ebuy_Inbox` e-mail address, route eBuy mail to it and set `Ebuy_Allowed_Senders` ([admin guide](../guides/admin-guide.md#gsa-ebuy-e-mail));
+    - Data Cloud connector ([Data Cloud ingestion](../integration/data-cloud-ingestion.md));
+    - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
+    - the assistant ([agent manual build](../guides/agent-manual-build.md)).
+10. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
 
 ## Release with source deploy
 
@@ -234,6 +240,8 @@ sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-qa
 scripts/load-sample-data.sh --org nxp-qa     # QA and INT only
 ```
 
+The sandbox's `NXP_Ebuy_Inbox` e-mail address is different from production's, so real eBuy mail keeps going to production. To test eBuy in a sandbox, send test e-mails to the sandbox address (or run `scripts/apex/seed-ebuy-email.apex`), and check the vehicles' **Inbox Address** values copied from production.
+
 In PowerShell, replace the `(cd …)` line with `Push-Location env-config/qa; sf project deploy start --source-dir force-app --target-org nxp-qa --api-version 68.0; Pop-Location`, and use `.\scripts\load-sample-data.ps1 -Org nxp-qa`.
 
 ## Rollback
@@ -262,12 +270,13 @@ Government Cloud can't deploy Agent Script, so the Nexus Pursuit Assistant is bu
 
 ## Uninstall
 
-`scripts/uninstall.sh` (or `.\scripts\uninstall.ps1`) removes Nexus Pursuit Hub from an org. It deletes every `NXP_` component and, with the NXP objects, all Nexus records: notices, searches, matches, push logs and feed runs. For a scratch org, delete the org instead: `sf org delete scratch --target-org <alias>`.
+`scripts/uninstall.sh` (or `.\scripts\uninstall.ps1`) removes Nexus Pursuit Hub from an org. It deletes every `NXP_` component and, with the NXP objects, all Nexus records: notices, searches, matches, push logs, feed runs, inbound e-mails and document analyses. Files attached to notices stay in Salesforce Files. For a scratch org, delete the org instead: `sf org delete scratch --target-org <alias>`.
 
 **1. Delete what was built by hand.** These refer to Nexus components and block the delete:
 
 - the **Nexus Pursuit Assistant** agent (deactivate, then delete) and its NXP agent actions;
 - the NXP prompt templates in Prompt Builder;
+- the `NXP_Ebuy_Inbox` e-mail service address (Setup → Email Services), and any mail rule that forwards eBuy mail to it;
 - reports, dashboards, flows and list views people built on NXP objects.
 
 **2. Run the script.**
@@ -307,4 +316,6 @@ If a step fails, the error names the component that is still in use. Remove that
 | `test-functional`: _Smoke test: no results were found_                                  | The smoke test didn't finish. Run `sf apex run --file scripts/apex/smoke-test.apex --target-org <alias>` and read the error at the end of the output.                                                                                                                                                                     |
 | `test-functional`: WARN on _Event matching_                                             | The platform event subscriber had not run yet, or is suspended: **Setup → Platform Events → NXP Gov Notice Changed → Subscriptions**, then resume it.                                                                                                                                                                     |
 | Package install fails with a missing dependency                                         | Install order is core, ingestion, search, push, experience, agents. Check the order in `release/versions.json`.                                                                                                                                                                                                           |
+| eBuy e-mail never appears in **Inbound Emails**                                         | The address isn't receiving it: check the e-mail address on `NXP_Ebuy_Inbox` is active and its _Accept Email From_ list includes the sender, and that eBuy or your mail rule sends to it. E-mail that arrives but isn't from `Ebuy_Allowed_Senders` shows as _Rejected_.                                                  |
+| Documents stay _Waiting to be read_ or show _Could not read_                            | Reading is off (`AI_Enabled`, `Document_Analysis_Enabled`), the `NXP_Document_Analysis` template is missing or inactive, it has no File input named `Document`, or its model doesn't read PDFs. The row's detail shows the error.                                                                                         |
 | Uninstall stops on a component that is `in use`                                         | Something built by hand still refers to it (agent action, prompt template, flow, report). Delete that and run the script again.                                                                                                                                                                                           |

@@ -2,7 +2,8 @@
 
 Government opportunity intelligence on Salesforce. Nexus Pursuit Hub replaces the GovWin IQ subscription:
 
-- **Feeds:** it ingests government feeds (SAM.gov, agency forecasts, USAspending awards, SAM.gov entities).
+- **Feeds:** it ingests government feeds (SAM.gov, agency forecasts, USAspending awards, SAM.gov entities) and GSA eBuy RFQs received by e-mail.
+- **Market intel:** forecasts, recompetes, vendor, agency and contract-vehicle views, with Watch alerts.
 - **Searches:** each user builds their own saved searches and gets alerts on matches.
 - **Push:** chosen notices go into **TechnoMile**, which keeps managing opportunities and capture.
 
@@ -22,25 +23,31 @@ Government opportunity intelligence on Salesforce. Nexus Pursuit Hub replaces th
 | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | **Standard feeds:** SAM.gov opportunities, entities, forecasts and USAspending awards                                  | `nxp-ingestion` connectors on a Queueable pipeline or a scheduled batch |
 | **Additional import channels:** Apex REST ingestion API, scheduled Apex batch, Apex callouts, Data Cloud Ingestion API | `/services/apexrest/nxp/v1/notices`, `NXP_FeedFetchBatch`, `datacloud/` |
+| **GSA eBuy RFQs by e-mail** (eBuy has no API): parsed by rules, optional AI fill-in, admin log with Reprocess          | `NXP_Ebuy_Inbox` e-mail service, **Inbound Emails** tab (`nxpEmailLog`) |
 | Dedupe across sources, amendment versioning, change events                                                             | `NXP_IngestionService`                                                  |
 | Rules-based fit score against the company profile                                                                      | `NXP_FitScoreService`, `NXP_Fit_Rule__mdt`                              |
 | User-built saved searches with boolean keywords, live preview and a 13-week back-test                                  | **My Searches** tab (`nxpSearchBuilder`)                                |
 | Real-time, daily and weekly alerts; follow alerts                                                                      | `NXP_SearchMatchService`, `NXP_AlertService`, `NXP_DigestBatch`         |
 | Match Inbox: push, watch or dismiss                                                                                    | **Match Inbox** tab (`nxpMatchInbox`)                                   |
 | Push to TechnoMile: manual, bulk, auto-push rules and post-push sync                                                   | `nxp-push`, `NXP_Push_Mapping__mdt`                                     |
+| Forecasts board and recompete timeline, with Watch                                                                     | **Forecasts** and **Recompetes** tabs                                   |
+| Vendor and agency profiles: awards, incumbents, what's coming, contacts                                                | Gov Vendor and Gov Agency record pages                                  |
+| Vehicle portfolio: vehicles we hold, their notices and expiry; notices that need a vehicle we lack                     | **Vehicle Portfolio** tab (`nxpVehiclePortfolio`)                       |
+| Document Reader: AI reads notice PDFs (requirements, evaluation, dates, risks) and flags differences from the notice   | Documents card on the notice page (`nxpNoticeDocuments`)                |
 | Nexus Pursuit Assistant (Agentforce) and AI summaries                                                                  | `nxp-agents`                                                            |
 | Feed health and Run now for admins                                                                                     | **Feed Console** tab (`nxpFeedConsole`)                                 |
+| Admin-only e-mail log, settings and configuration                                                                      | **Inbound Emails** tab, `NXP_Setting__mdt`                              |
 
 ## Repository layout
 
 ```text
 packages/
   nxp-core/        objects, metadata types, platform event, shared Apex, fit score
-  nxp-ingestion/   connectors, pipeline, batches, Apex REST API, credentials, feed config
-  nxp-search/      saved searches, matcher, alerts, digests
+  nxp-ingestion/   connectors, pipeline, batches, Apex REST API, eBuy e-mail intake, credentials, feed config
+  nxp-search/      saved searches, matcher, alerts, digests, market and vehicle screens' data, watches
   nxp-push/        push target, push service, post-push sync, push mappings
   nxp-experience/  Lightning app, tabs, record page, LWCs
-  nxp-agents/      agent actions, AI jobs, permission sets
+  nxp-agents/      agent actions, AI jobs (Notice Analyst, Document Reader, eBuy AI), permission sets
     reference/     Agent Script + prompt templates (not deployed in Government Cloud)
 env-config/<env>/  per-environment settings (each a small DX project)
 datacloud/         Ingestion API schema and bulk upload script
@@ -68,7 +75,7 @@ Windows PowerShell:
 .\scripts\dev-setup.ps1                    # or: .\scripts\dev-setup.ps1 -Org my-sandbox
 ```
 
-Then add your SAM.gov API key. In **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**, add an authentication parameter named `ApiKey`.
+Then add your SAM.gov API key. In **Setup → Named Credentials → External Credentials → NXP SAM.gov → Principals → Default**, add an authentication parameter named `ApiKey` (details in the [admin guide](docs/guides/admin-guide.md#first-time-configuration)).
 
 Test it with the sample data, then run the pre-PR checks:
 
@@ -102,4 +109,4 @@ Version 1.0.0, first build:
     - 41 Jest tests pass (in several time zones) and ESLint is clean.
     - Every bash and PowerShell script parses, and each was run against a stand-in `sf` CLI and REST endpoint to check its commands and results.
 - **Not yet run:** the code has not been deployed to an org from this repository. Run `scripts/validate.sh --org <org>` first; it compiles everything and runs every Apex test.
-- **Org-specific settings:** the push target and the TechnoMile field mapping must be set per org. See the [admin guide](docs/guides/admin-guide.md#push-mapping).
+- **Org-specific settings:** the push target and the TechnoMile field mapping must be set per org. See the [admin guide](docs/guides/admin-guide.md#push-mapping). The eBuy e-mail address, prompt templates and AI switches are also set up per org after deployment.

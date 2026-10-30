@@ -41,14 +41,16 @@ sf org login web --alias nxp-devhub --set-default-dev-hub   # or log in to your 
 
 ## Where things go
 
-| Change                         | Package                                                                                            |
-| ------------------------------ | -------------------------------------------------------------------------------------------------- |
-| New field on Gov Notice        | `nxp-core` (then add it to `NXP_GovNoticeSelector.FIELDS` and the permission set generator)        |
-| New feed                       | `nxp-ingestion` (see [feeds and connectors](../integration/feeds-and-connectors.md#adding-a-feed)) |
-| Search or alert behaviour      | `nxp-search`                                                                                       |
-| Push behaviour or target       | `nxp-push` (mapping first, code last)                                                              |
-| Screens                        | `nxp-experience`                                                                                   |
-| Agent actions, permission sets | `nxp-agents`                                                                                       |
+| Change                         | Package                                                                                                                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| New field on Gov Notice        | `nxp-core` (then add it to `NXP_GovNoticeSelector.FIELDS` and the permission set generator)                                                                                           |
+| New feed                       | `nxp-ingestion` (see [feeds and connectors](../integration/feeds-and-connectors.md#adding-a-feed))                                                                                    |
+| Search or alert behaviour      | `nxp-search`                                                                                                                                                                          |
+| Push behaviour or target       | `nxp-push` (mapping first, code last)                                                                                                                                                 |
+| Screens                        | `nxp-experience`                                                                                                                                                                      |
+| Agent actions, permission sets | `nxp-agents`                                                                                                                                                                          |
+| Anything that calls AI         | `nxp-agents` (through `NXP_AiService`). Lower packages define an interface and find the class by name (`NXP_EbuyAiExtractor`, `NXP_DocumentAnalyzer`), so they don't depend on agents |
+| A new e-mail intake            | `nxp-ingestion`: an `InboundEmailHandler` that records `NXP_Inbound_Email__c` and hands records to `NXP_IngestionService` (see `NXP_EbuyEmailHandler`)                                |
 
 ## Useful commands
 

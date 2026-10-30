@@ -56,13 +56,17 @@ Matching is on whole words and ignores case and punctuation ("Zero-Trust" matche
 
 ## Alerts
 
-| Setting          | Behaviour                                                                                                                            |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Real Time        | Custom notification (bell, mobile, Slack/Teams where the org forwards Salesforce notifications) plus e-mail, minutes after ingestion |
-| Daily / Weekly   | One digest e-mail per user at 06:30 (weekly on Monday), a section per search                                                         |
-| None             | Matches appear in the Match Inbox only                                                                                               |
-| Alert on changes | An amendment to a matched notice sets the match back to Pending and shows the change type                                            |
-| Follow / Watch   | A change to a followed notice sends a notification to the follower                                                                   |
+| Setting                   | Behaviour                                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Real Time                 | Custom notification (bell, mobile, Slack/Teams where the org forwards Salesforce notifications) plus e-mail, minutes after ingestion |
+| Daily / Weekly            | One digest e-mail per user at 06:30 (weekly on Monday), a section per search                                                         |
+| None                      | Matches appear in the Match Inbox only                                                                                               |
+| Alert on changes          | An amendment to a matched notice sets the match back to Pending and shows the change type                                            |
+| Follow / Watch            | A change to a followed notice sends a notification to the follower                                                                   |
+| Watch a forecast          | When a notice is released from the forecast (`NXP_WatchService`)                                                                     |
+| Watch a recompete (award) | When a likely follow-on notice is posted (same agency and NAICS, or the notice names the award as predecessor)                       |
+| Watch a vendor            | When the vendor wins a new award                                                                                                     |
+| Watch an agency           | When the agency or a sub-agency posts a new notice                                                                                   |
 
 ## Limits
 

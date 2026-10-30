@@ -2,11 +2,11 @@
 
 Other systems push government notices into Nexus Pursuit Hub through these endpoints. Records go through the same processing as the standard feeds: dedupe, versioning, scoring, matching, alerts and push.
 
-| Method | Path                                     | Purpose                                                                 |
-| ------ | ---------------------------------------- | ----------------------------------------------------------------------- |
-| POST   | `/services/apexrest/nxp/v1/notices`      | Create or update notices                                                |
-| POST   | `/services/apexrest/nxp/v1/task-orders`  | Same, defaulting `noticeType` to _Task Order_ and linking `vehicleCode` |
-| GET    | `/services/apexrest/nxp/v1/runs/{runId}` | Status of a call (feed run)                                             |
+| Method | Path                                     | Purpose                                                                                                                                                                                              |
+| ------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/services/apexrest/nxp/v1/notices`      | Create or update notices                                                                                                                                                                             |
+| POST   | `/services/apexrest/nxp/v1/task-orders`  | Same, defaulting `noticeType` to _Task Order_ and linking `vehicleCode` (for a mail relay you run yourself; GSA eBuy e-mail can go straight to the built-in `NXP_Ebuy_Inbox` e-mail service instead) |
+| GET    | `/services/apexrest/nxp/v1/runs/{runId}` | Status of a call (feed run)                                                                                                                                                                          |
 
 ## Authentication
 

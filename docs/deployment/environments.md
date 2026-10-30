@@ -14,6 +14,8 @@
 - **API version:** all orgs must be on API 68.0 before a release.
 - **No manual changes:** don't change metadata by hand in INT, QA, UAT or production. Retrieve any Setup change into a branch and release it.
 - **Credentials:** SAM.gov API keys are set per org on the `NXP_SAM_Gov` principal. Sandboxes refreshed from production keep the production key; replace it with a test key after each refresh.
+- **eBuy e-mail:** each org has its own `NXP_Ebuy_Inbox` address. Route real eBuy mail to production only; sandboxes get test e-mails.
+- **AI:** prompt templates are built per org; `AI_Enabled` comes from env-config, `Document_Analysis_Enabled` and the `Ebuy_*` settings are set per org (Setup → Custom Metadata Types → NXP Setting).
 - **Sample data:** dev, INT and QA only (`load-sample-data`); never UAT or production. The loader refuses production orgs.
 - **Post-refresh steps for sandboxes:** see [Sandbox refresh](deployment-guide.md#sandbox-refresh).
 - **Scripts:** the commands above are the bash versions; on Windows use the `.ps1` scripts with the same names (`.\scripts\release.ps1 -Environment qa -Org nxp-qa`).

@@ -12,6 +12,9 @@ Copy into the release ticket and tick each item.
 - [ ] Smoke test: open a new notice → summary card renders; follow / unfollow works
 - [ ] Smoke test: preview a saved search; save; a match appears after the next run
 - [ ] Smoke test (UAT/prod): push one sample notice to TechnoMile → record created, Push Log Success; delete the test record afterwards
+- [ ] Smoke test: Forecasts, Recompetes, Vehicle Portfolio and a vendor and agency page load with data
+- [ ] Smoke test (if eBuy is set up): send a test eBuy e-mail → **Inbound Emails** shows it _Ingested_ and the notice exists
+- [ ] Smoke test (if the Document Reader is on): attach a PDF to a notice → Documents card shows _Read_ within a few minutes
 - [ ] No new ERROR rows in `NXP_Log__c` in the first hour
 - [ ] QA only: `load-sample-data --reset` and `test-functional --apex-tests` pass; screen walkthrough done ([testing guide](../guides/testing-guide.md#3-walk-through-the-app))
 
@@ -22,12 +25,14 @@ Copy into the release ticket and tick each item.
 - [ ] SAM.gov `ApiKey` set on the NXP SAM.gov principal
 - [ ] Forecast Named Credential URL and `FC_*` mappings set
 - [ ] Active Company Profile created; `rescore-notices.apex` run
-- [ ] Push mapping points at the TechnoMile object; duplicate field added and mapped
+- [ ] Push mapping points at the TechnoMile object; duplicate field added and mapped; `Contract_Vehicle_Code__c` mapped if TechnoMile has a vehicle field
+- [ ] Contract vehicles we hold created (We Hold, expiry, Inbox Address)
+- [ ] eBuy (if used): `NXP_Ebuy_Inbox` address created with the integration user as context user; eBuy mail routed to it; `Ebuy_Allowed_Senders` set; auto-push search for eBuy RFQs created by a Power User (optional)
 - [ ] Custom notification _NXP Match Alert_ delivery enabled
 - [ ] Org-wide e-mail address set in `Alert_OrgWide_Email_Id` (optional)
 - [ ] REST integration user, External Client App and NXP_Integration set up (if used)
 - [ ] Data Cloud `NXP_Awards` connector and data stream created (if used)
-- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used)
+- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used); `NXP_Document_Analysis` with a File input and `Document_Analysis_Enabled` (if the Document Reader is used); ATO covers sending solicitation documents and eBuy RFQs to the model
 - [ ] Nexus Pursuit Assistant built or deployed, tested with `tests/agents/assistant.yaml` (≥ 90%), activated, access assigned
 
 ## GovWin cut-over
