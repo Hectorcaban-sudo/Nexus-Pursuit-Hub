@@ -7,14 +7,12 @@
     <filter>
         <criteriaItems>
             <column>NXP_Push_Log__c$Status__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Success,Linked Existing</value>
         </criteriaItems>
         <criteriaItems>
             <column>NXP_Push_Log__c$Mode__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>notEqual</operator>
             <value>Sync</value>

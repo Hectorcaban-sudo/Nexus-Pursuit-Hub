@@ -7,7 +7,6 @@
     <filter>
         <criteriaItems>
             <column>NXP_Saved_Search__c$Active__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>1</value>

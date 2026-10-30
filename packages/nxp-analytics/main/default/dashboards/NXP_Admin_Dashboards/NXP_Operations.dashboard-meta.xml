@@ -16,6 +16,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Failed feed runs (7 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Feed_Failures_7_Days</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -30,6 +33,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Push failures (7 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Push_Failures</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -44,6 +50,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>eBuy e-mails needing review</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Emails_Needing_Review</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -58,6 +67,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Errors logged (7 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Recent_Errors</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -195,6 +207,9 @@
                 <componentType>Table</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Errors by source (7 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Recent_Errors</report>
                 <sortBy>RowValueDescending</sortBy>
                 <useReportChart>false</useReportChart>

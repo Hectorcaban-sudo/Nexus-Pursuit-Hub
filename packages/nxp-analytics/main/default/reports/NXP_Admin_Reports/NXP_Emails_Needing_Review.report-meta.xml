@@ -13,7 +13,6 @@
     <filter>
         <criteriaItems>
             <column>NXP_Inbound_Email__c$Status__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Needs Review,Failed</value>

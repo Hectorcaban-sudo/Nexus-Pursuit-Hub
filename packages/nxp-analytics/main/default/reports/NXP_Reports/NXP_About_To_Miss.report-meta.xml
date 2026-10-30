@@ -16,28 +16,24 @@
     <filter>
         <criteriaItems>
             <column>NXP_Gov_Notice__c$Status__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Active</value>
         </criteriaItems>
         <criteriaItems>
             <column>NXP_Gov_Notice__c$Fit_Score__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>greaterOrEqual</operator>
             <value>60</value>
         </criteriaItems>
         <criteriaItems>
             <column>NXP_Gov_Notice__c$Pushed__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>0</value>
         </criteriaItems>
         <criteriaItems>
             <column>NXP_Gov_Notice__c$Response_Due__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>NEXT_N_DAYS:14</value>

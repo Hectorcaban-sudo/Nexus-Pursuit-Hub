@@ -16,6 +16,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Active users this week</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Active_Users_This_Week</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -30,6 +33,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Active saved searches</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Searches_By_User</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -44,6 +50,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>GovWin alerts caught by a search</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_GovWin_Caught</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -58,6 +67,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>GovWin alerts loaded</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_GovWin_All</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -149,6 +161,9 @@
                 <componentType>Table</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Screen views by user (30 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Admin_Reports/NXP_Activity_By_User</report>
                 <sortBy>RowValueDescending</sortBy>
                 <useReportChart>false</useReportChart>

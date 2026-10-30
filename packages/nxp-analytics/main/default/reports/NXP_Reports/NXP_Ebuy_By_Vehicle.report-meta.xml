@@ -13,7 +13,6 @@
     <filter>
         <criteriaItems>
             <column>NXP_Gov_Notice__c$Source_Feed__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>EMAIL_GSA_eBuy</value>

@@ -7,7 +7,6 @@
     <filter>
         <criteriaItems>
             <column>NXP_GovWin_Alert__c$Result__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Caught by a search</value>

@@ -70,7 +70,7 @@ def report(folder, name, label, rt, desc, fmt='Summary', down=(), across=(), col
     if filters:
         x += '    <filter>\n'
         for col, op, val in filters:
-            x += f'        <criteriaItems>\n            <column>{col}</column>\n            <columnToValue>false</columnToValue>\n            <isUnlocked>true</isUnlocked>\n            <operator>{op}</operator>\n            <value>{esc(val)}</value>\n        </criteriaItems>\n'
+            x += f'        <criteriaItems>\n            <column>{col}</column>\n            <isUnlocked>true</isUnlocked>\n            <operator>{op}</operator>\n            <value>{esc(val)}</value>\n        </criteriaItems>\n'
         x += '    </filter>\n'
     x += f'    <format>{fmt}</format>\n'
     for field, gran in across:
@@ -188,6 +188,11 @@ def comp(row, col, rowspan, colspan, ctype, report, title, sort='RowLabelAscendi
     if summary:
         x += f'                <groupingColumn>{grouping}</groupingColumn>\n'
     x += f'                <header>{esc(title)}</header>\n'
+    if ctype in ('Metric', 'Table'):
+        # Required for metric, gauge and table components (colors for the low/middle/high ranges).
+        x += '                <indicatorHighColor>#54C254</indicatorHighColor>\n'
+        x += '                <indicatorLowColor>#C25454</indicatorLowColor>\n'
+        x += '                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>\n'
     if ctype in ('Bar', 'Column', 'ColumnStacked', 'Donut', 'BarStacked'):
         x += '                <legendPosition>Bottom</legendPosition>\n'
     x += extra

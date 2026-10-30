@@ -10,7 +10,6 @@
     <filter>
         <criteriaItems>
             <column>NXP_Feed_Run__c$Status__c</column>
-            <columnToValue>false</columnToValue>
             <isUnlocked>true</isUnlocked>
             <operator>equals</operator>
             <value>Failed</value>

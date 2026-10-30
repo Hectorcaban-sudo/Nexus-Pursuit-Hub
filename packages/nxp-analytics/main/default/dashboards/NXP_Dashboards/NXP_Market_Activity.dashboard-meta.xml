@@ -16,6 +16,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>New notices (30 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Reports/NXP_New_Notices_30_Days</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -30,6 +33,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Search matches (30 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Reports/NXP_Match_Outcomes</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -44,6 +50,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>Pushed to TechnoMile (30 days)</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Reports/NXP_Pushes_30_Days</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -58,6 +67,9 @@
                 <componentType>Metric</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>High-fit, due in 14 days, not pushed</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Reports/NXP_About_To_Miss</report>
                 <useReportChart>false</useReportChart>
             </dashboardComponent>
@@ -148,6 +160,9 @@
                 <componentType>Table</componentType>
                 <displayUnits>Auto</displayUnits>
                 <header>About to miss: fit 60+, due in 14 days, not pushed</header>
+                <indicatorHighColor>#54C254</indicatorHighColor>
+                <indicatorLowColor>#C25454</indicatorLowColor>
+                <indicatorMiddleColor>#C2C254</indicatorMiddleColor>
                 <report>NXP_Reports/NXP_About_To_Miss</report>
                 <sortBy>RowLabelAscending</sortBy>
                 <useReportChart>false</useReportChart>
