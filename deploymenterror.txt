@@ -1,24 +1,51 @@
-==> Setting sample dates relative to today
-(node:45696) Warning: org-api-version configuration overridden at 68.0
-(Use `node --trace-warnings ...` to show where the warning was created)
-   Dates refreshed on 10 SAMPLE notices.
+Component Failures [33]
+┌────────────┬──────────────────────────────────────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────┬─────────────┐
+│ Type       │ Name                                         │ Problem                                                                                                       │ Line:Column │
+├────────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────┼─────────────┤
+│ Dashboard  │ NXP_Admin_Dashboards/NXP_Adoption            │ Metric, gauge, or table dashboard component missing indicatorLowColor attribute (14:33)                       │ 14:33       │
+│ Dashboard  │ NXP_Admin_Dashboards/NXP_Operations          │ Metric, gauge, or table dashboard component missing indicatorLowColor attribute (14:33)                       │ 14:33       │
+│ Report     │ NXP_Admin_Reports/NXP_Active_Users_By_Week   │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Admin_Reports/NXP_Active_Users_This_Week │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 14:28       │
+│            │                                              │ in type ReportFilterItem (14:28)                                                                              │             │
+│ Report     │ NXP_Admin_Reports/NXP_Activity_By_User       │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Admin_Reports/NXP_Documents_By_Status    │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Admin_Reports/NXP_Emails_Needing_Review  │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 16:28       │
+│            │                                              │ in type ReportFilterItem (16:28)                                                                              │             │
+│ Report     │ NXP_Admin_Reports/NXP_Feed_Failures_7_Days   │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 13:28       │
+│            │                                              │ in type ReportFilterItem (13:28)                                                                              │             │
+│ Report     │ NXP_Admin_Reports/NXP_GovWin_All             │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Admin_Reports/NXP_GovWin_Catch_Rate      │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Admin_Reports/NXP_GovWin_Caught          │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 10:28       │
+│            │                                              │ in type ReportFilterItem (10:28)                                                                              │             │
+│ Report     │ NXP_Admin_Reports/NXP_Push_Failures          │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 16:28       │
+│            │                                              │ in type ReportFilterItem (16:28)                                                                              │             │
+│ Report     │ NXP_Admin_Reports/NXP_Push_Results           │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Admin_Reports/NXP_Pushes_By_Source       │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 10:28       │
+│            │                                              │ in type ReportFilterItem (10:28)                                                                              │             │
+│ Report     │ NXP_Admin_Reports/NXP_Recent_Errors          │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 13:28       │
+│            │                                              │ in type ReportFilterItem (13:28)                                                                              │             │
+│ Report     │ NXP_Admin_Reports/NXP_Searches_By_User       │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 10:28       │
+│            │                                              │ in type ReportFilterItem (10:28)                                                                              │             │
+│ Dashboard  │ NXP_Dashboards/NXP_Market_Activity           │ Metric, gauge, or table dashboard component missing indicatorLowColor attribute (14:33)                       │ 14:33       │
+│ ReportType │ NXP_Document_Analyses                        │ In field: baseObject - no CustomObject named NXP_Document_Analysis__c found                                   │             │
+│ ReportType │ NXP_GovWin_Alerts                            │ In field: baseObject - no CustomObject named NXP_GovWin_Alert__c found                                        │             │
+│ ReportType │ NXP_Notices                                  │ In field: field - no CustomField named NXP_Gov_Notice__c.Fit_Band__c found (64:18)                            │ 64:18       │
+│ ReportType │ NXP_Push_Logs                                │ In field: field - no CustomField named NXP_Push_Log__c.Source__c found (29:18)                                │ 29:18       │
+│ Report     │ NXP_Reports/NXP_About_To_Miss                │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 19:28       │
+│            │                                              │ in type ReportFilterItem (19:28)                                                                              │             │
+│ Report     │ NXP_Reports/NXP_Ebuy_By_Vehicle              │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 16:28       │
+│            │                                              │ in type ReportFilterItem (16:28)                                                                              │             │
+│ Report     │ NXP_Reports/NXP_Match_Outcomes               │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Reports/NXP_Matches_By_Search            │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Reports/NXP_New_Notices_30_Days          │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Reports/NXP_New_Notices_By_Fit_Band      │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Reports/NXP_New_Notices_By_Week_Source   │ invalid report type                                                                                           │             │
+│ Report     │ NXP_Reports/NXP_Pushes_30_Days               │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 10:28       │
+│            │                                              │ in type ReportFilterItem (10:28)                                                                              │             │
+│ Report     │ NXP_Reports/NXP_Pushes_By_Month              │ Error parsing file: Element {http://soap.sforce.com/2006/04/metadata}columnToValue invalid at this location   │ 10:28       │
+│            │                                              │ in type ReportFilterItem (10:28)                                                                              │             │
+│ ReportType │ NXP_Saved_Searches                           │ In field: field - no CustomField named NXP_Saved_Search__c.Owner_Name__c found (14:18)                        │ 14:18       │
+│ ReportType │ NXP_Searches_And_Matches                     │ In field: field - no CustomField named NXP_Saved_Search__c.Owner_Name__c found (18:18)                        │ 18:18       │
+│ ReportType │ NXP_Usage                                    │ In field: baseObject - no CustomObject named NXP_Usage__c found                                               │             │
+└────────────┴──────────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────┴─────────────┘
 
-==> Saved searches and matching
-(node:32980) Warning: org-api-version configuration overridden at 68.0
-(Use `node --trace-warnings ...` to show where the warning was created)
-   Saved searches created: 3 (already there: 0)
-   Change events published for 10 SAMPLE notices. Matching runs in the background.
-
-Sample data loaded into staging. Matching runs in the background and takes about a minute.
-  Test everything:  .\scripts\test-functional.ps1 -Org staging
-  Look around:      sf org open --target-org staging --path /lightning/n/NXP_Match_Inbox
-
-==> Scheduling background jobs
-(node:45896) Warning: org-api-version configuration overridden at 68.0
-(Use `node --trace-warnings ...` to show where the warning was created)
-Exception: C:\TeamProjectsGitlab\nexus-pursuit-hub\scripts\lib\common.ps1:74:9
-Line |
-  74 |          throw "Anonymous Apex failed: $File`n$why"
-     |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     | Anonymous Apex failed: scripts/post-deploy/schedule-jobs.apex Execution failed at this code:  System.StringException: Seconds and minutes must be specified as integers:
-     | 0 15,45 * * * ?
