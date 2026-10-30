@@ -1,7 +1,9 @@
-// Creates three SAMPLE saved searches for the running user, then publishes a "New" change event for
+// Creates four SAMPLE saved searches for the running user, then publishes a "New" change event for
 // every SAMPLE notice so the real matching path runs (event -> NXP_GovNoticeChangedTrigger ->
 // NXP_SearchMatchService -> Search Matches + alerts). Safe to run again: searches are created once
 // and matches are de-duplicated by Match Key.
+// "SAMPLE - eBuy RFQs on our vehicles" has auto-push on (fit 60 or more): the sample eBuy RFQ
+// (seed-ebuy-email.apex) is pushed to the push target (Opportunity by default) when it arrives.
 // Run after the seed notices are loaded (scripts/load-sample-data.ps1 or .sh does both).
 Map<String, Map<String, Object>> samples = new Map<String, Map<String, Object>>{
     'SAMPLE - DHS cyber, small business' => new Map<String, Object>{
@@ -18,6 +20,13 @@ Map<String, Map<String, Object>> samples = new Map<String, Map<String, Object>>{
         'criteria' => '{"keywords":"\\"zero trust\\" OR segmentation"}',
         'frequency' => 'Weekly',
         'channels' => 'Email'
+    },
+    'SAMPLE - eBuy RFQs on our vehicles' => new Map<String, Object>{
+        'criteria' => '{"noticeTypes":["Task Order"],"vehicles":["GSA-MAS-IT","OASIS+"]}',
+        'frequency' => 'Real Time',
+        'channels' => 'Salesforce',
+        'autoPush' => 'Fit Threshold',
+        'autoPushMinFit' => 60
     }
 };
 
@@ -44,7 +53,8 @@ for (String name : samples.keySet()) {
             Channels__c = (String) cfg.get('channels'),
             Visibility__c = 'Private',
             Alert_On_Changes__c = true,
-            Auto_Push__c = 'Off',
+            Auto_Push__c = cfg.containsKey('autoPush') ? (String) cfg.get('autoPush') : 'Off',
+            Auto_Push_Min_Fit__c = (Integer) cfg.get('autoPushMinFit'),
             Active__c = true,
             Description__c = '[SAMPLE DATA] Created by scripts/apex/seed-searches.apex'
         )

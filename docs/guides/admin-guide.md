@@ -40,8 +40,9 @@ Feeds are `NXP_Feed_Config__mdt` records. Change them through `env-config/<env>`
 1. Find TechnoMile's opportunity object and required fields in Object Manager.
 2. In `NXP_Push_Mapping__mdt` (mapping set `TechnoMile_Default`), set `Target_Object__c` on every row to that object. Point `Target_Field__c` at its fields, and set the default stage to a valid value.
 3. Recommended: add a text field `NXP_Solicitation_Number__c` to the TechnoMile object, and a row from `Solicitation_Number__c` to that field with Sync Behavior _Never_, to turn on duplicate detection.
-4. Decide sync behaviour per field: Update (due date), Alert Only (value, set-aside), Never (name, stage).
-5. Test in a sandbox: push a sample notice, check the record, then amend the notice (or re-run a feed) and check the sync.
+4. Optional: map `Contract_Vehicle_Code__c` to TechnoMile's contract vehicle field, and `Notice_URL__c` to a link field if it has one. The shipped Description row uses `Push_Details__c` (source, IDs, vehicle, due date and link in one line).
+5. Decide sync behaviour per field: Update (due date), Alert Only (value, set-aside), Never (name, stage).
+6. Test in a sandbox: push a sample notice, check the record, then amend the notice (or re-run a feed) and check the sync.
 
 ## GSA eBuy e-mail
 
@@ -52,7 +53,8 @@ eBuy has no API, so RFQs come in through the e-mail eBuy sends your company. The
 3. **Route eBuy mail to it:** either set that address as a notification e-mail in your eBuy contractor profile, or add a mail rule that **redirects** (not forwards) eBuy messages to it. A redirect keeps GSA as the sender; a forward makes your colleague the sender, so their domain must then be added to `Ebuy_Allowed_Senders`.
 4. **Pick the vehicle:** put the address eBuy sends to (your alias, or the service address) in the contract vehicle's **Inbox Address**. E-mail to any other address goes to the `Ebuy_Default_Vehicle` (GSA-MAS-IT).
 5. **Optional AI:** create the `NXP_Ebuy_RFQ_Extract` prompt template from `packages/nxp-agents/reference/genAiPromptTemplates/` and set `AI_Enabled = true`. AI only fills fields the rules miss, and code checks every value. To let it read the first PDF attachment, add a File input named _Attachment_ to the template, choose a model that reads files, and set `Ebuy_AI_Read_Attachments = true`.
-6. **Tune the rules** to your real e-mails: the accepted labels for each field are in `NXP_EbuyEmailParser.LABELS`.
+6. **Send eBuy RFQs to TechnoMile automatically** (bid/no-bid stays in TechnoMile): create a saved search with notice type _Task Order_, your vehicles, Real Time alerts and Auto-Push _Fit Threshold_ (for example 60). eBuy RFQs often close in one to two weeks, so this saves the wait for someone to push them. Auto-push needs `NXP_Power_User`. The sample data has one: _SAMPLE - eBuy RFQs on our vehicles_.
+7. **Tune the rules** to your real e-mails: the accepted labels for each field are in `NXP_EbuyEmailParser.LABELS`.
 
 What is kept and who sees it:
 

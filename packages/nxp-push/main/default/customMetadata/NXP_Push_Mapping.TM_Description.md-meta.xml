@@ -24,7 +24,7 @@
     </values>
     <values>
         <field>Source_Field__c</field>
-        <value xsi:type="xsd:string">Notice_URL__c</value>
+        <value xsi:type="xsd:string">Push_Details__c</value>
     </values>
     <values>
         <field>Sync_Behavior__c</field>

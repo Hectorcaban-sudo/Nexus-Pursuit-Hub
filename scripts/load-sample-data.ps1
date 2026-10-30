@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Loads a sample Company Profile, 7 agencies, 3 contract vehicles, 4 vendors, 6 award summaries,
-    3 forecasts, 10 SAMPLE notices (scored on insert), 3 saved searches for you, the search matches
+    3 forecasts, 10 SAMPLE notices (scored on insert), 4 saved searches for you, the search matches
     and alerts they produce, and one made-up eBuy RFQ e-mail (notice EBUY:RFQ9990001).
     Refuses to run against a production org unless -AllowProduction is given.
     Bash version: scripts/load-sample-data.sh

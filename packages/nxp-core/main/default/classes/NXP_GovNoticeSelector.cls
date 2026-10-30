@@ -8,7 +8,7 @@ public inherited sharing class NXP_GovNoticeSelector {
         'Agency__c, Agency_Path__c, Office__c, NAICS_Code__c, PSC_Code__c, Set_Aside__c, Estimated_Value__c, ' +
         'Posted_Date__c, Response_Due__c, Archive_Date__c, Days_To_Respond__c, Place_Of_Performance__c, ' +
         'Description__c, Notice_URL__c, Source_Feed__c, Source_Lineage__c, Contract_Vehicle__c, ' +
-        'Contract_Vehicle__r.Vehicle_Code__c, Forecast__c, Predecessor_Award__c, Incumbent__c, Incumbent__r.Name, ' +
+        'Contract_Vehicle__r.Vehicle_Code__c, Contract_Vehicle_Code__c, Push_Details__c, Forecast__c, Predecessor_Award__c, Incumbent__c, Incumbent__r.Name, ' +
         'Fit_Score__c, Fit_Breakdown__c, AI_Summary__c, AI_Summary_Status__c, Last_Change_Type__c, ' +
         'Last_Changed__c, Version_Count__c, Pushed__c, Pushed_Record_Id__c, Content_Hash__c, CreatedDate';
 

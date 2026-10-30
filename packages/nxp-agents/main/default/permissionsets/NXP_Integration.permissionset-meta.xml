@@ -38,6 +38,16 @@
     </customPermissions>
     <description>Integration user for the Apex REST ingestion API (/nxp/v1/*). Nothing else.</description>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Contract_Vehicle_Code__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Push_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Award_Summary__c.PIID__c</field>
         <readable>true</readable>

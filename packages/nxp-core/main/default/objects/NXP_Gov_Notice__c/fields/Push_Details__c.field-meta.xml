@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Push_Details__c</fullName>
+    <description
+    >One line for the pushed record's description: source, solicitation or RFQ number, vehicle, due date and link.</description>
+    <formula>IF(Source_Feed__c = "EMAIL_GSA_eBuy", "GSA eBuy RFQ", TEXT(Notice_Type__c)) &amp;
+" (Nexus " &amp; Notice_Id__c &amp; ")" &amp;
+IF(ISBLANK(Solicitation_Number__c), "", " · Solicitation " &amp; Solicitation_Number__c) &amp;
+IF(ISBLANK(Contract_Vehicle__c), "", " · Vehicle " &amp; Contract_Vehicle__r.Name) &amp;
+IF(ISBLANK(Response_Due__c), "", " · Responses due " &amp; TEXT(DATEVALUE(Response_Due__c))) &amp;
+IF(ISBLANK(Notice_URL__c), "", " · " &amp; Notice_URL__c)</formula>
+    <formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+    <label>Push Details</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

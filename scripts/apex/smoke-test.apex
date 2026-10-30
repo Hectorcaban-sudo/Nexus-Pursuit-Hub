@@ -435,6 +435,36 @@ try {
     fails++;
 }
 
+// 7g. eBuy auto-push (saved search "SAMPLE - eBuy RFQs on our vehicles", Fit Threshold 60) -----
+try {
+    List<NXP_Gov_Notice__c> rfq = [
+        SELECT Id, Pushed__c, Pushed_Record_Id__c, Fit_Score__c, Push_Details__c
+        FROM NXP_Gov_Notice__c
+        WHERE Notice_Id__c = 'EBUY:RFQ9990001'
+        LIMIT 1
+    ];
+    List<NXP_Saved_Search__c> ebuySearch = [
+        SELECT Id
+        FROM NXP_Saved_Search__c
+        WHERE Name = 'SAMPLE - eBuy RFQs on our vehicles' AND OwnerId = :me
+        LIMIT 1
+    ];
+    if (rfq.isEmpty() || ebuySearch.isEmpty()) {
+        out.add('WARN|eBuy auto-push|sample eBuy notice or search not there yet; re-run in a minute');
+    } else if (rfq[0].Pushed__c) {
+        out.add('PASS|eBuy auto-push|EBUY:RFQ9990001 (fit ' + rfq[0].Fit_Score__c + ') pushed to ' + rfq[0].Pushed_Record_Id__c + '; description: ' + String.valueOf(rfq[0].Push_Details__c).left(120));
+    } else {
+        Integer m = [SELECT COUNT() FROM NXP_Search_Match__c WHERE Gov_Notice__c = :rfq[0].Id AND Saved_Search__c = :ebuySearch[0].Id];
+        out.add(
+            'WARN|eBuy auto-push|not pushed yet (fit ' + rfq[0].Fit_Score__c + ', ' + m +
+            ' match). Matching and auto-push run in the background; re-run in a minute, then check Push Logs.'
+        );
+    }
+} catch (Exception e) {
+    out.add('FAIL|eBuy auto-push|' + e.getTypeName() + ': ' + e.getMessage());
+    fails++;
+}
+
 // 8. Feed console and REST/feed run history -------------------------------------------------
 try {
     NXP_FeedConsoleController.Console c = NXP_FeedConsoleController.getConsole();

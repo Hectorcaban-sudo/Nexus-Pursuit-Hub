@@ -90,6 +90,16 @@
     </customMetadataTypeAccesses>
     <description>Everyone in BD: search, save own searches, follow, push manually, use the assistant.</description>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Contract_Vehicle_Code__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Push_Details__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Follow__c.Agency__c</field>
         <readable>true</readable>
