@@ -18,3 +18,11 @@ git pull
 sf project deploy start --source-dir packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-push packages/nxp-experience packages/nxp-agents --target-org staging --api-version 68.0 --wait 30
 .\scripts\load-sample-data.ps1 -Org staging
 .\scripts\test-functional.ps1 -Org staging
+
+
+git pull
+git status
+sf project deploy start --source-dir packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-push packages/nxp-experience packages/nxp-agents --target-org staging --api-version 68.0 --wait 30
+.\scripts\load-sample-data.ps1 -Org staging
+# wait about a minute
+.\scripts\test-functional.ps1 -Org staging
