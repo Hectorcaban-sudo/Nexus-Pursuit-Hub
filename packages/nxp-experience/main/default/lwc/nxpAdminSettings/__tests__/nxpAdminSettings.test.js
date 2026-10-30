@@ -4,6 +4,7 @@ import getSettings from '@salesforce/apex/NXP_SettingsController.getSettings';
 import getHealth from '@salesforce/apex/NXP_SettingsController.getHealth';
 import saveSettings from '@salesforce/apex/NXP_SettingsController.saveSettings';
 import rescheduleJobs from '@salesforce/apex/NXP_SettingsController.rescheduleJobs';
+import reapplySettings from '@salesforce/apex/NXP_SettingsController.reapplySettings';
 
 jest.mock('@salesforce/apex/NXP_SettingsController.getSettings', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_SettingsController.getHealth', () => ({ default: jest.fn() }), { virtual: true });
@@ -11,6 +12,7 @@ jest.mock('@salesforce/apex/NXP_SettingsController.saveSettings', () => ({ defau
 jest.mock('@salesforce/apex/NXP_SettingsController.getSaveStatus', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_SettingsController.testSamKey', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_SettingsController.rescheduleJobs', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_SettingsController.reapplySettings', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_SettingsController.rescoreNotices', () => ({ default: jest.fn() }), { virtual: true });
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -155,6 +157,31 @@ describe('c-nxp-admin-settings', () => {
         await flush();
         expect(rescheduleJobs).toHaveBeenCalled();
         expect(getHealth).toHaveBeenCalledTimes(2);
+    });
+
+    it('reapplies settings a release put back', async () => {
+        getHealth.mockResolvedValue([
+            {
+                key: 'saved',
+                title: 'Settings saved here',
+                status: 'warn',
+                detail: '1 setting(s) were put back',
+                action: 'reapply',
+                actionLabel: 'Reapply my settings'
+            }
+        ]);
+        getSettings.mockResolvedValue(JSON.parse(JSON.stringify(MODEL)));
+        const el = createElement('c-nxp-admin-settings', { is: NxpAdminSettings });
+        document.body.appendChild(el);
+        await flush();
+        await flush();
+        reapplySettings.mockResolvedValue('test');
+        el.shadowRoot.querySelector('.check-action').click();
+        await flush();
+        await flush();
+        await flush();
+        expect(reapplySettings).toHaveBeenCalled();
+        expect(getSettings).toHaveBeenCalledTimes(2);
     });
 
     it('shows an error when loading fails', async () => {

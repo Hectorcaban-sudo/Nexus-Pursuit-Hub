@@ -2,7 +2,7 @@
 
 For admins who set up and run Nexus Pursuit Hub. Read [How Nexus works](how-it-works.md) first: it explains what each part does. Installing and releasing are in the [deployment guide](../deployment/deployment-guide.md).
 
-**Contents:** [First-time configuration](#first-time-configuration) · [Adding users](#adding-users) · [E-mail and notifications](#e-mail-and-notifications) · [Scheduled jobs](#scheduled-jobs) · [Your routine](#your-routine) · [Feeds](#feeds) · [Fit rules](#fit-rules) · [Push mapping](#push-mapping) · [Search templates](#search-templates) · [GSA eBuy e-mail](#gsa-ebuy-e-mail) · [Document Reader](#document-reader) · [AI](#ai) · [Settings](#settings-nxp_setting__mdt) · [Monitoring](#monitoring) · [Troubleshooting](#troubleshooting)
+**Contents:** [First-time configuration](#first-time-configuration) · [Adding users](#adding-users) · [E-mail and notifications](#e-mail-and-notifications) · [Scheduled jobs](#scheduled-jobs) · [The Settings tab](#the-settings-tab) · [Your routine](#your-routine) · [Feeds](#feeds) · [Fit rules](#fit-rules) · [Push mapping](#push-mapping) · [Search templates](#search-templates) · [GSA eBuy e-mail](#gsa-ebuy-e-mail) · [Document Reader](#document-reader) · [AI](#ai) · [Settings](#settings-nxp_setting__mdt) · [Monitoring](#monitoring) · [Troubleshooting](#troubleshooting)
 
 ## First-time configuration
 
@@ -21,6 +21,7 @@ For admins who set up and run Nexus Pursuit Hub. Read [How Nexus works](how-it-w
 9. **Search templates:** run `scripts/apex/seed-search-templates.apex` as an `NXP_Admin` user to create the four starter templates, then adjust them ([Search templates](#search-templates)).
 10. **AI (optional):** prompt templates, `AI_Enabled`, the Document Reader and the daily limit ([AI](#ai)).
 11. **Contract vehicles:** create the vehicles you hold (tick **We Hold**, set expiry, ceiling and **Inbox Address**).
+12. **Check everything on the Settings tab:** its _Health checks_ panel should be all green ✓ ([The Settings tab](#the-settings-tab)).
 
 ## Adding users
 
@@ -51,9 +52,24 @@ Nexus sends two kinds of message; who gets what is in [How Nexus works](how-it-w
 
 **Admin problems e-mail**: every active `NXP_Admin` user gets it at 07:00 when something failed. Change who with `Admin_Digest_Recipients` and when with `Admin_Digest_Mode` ([Monitoring](#monitoring)).
 
+## The Settings tab
+
+**Settings** (in the Nexus Pursuit Hub app, admins only) puts the Nexus settings in one screen, so you rarely need Setup → Custom Metadata Types.
+
+- **Sections** on the left: Alerts and e-mail, SAM.gov and feeds, Searches and inbox, AI, Descriptions and files, GSA eBuy, Fit score rules, Push to Opportunity, and Other settings. Each setting has a plain description and its current value; **Find a setting** searches all sections.
+- **Change and save:** changed settings are marked _Changed_ and a bar at the bottom counts them. **Save changes** saves them together (about 30 seconds) and the toast says when they are in effect; **Discard** throws them away. Values are checked first: numbers can't be negative, and active fit rule weights must still add up to 100.
+- **After a release:** deploying the packages puts the shipped values back for every setting and fit rule. The release scripts then run `scripts/post-deploy/reapply-settings.apex`, which saves again the last value you gave each setting here, so your changes survive. If you deploy packages by hand, click **Reapply my settings** in the health checks (the _Settings saved here_ check lists what a release put back).
+- **Reset by each release:** settings with this badge (`AI_Enabled`, `Org_Environment` and the feed switches, intervals, lookback and page size) are set by `env-config/<env>` on purpose and are not reapplied. Change them here for today, but make the lasting change in `env-config` too.
+- **Health checks** (right): e-mail delivery (Deliverability), bell notifications (NXP Match Alert), the SAM.gov key and feed (**Test the key** makes one SAM.gov call), scheduled jobs (**Reschedule all** reschedules the seven Nexus jobs as you), settings saved here (**Reapply my settings** after a release put shipped values back), SAM.gov file downloads (Remote Site Settings), the Company Profile (**Rescore notices** re-scores open notices, for example after you change fit weights) and AI (today's calls against the daily limit). Links open the right Setup page where Setup is needed.
+- **Recent changes:** who changed what, from what to what, and whether the save worked. A _Failed_ save shows the reason and nothing is changed. The history is kept in the **Setting Changes** object (`NXP_Setting_Change__c`).
+
+What you need: `NXP_Admin` and the **Customize Application** permission (saving deploys custom metadata, like editing it in Setup). Without Customize Application the save fails with a message saying so.
+
+Still in Setup: the SAM.gov API key (Named Credentials), permission sets and users, push mapping rows (`NXP_Push_Mapping__mdt`), prompt templates (Prompt Builder), Remote Site Settings, Deliverability and Custom Notifications. The health checks link to the last three.
+
 ## Scheduled jobs
 
-`scripts/post-deploy/schedule-jobs.apex` (run by `release` and `dev-setup`, or by hand as an `NXP_Admin` user) stops and reschedules all of them. They run as the user who scheduled them, so that user must keep `NXP_Admin` and stay active.
+`scripts/post-deploy/schedule-jobs.apex` (run by `release` and `dev-setup`, or by hand as an `NXP_Admin` user) stops and reschedules all of them; so does **Settings → Health checks → Reschedule all**. They run as the user who scheduled them, so that user must keep `NXP_Admin` and stay active.
 
 | Job (Setup → Scheduled Jobs) | When           | Does                                                                                      |
 | ---------------------------- | -------------- | ----------------------------------------------------------------------------------------- |
@@ -86,7 +102,7 @@ Matching and Real Time alerts don't need a schedule: they run as notices arrive.
 
 ## Feeds
 
-Feeds are `NXP_Feed_Config__mdt` records. Change them through `env-config/<env>` and deploy, so environments stay reproducible. In an emergency, Setup → Custom Metadata Types also works; retrieve the change afterwards.
+Feeds are `NXP_Feed_Config__mdt` records. Change them through `env-config/<env>` and deploy, so environments stay reproducible. For a quick change, **Settings → SAM.gov and feeds** turns a feed on or off and changes its interval, lookback and page size (the next release resets them to `env-config`); Setup → Custom Metadata Types has the other fields.
 
 | Field                                              | Meaning                                                                  |
 | -------------------------------------------------- | ------------------------------------------------------------------------ |
@@ -102,7 +118,7 @@ Feeds are `NXP_Feed_Config__mdt` records. Change them through `env-config/<env>`
 
 ## Fit rules
 
-`NXP_Fit_Rule__mdt`: active weights should sum to 100. Shipped weights are NAICS 30, Agency 20, Set-Aside 15, Keyword 20 (three keywords give full points) and Value Range 15. PSC and Vehicle ship off. The Vehicle rule gives full points when the notice is on a contract vehicle we hold (**We Hold** ticked on the vehicle, or its code in the profile's _Vehicles We Hold_); to use it, give it a weight and lower another rule so the total stays 100. After changes, run `rescore-notices.apex`.
+`NXP_Fit_Rule__mdt`: active weights should sum to 100. Shipped weights are NAICS 30, Agency 20, Set-Aside 15, Keyword 20 (three keywords give full points) and Value Range 15. PSC and Vehicle ship off. The Vehicle rule gives full points when the notice is on a contract vehicle we hold (**We Hold** ticked on the vehicle, or its code in the profile's _Vehicles We Hold_); to use it, give it a weight and lower another rule so the total stays 100. Change the weights on **Settings → Fit score rules** (the save refuses weights that don't add up to 100), then click **Rescore notices** in the health checks (or run `rescore-notices.apex`).
 
 ## Push mapping
 
@@ -168,12 +184,13 @@ AI is optional; everything works without it. With it: AI summaries of matched no
 
 1. Create the prompt templates in Prompt Builder from `packages/nxp-agents/reference/genAiPromptTemplates/` ([agent manual build](agent-manual-build.md) lists them) and activate them.
 2. Set `AI_Enabled = true`. For the Document Reader also set `Document_Analysis_Enabled = true`.
-3. Set `AI_Max_Calls_Per_Day` to fit your Einstein credits (default 500). When it's used up, summaries and document reading wait for the next day and the problems e-mail says so. Today's count: Setup → Custom Settings → **NXP AI Usage** → Manage.
+3. Set `AI_Max_Calls_Per_Day` to fit your Einstein credits (default 500); the **Settings → AI** section shows today's count. When it's used up, summaries and document reading wait for the next day and the problems e-mail says so. Today's count: Setup → Custom Settings → **NXP AI Usage** → Manage.
 4. The assistant is built by hand in Agentforce Builder: [agent manual build](agent-manual-build.md).
+5. **Find similar** (notice page) drafts its keywords with `NXP_Similar_Keywords` (setting `Similar_Keywords_Template`). Without it, or with AI off, Find similar uses words from the notice title instead.
 
 ## Settings (`NXP_Setting__mdt`)
 
-Change settings in Setup → Custom Metadata Types → **NXP Setting** → Manage Records → Edit. Changes made there are overwritten by the next deployment of `env-config`, so record lasting changes in `env-config/<env>` too.
+Change settings on the **Settings** tab ([The Settings tab](#the-settings-tab)), or in Setup → Custom Metadata Types → **NXP Setting** → Manage Records → Edit. Every package deployment puts the shipped values back; values saved on the Settings tab are reapplied by the release scripts, but edits made in Setup are not, so prefer the Settings tab. `AI_Enabled` and `Org_Environment` come from `env-config/<env>`: record lasting changes to those there.
 
 | Key                                                        | Default                       | Purpose                                                                                                                                                                                                            |
 | ---------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -199,6 +216,7 @@ Change settings in Setup → Custom Metadata Types → **NXP Setting** → Manag
 | `Admin_Digest_Mode` / `Admin_Digest_Recipients`            | Problems / (blank)            | Daily problems e-mail at 07:00: Problems (only when something failed), Daily (always) or Off; blank recipients = active NXP_Admin users                                                                            |
 | `Files_Auto_Download` / `Files_Min_Fit`                    | true / 70                     | Download SAM.gov attachments automatically for matched notices and this fit or higher                                                                                                                              |
 | `Files_Max_Per_Notice` / `Files_Max_MB`                    | 10 / 6                        | Most files per notice; largest file in MB (keep at 8 or less)                                                                                                                                                      |
+| `Similar_Keywords_Template`                                | NXP_Similar_Keywords          | Prompt template Find similar uses to suggest keywords (needs `AI_Enabled`; counts toward the daily limit)                                                                                                          |
 | `Ebuy_Silence_Days`                                        | 3                             | The problems e-mail warns when no eBuy e-mail has arrived for this many days (0 = off)                                                                                                                             |
 | `Bypass_NXP_GovNoticeTriggerHandler`                       | (none)                        | Emergency trigger switch (set Value to true)                                                                                                                                                                       |
 
@@ -228,4 +246,7 @@ Change settings in Setup → Custom Metadata Types → **NXP Setting** → Manag
 | No AI summaries                                            | `AI_Enabled`, active prompt templates, the notice matched a search, Notice Analyst jobs scheduled, daily AI limit not reached                                  |
 | eBuy e-mail _Rejected_                                     | Sender not in `Ebuy_Allowed_Senders` (forwarding changes the sender: use redirect)                                                                             |
 | Push _Failed_                                              | The Push Log error: usually a required Opportunity field missing from the push mapping                                                                         |
+| Settings tab: _Failed_ save mentioning permissions         | The admin needs **Customize Application** (profile or a permission set)                                                                                        |
+| Settings tab: a value went back after a release            | **Reapply my settings** (health checks). If it's marked _Reset by each release_, change it in `env-config/<env>` too                                           |
+| Find similar has keywords from the title only              | AI is off, the daily AI limit is used up, or the `NXP_Similar_Keywords` prompt template isn't active                                                           |
 | Settings edit page shows only Label and Name               | The NXP custom metadata page layouts aren't deployed: deploy `packages/nxp-core`                                                                               |

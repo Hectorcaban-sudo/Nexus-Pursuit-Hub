@@ -57,6 +57,8 @@ A **saved search** describes what you want: keywords, buyer, NAICS, PSC, set-asi
 - **When you save a search**, Nexus also checks it against the open notices already loaded, so what the live preview showed appears in your inbox within a minute. These existing notices don't send alerts.
 - If only the description could decide a match (it's still a link), Nexus fetches the description and checks again; the match can arrive up to an hour after the notice.
 
+**Find similar** (on a notice) starts a search from that notice: it offers the notice's buyer, NAICS, PSC, set-aside and early notice types as choices, each with a narrower and a wider option, and suggests keywords. With AI on, the keywords come from the `NXP_Similar_Keywords` prompt template (one AI call, checked as a valid keyword expression before it's used); otherwise from the notice title. The result is an ordinary saved search.
+
 Searches can be **Private** (default), shared with a **Team**, or an **Org Template** that everyone can copy with **Use template** (Power Users). Templates never alert by themselves.
 
 ## 4. Alerts and notifications
@@ -116,7 +118,11 @@ When you decide to pursue, **Push to Opportunity** shows exactly which values wi
 
 The **Nexus Pursuit Assistant** (Agentforce panel) answers questions from Nexus data: drafts and saves searches, explains a fit score, says what changed or what the documents require, finds the incumbent and recompetes, previews and pushes notices. It always shows a preview and waits for **yes** before it saves or pushes anything.
 
-## 9. What runs on its own
+## 9. Settings
+
+Admins change Nexus settings on the **Settings** tab rather than in Setup: alert, feed, search, AI, file, eBuy, fit rule and push settings, each with a description. Saving deploys the custom metadata (about 30 seconds) and records who changed what in **Setting Changes**. Deploying a release puts shipped values back; the release scripts then reapply what admins saved there, except the values `env-config` sets on purpose (AI on or off, feed switches). The tab's health checks show whether e-mail, the bell, the SAM.gov key, the jobs, file downloads, the Company Profile and AI are working.
+
+## 10. What runs on its own
 
 | Job                | When                   | Does                                                                          |
 | ------------------ | ---------------------- | ----------------------------------------------------------------------------- |
@@ -128,7 +134,7 @@ The **Nexus Pursuit Assistant** (Agentforce panel) answers questions from Nexus 
 | NXP Weekly Digest  | 06:30 Mondays          | Weekly e-mail digests                                                         |
 | NXP Admin Digest   | 07:00 daily            | Problems e-mail to admins                                                     |
 
-## 10. Limits to know
+## 11. Limits to know
 
 - **SAM.gov key**: each call counts against the key's daily limit. Personal keys expire every 90 days; production should use a System Account key. When the limit is reached, feeds and downloads wait until the key resets.
 - **AI**: at most `AI_Max_Calls_Per_Day` (500) AI calls a day. After that, summaries and document reading wait for the next day.

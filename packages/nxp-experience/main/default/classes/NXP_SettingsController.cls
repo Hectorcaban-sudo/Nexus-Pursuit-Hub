@@ -605,6 +605,55 @@ public with sharing class NXP_SettingsController {
         return jobId;
     }
 
+    /**
+     * Deploying the packages puts the shipped values back. Saves again the last value saved on
+     * this screen for every setting a release changed (not those env-config sets on purpose).
+     * Returns the deployment Id, or null when nothing needs reapplying.
+     */
+    @AuraEnabled
+    public static String reapplySettings() {
+        requireAdmin();
+        List<Change> changes = releaseDrift();
+        return changes.isEmpty() ? null : saveSettings(changes);
+    }
+
+    /** Settings whose current value differs from the last value saved here. */
+    @TestVisible
+    private static List<Change> releaseDrift() {
+        Map<String, Item> current = new Map<String, Item>();
+        for (Section s : getSettings().sections) {
+            for (Item i : s.items) {
+                current.put(i.id, i);
+            }
+        }
+        Map<String, String> lastSaved = new Map<String, String>();
+        for (NXP_Setting_Change__c c : [
+            SELECT Setting__c, New_Value__c
+            FROM NXP_Setting_Change__c
+            WHERE Status__c = 'Saved'
+            WITH USER_MODE
+            ORDER BY CreatedDate DESC, Name DESC
+            LIMIT 2000
+        ]) {
+            if (!lastSaved.containsKey(c.Setting__c)) {
+                lastSaved.put(c.Setting__c, c.New_Value__c);
+            }
+        }
+        List<Change> out = new List<Change>();
+        for (String id : lastSaved.keySet()) {
+            Item i = current.get(id);
+            String want = lastSaved.get(id) == null ? '' : lastSaved.get(id);
+            String have = i == null || i.value == null ? '' : i.value;
+            if (i != null && !i.releaseManaged && want != have) {
+                Change c = new Change();
+                c.id = id;
+                c.value = want;
+                out.add(c);
+            }
+        }
+        return out;
+    }
+
     /** Pending, Saved or Failed (with the reason) for one deployment. */
     @AuraEnabled
     public static Map<String, String> getSaveStatus(String deployId) {
@@ -849,6 +898,27 @@ public with sharing class NXP_SettingsController {
         jobs.action = 'reschedule';
         jobs.actionLabel = 'Reschedule all';
         out.add(jobs);
+
+        Check saved = check('saved', 'Settings saved here');
+        List<Change> drift = releaseDrift();
+        if (drift.isEmpty()) {
+            ok(saved, 'Everything saved on this screen is in effect.');
+        } else {
+            List<String> names = new List<String>();
+            for (Change c : drift) {
+                names.add(c.id.substringAfter('.'));
+            }
+            warn(
+                saved,
+                drift.size() +
+                    ' setting(s) were put back to the shipped value by a release: ' +
+                    String.join(names, ', ') +
+                    '.'
+            );
+            saved.action = 'reapply';
+            saved.actionLabel = 'Reapply my settings';
+        }
+        out.add(saved);
 
         Check files = check('files', 'SAM.gov file downloads');
         Integer failed = [

@@ -45,6 +45,7 @@ echo "==> env-config/$ENV"
 
 echo "==> Post-deploy"
 sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org "$ORG"
+sf apex run --file scripts/post-deploy/reapply-settings.apex --target-org "$ORG"
 
 cat <<MSG
 Release finished. Complete docs/deployment/post-deployment-checklist.md:

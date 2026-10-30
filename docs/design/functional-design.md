@@ -2,13 +2,13 @@
 
 ## Users
 
-| Persona                  | Uses Nexus Pursuit Hub to                                                                                        |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| BD / opportunity analyst | Build searches, triage the Match Inbox, push good notices to Opportunity                                         |
-| Capture manager          | Follow notices, see amendments flow into pushed Opportunity records                                              |
-| BD lead (Power User)     | Share team searches, turn on auto-push, bulk push                                                                |
-| Admin                    | Configure feeds, credentials, fit rules, push mapping, eBuy inbox, AI; watch the Feed Console and Inbound Emails |
-| Integration (system)     | Push notices in through the REST API; owns eBuy e-mail records                                                   |
+| Persona                  | Uses Nexus Pursuit Hub to                                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| BD / opportunity analyst | Build searches, triage the Match Inbox, push good notices to Opportunity                                                                      |
+| Capture manager          | Follow notices, see amendments flow into pushed Opportunity records                                                                           |
+| BD lead (Power User)     | Share team searches, turn on auto-push, bulk push                                                                                             |
+| Admin                    | Configure feeds, credentials, fit rules, push mapping, eBuy inbox, AI (mostly on the Settings tab); watch the Feed Console and Inbound Emails |
+| Integration (system)     | Push notices in through the REST API; owns eBuy e-mail records                                                                                |
 
 ## User stories
 
@@ -47,6 +47,8 @@
 | 31  | BD user         | be warned when a solicitation document disagrees with the notice, and record that it was checked                                                | Document checks                      |
 | 32  | Admin           | get one e-mail a day only when something failed (eBuy, feeds, pushes, documents, AI limit)                                                      | Admin problems e-mail                |
 | 33  | Admin           | cap AI calls per day                                                                                                                            | `AI_Max_Calls_Per_Day`               |
+| 34  | BD user         | start a saved search from a notice I like, with AI-suggested keywords, and see what it would find before saving                                 | Find similar                         |
+| 35  | Admin           | change every Nexus setting in one screen, see whether e-mail, jobs, the SAM.gov key and AI work, and keep my changes across releases            | Settings tab                         |
 
 ## GovWin IQ coverage
 

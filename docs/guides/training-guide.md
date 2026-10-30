@@ -11,8 +11,8 @@ A ready-to-run plan for training BD users and admins on Nexus Pursuit Hub, with 
 1. Deploy the current release and load sample data: `.\scripts\load-sample-data.ps1 -Org <alias> -Reset` (creates sample notices, vehicles, forecasts, awards, an eBuy e-mail, searches and the four search templates).
 2. Setup → Deliverability → **All email**, so trainees receive alert e-mails.
 3. Setup → Custom Notifications → **NXP Match Alert** → Desktop and Mobile on.
-4. Create a training user per trainee (or reuse sandbox users) with the **Nexus Pursuit Hub** app and `NXP_User`; add `NXP_Power_User` for leads and `NXP_Admin` for admins. Check each user's e-mail address.
-5. Run `scripts/apex/smoke-test.apex`; everything should be PASS or WARN.
+4. Create a training user per trainee (or reuse sandbox users) with the **Nexus Pursuit Hub** app and `NXP_User`; add `NXP_Power_User` for leads and `NXP_Admin` (plus **Customize Application**, to save on the Settings tab) for admins. Check each user's e-mail address.
+5. Run `scripts/apex/smoke-test.apex`; everything should be PASS or WARN. Open **Settings**: the health checks should be green or amber, not red.
 6. If SAM.gov is connected in the sandbox, run the SAM.gov feed once (**Feed Console → Run now**) so there are real notices too.
 
 **For trainees:** ask them to bring two or three real examples of opportunities they'd want to hear about ("CRM work for Army recruiting", "DHS zero trust under $10M").
@@ -41,6 +41,8 @@ Key message: _"Your job is to keep your searches good and work your inbox daily.
 3. Show the **Live preview** changing as you add and remove filters.
 4. Explain **Alerts**: Daily (one 06:30 e-mail), Weekly, Real Time (e-mail and/or bell within minutes), None.
 
+5. **Find similar**: open a notice a trainee likes, click **Find similar**, switch the buyer from sub-agency to department and watch the count change. Point out the keyword note (AI or title words).
+
 **Exercise 1** (each trainee):
 
 | Step                                                                  | Expected result                                                                        |
@@ -48,6 +50,7 @@ Key message: _"Your job is to keep your searches good and work your inbox daily.
 | Copy a template and save it as your own                               | It appears in _My searches_ on the left                                                |
 | Build a search for one of your own examples, Daily alerts             | Preview shows a count; after saving, matches appear in the Match Inbox within a minute |
 | Set one narrow search to **Real Time**, Email and Salesforce channels | Saved; it alerts as new matches arrive                                                 |
+| Open a notice you'd bid on, **Find similar**, save it Daily           | The preview count fits; the search appears in _My searches_                            |
 
 ### Part 3 — Work the Match Inbox (20 min)
 
@@ -120,28 +123,31 @@ For BD leads (`NXP_Power_User`).
 
 For Nexus admins (`NXP_Admin`). Follow the [admin guide](admin-guide.md); demo each part in the sandbox.
 
-| Time   | Topic                          | Show                                                                                                                                         |
-| ------ | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| 15 min | How it works                   | [How Nexus works](how-it-works.md): sources, matching, alerts, jobs                                                                          |
-| 15 min | Users and permissions          | [Adding users](admin-guide.md#adding-users); the four permission sets                                                                        |
-| 20 min | Feeds                          | Feed Console, **Run now**, Errors, turning a feed on (NXP Feed Config → Active); the SAM.gov key and its limits                              |
-| 15 min | Notifications                  | Deliverability, NXP Match Alert, org-wide address, the problems e-mail                                                                       |
-| 15 min | Company Profile and fit rules  | Change a NAICS, run `rescore-notices.apex`, see scores change                                                                                |
-| 15 min | eBuy inbox                     | **Inbound Emails**: an _Ingested_ and a _Needs Review_ e-mail; **Reprocess** with an RFQ number                                              |
-| 10 min | Documents and SAM.gov files    | Get SAM.gov files, Document Reader settings, Remote Site Settings                                                                            |
-| 10 min | AI                             | Prompt templates, `AI_Enabled`, `AI_Max_Calls_Per_Day`, NXP AI Usage                                                                         |
-| 15 min | Monitoring and troubleshooting | Problems e-mail (run it with `Admin_Digest_Mode = Daily`), Operations dashboard, NXP Logs, [troubleshooting](admin-guide.md#troubleshooting) |
+| Time   | Topic                          | Show                                                                                                                                                                   |
+| ------ | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 10 min | How it works                   | [How Nexus works](how-it-works.md): sources, matching, alerts, jobs                                                                                                    |
+| 15 min | The Settings tab               | Sections and search, a change and **Save changes**, Recent changes, the health checks and their buttons, _Reset by each release_                                       |
+| 15 min | Users and permissions          | [Adding users](admin-guide.md#adding-users); the four permission sets                                                                                                  |
+| 15 min | Feeds                          | Feed Console, **Run now**, Errors, turning a feed on (NXP Feed Config → Active); the SAM.gov key and its limits                                                        |
+| 10 min | Notifications                  | Deliverability, NXP Match Alert, org-wide address, the problems e-mail                                                                                                 |
+| 15 min | Company Profile and fit rules  | Change a NAICS, run `rescore-notices.apex`, see scores change                                                                                                          |
+| 15 min | eBuy inbox                     | **Inbound Emails**: an _Ingested_ and a _Needs Review_ e-mail; **Reprocess** with an RFQ number                                                                        |
+| 10 min | Documents and SAM.gov files    | Get SAM.gov files, Document Reader settings, Remote Site Settings                                                                                                      |
+| 10 min | AI                             | Prompt templates, `AI_Enabled`, `AI_Max_Calls_Per_Day`, NXP AI Usage                                                                                                   |
+| 15 min | Monitoring and troubleshooting | Settings → Health checks, problems e-mail (run it with `Admin_Digest_Mode = Daily`), Operations dashboard, NXP Logs, [troubleshooting](admin-guide.md#troubleshooting) |
 
 **Exercises:**
 
-| Step                                                                                  | Expected result                                         |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Assign `NXP_User` to a new user and log in as them                                    | They see the app and can save a search                  |
-| Feed Console → **Run now** on SAM.gov Opportunities                                   | A new run, _Succeeded_                                  |
-| Set `Admin_Digest_Mode = Daily`; run `NXP_AdminDigestJob.run();` in Execute Anonymous | The problems e-mail arrives (set it back to _Problems_) |
-| Reprocess the sample eBuy e-mail                                                      | Status _Ingested_, notice `EBUY:RFQ9990001` updated     |
-| Change `Description_Min_Fit` to 40                                                    | More notices get description text after the next run    |
-| Create an Org Template                                                                | Users see it under _Start from a template_              |
+| Step                                                                          | Expected result                                         |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Assign `NXP_User` to a new user and log in as them                            | They see the app and can save a search                  |
+| Feed Console → **Run now** on SAM.gov Opportunities                           | A new run, _Succeeded_                                  |
+| **Settings → Alerts and e-mail**: Problems e-mail = _Daily_, **Save changes** | _Saved_ under Recent changes                            |
+| Run `NXP_AdminDigestJob.run();` in Execute Anonymous                          | The problems e-mail arrives (set it back to _Problems_) |
+| **Settings → Health checks**: click **Test the key**                          | "The SAM.gov key works"                                 |
+| Reprocess the sample eBuy e-mail                                              | Status _Ingested_, notice `EBUY:RFQ9990001` updated     |
+| **Settings → Descriptions and files**: `Description_Min_Fit` 40               | More notices get description text after the next run    |
+| Create an Org Template                                                        | Users see it under _Start from a template_              |
 
 ## Handout: one-page summary
 
@@ -150,6 +156,7 @@ For Nexus admins (`NXP_Admin`). Follow the [admin guide](admin-guide.md); demo e
 | I want to…                            | Where                                                 |
 | ------------------------------------- | ----------------------------------------------------- |
 | Hear about a kind of opportunity      | **My Searches** → template or **+** → Save search     |
+| Search for more like a notice         | Notice → **Find similar**                             |
 | Hear about one notice changing        | **Follow** (notice) or **Watch** (inbox card)         |
 | Hear about an agency's new notices    | Agency profile → **Watch this agency**                |
 | Hear when a forecast is released      | **Forecasts** → **Watch**                             |

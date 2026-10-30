@@ -81,6 +81,7 @@ finally {
 
 Write-Step 'Post-deploy'
 Invoke-ApexFile 'scripts/post-deploy/schedule-jobs.apex' $Org
+Invoke-ApexFile 'scripts/post-deploy/reapply-settings.apex' $Org
 
 Write-Host ''
 Write-Host 'Release finished. Complete docs/deployment/post-deployment-checklist.md:' -ForegroundColor Green

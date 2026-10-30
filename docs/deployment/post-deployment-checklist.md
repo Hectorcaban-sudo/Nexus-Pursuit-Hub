@@ -7,6 +7,8 @@ Copy into the release ticket and tick each item.
 - [ ] Deployment succeeded; job ID and manifest attached to the ticket
 - [ ] `env-config/<env>` deployed
 - [ ] `schedule-jobs.apex` ran; Setup → Scheduled Jobs shows _NXP Feed Scheduler_, _NXP Daily Digest_, _NXP Weekly Digest_, _NXP Notice Analyst :15_, _NXP Notice Analyst :45_, _NXP Push Retry_, _NXP Admin Digest_
+- [ ] `reapply-settings.apex` ran; **Settings → Health checks** shows _Settings saved here_ green (if not, **Reapply my settings**)
+- [ ] **Settings → Health checks**: e-mail delivery, bell notifications, SAM.gov key, scheduled jobs green
 - [ ] Platform event subscribers running (Setup → Platform Events → NXP Gov Notice Changed → Subscriptions)
 - [ ] Feed Console: _Run now_ on SAM_Opportunities → run Succeeded, records read > 0
 - [ ] Smoke test: open a new notice → summary card renders; follow / unfollow works
@@ -14,6 +16,7 @@ Copy into the release ticket and tick each item.
 - [ ] Smoke test: on a matched SAM.gov notice, the description is text (not **Load description**) and the Documents card lists the SAM.gov files
 - [ ] Smoke test: a Real Time search with the Email channel delivers an e-mail; a followed notice's change shows in the bell
 - [ ] Smoke test (UAT/prod): push one sample notice to Opportunity → record created, Push Log Success; delete the test record afterwards
+- [ ] Smoke test: on a notice, **Find similar** opens with buyer, NAICS and notice type choices and a match count; **Save search** creates the search
 - [ ] Smoke test: Forecasts, Recompetes, Vehicle Portfolio and a vendor and agency page load with data
 - [ ] Smoke test (if eBuy is set up): send a test eBuy e-mail → **Inbound Emails** shows it _Ingested_ and the notice exists
 - [ ] Smoke test (if the Document Reader is on): attach a PDF to a notice → Documents card shows _Read_ within a few minutes
@@ -25,6 +28,7 @@ Copy into the release ticket and tick each item.
 
 - [ ] Setup → Deployment Settings: _Allow deployments of components when corresponding Apex jobs are pending or in progress_ on
 - [ ] Permission sets assigned: NXP_User, NXP_Power_User, NXP_Admin, NXP_Integration
+- [ ] Nexus admins have **Customize Application** (to save on the Settings tab); one test save succeeded and shows _Saved_ under Recent changes
 - [ ] SAM.gov `ApiKey` set on the NXP SAM.gov principal (System Account key in production) and _Run now_ on SAM_Opportunities succeeds ([steps](deployment-guide.md#samgov-api-key))
 - [ ] Personal key only: reminder set to replace it before it expires (90 days)
 - [ ] Forecast Named Credential URL and `FC_*` mappings set
@@ -43,7 +47,7 @@ Copy into the release ticket and tick each item.
 - [ ] Org-wide e-mail address set in `Alert_OrgWide_Email_Id` (optional)
 - [ ] REST integration user, External Client App and NXP_Integration set up (if used)
 - [ ] Data Cloud `NXP_Awards` connector and data stream created (if used)
-- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used); `NXP_Document_Analysis` with a File input and `Document_Analysis_Enabled` (if the Document Reader is used); ATO covers sending solicitation documents and eBuy RFQs to the model
+- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used); `NXP_Similar_Keywords` (for Find similar, optional); `NXP_Document_Analysis` with a File input and `Document_Analysis_Enabled` (if the Document Reader is used); ATO covers sending solicitation documents and eBuy RFQs to the model
 - [ ] Nexus Pursuit Assistant built or deployed, tested with `tests/agents/assistant.yaml` (≥ 90%), activated, access assigned
 
 ## GovWin cut-over

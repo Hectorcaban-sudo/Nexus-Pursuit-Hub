@@ -12,9 +12,10 @@ Agent Script is not available in Government Cloud, so the agent is configured by
     - `NXP_Amendment_Impact`: input _Version_, an `NXP_Notice_Version__c` record.
     - `NXP_Search_Criteria_Draft`: input _Request_, text.
     - `NXP_Document_Analysis` (Document Reader): input _Notice_, an `NXP_Gov_Notice__c` record, plus a **File** input _Document_ added in Prompt Builder (see the [admin guide](admin-guide.md#document-reader)).
+    - `NXP_Similar_Keywords` (optional, **Find similar** keywords): input _Notice_, an `NXP_Gov_Notice__c` record. It returns one keyword expression; without it Find similar uses title words.
     - `NXP_Ebuy_RFQ_Extract` (optional, eBuy e-mail): input _Email_, an `NXP_Inbound_Email__c` record; add a File input _Attachment_ only if you turn on `Ebuy_AI_Read_Attachments`.
 
-    Activate them, then set `NXP_Setting.AI_Enabled = true`.
+    Activate them, then set `NXP_Setting.AI_Enabled = true` (in `env-config/<env>`, or for today on the **Settings** tab → AI).
 
 ## Step by step
 

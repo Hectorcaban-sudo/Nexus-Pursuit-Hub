@@ -7,6 +7,7 @@ import getSaveStatus from '@salesforce/apex/NXP_SettingsController.getSaveStatus
 import testSamKey from '@salesforce/apex/NXP_SettingsController.testSamKey';
 import rescheduleJobs from '@salesforce/apex/NXP_SettingsController.rescheduleJobs';
 import rescoreNotices from '@salesforce/apex/NXP_SettingsController.rescoreNotices';
+import reapplySettings from '@salesforce/apex/NXP_SettingsController.reapplySettings';
 import { formatDate, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const POLL_MS = 3000;
@@ -245,6 +246,24 @@ export default class NxpAdminSettings extends NavigationMixin(LightningElement) 
         }
     }
 
+    async reapply() {
+        this.saving = true;
+        this.savingNote = 'Reapplying your settings…';
+        try {
+            const jobId = await reapplySettings();
+            const result = jobId ? await this.waitFor(jobId) : { status: 'Saved' };
+            if (result.status === 'Failed') {
+                toast(this, 'Settings not reapplied', result.detail || 'The deployment failed.', 'error');
+            } else {
+                toast(this, 'Settings reapplied', 'The values you saved here are back in effect.');
+            }
+            await this.load();
+        } finally {
+            this.saving = false;
+            this.savingNote = '';
+        }
+    }
+
     async waitFor(jobId) {
         if (jobId === 'test') {
             return { status: 'Saved' };
@@ -272,6 +291,9 @@ export default class NxpAdminSettings extends NavigationMixin(LightningElement) 
             } else if (action === 'rescore') {
                 await rescoreNotices();
                 toast(this, 'Rescoring', 'Open notices are being re-scored in the background.');
+            } else if (action === 'reapply') {
+                await this.reapply();
+                return;
             } else if (action && action.startsWith('/')) {
                 this[NavigationMixin.Navigate]({ type: 'standard__webPage', attributes: { url: action } });
                 return;

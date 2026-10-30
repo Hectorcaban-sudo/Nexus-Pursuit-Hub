@@ -28,6 +28,17 @@ Nexus Pursuit Hub finds government opportunities for you, tells you about the on
 
 **Example**: "Alert me when a CRM solution is needed for the Army recruiting office" works well as keywords `(CRM OR "customer relationship management" OR Salesforce) AND recruit*`, buyer `Army`, notice types Sources Sought, RFI, Pre-solicitation and Solicitation, Real Time alerts. Leave NAICS empty: CRM work is posted under several codes.
 
+### Start from a notice: Find similar
+
+Found a notice that's exactly the kind of work you want? Open it and click **Find similar**:
+
+1. Nexus fills in a search from the notice: its **buyer** (the sub-agency, or the wider department), **NAICS** (the exact code, or its family such as `5415*`), **PSC**, **set-aside** and **notice types** (early signals such as Sources Sought and Pre-solicitation are ticked). Pick a narrower or wider choice for each, or **Any**.
+2. **Keywords** are suggested: by AI when it's on (the note under the box says so), otherwise from words in the title. Edit them like any keywords.
+3. The preview shows how many open notices match, about how many a week, and the most similar ones. Widen or narrow until the count feels right.
+4. Name it, choose **Alerts** (Daily by default) and click **Save search**; or click **Edit in My Searches** to finish it with every filter.
+
+The saved search is private and works like any other: matches appear in your Match Inbox within a minute.
+
 **Descriptions**: SAM.gov sends the description separately. When only the description can decide a match, Nexus fetches it and checks again, so that notice can arrive up to an hour after it was posted.
 
 To change a search, click it in the list on the left, edit, and **Save search**. To stop it, untick **Active**, or delete it with the bin icon (its matches go too).
@@ -59,7 +70,7 @@ Cards stay in the inbox for 30 days, or until you dismiss or push them.
 
 Click a notice title. The page shows:
 
-- **Header**: days to respond, fit score with its top reasons (**All rules** jumps to the full breakdown), due date, value, set-aside, NAICS/PSC and sources. Buttons: **Push to Opportunity** (or **Open Opportunity record** once pushed), **Follow**, **Open on SAM.gov**.
+- **Header**: days to respond, fit score with its top reasons (**All rules** jumps to the full breakdown), due date, value, set-aside, NAICS/PSC and sources. Buttons: **Push to Opportunity** (or **Open Opportunity record** once pushed), **Follow**, **Find similar** ([Start from a notice](#start-from-a-notice-find-similar)), **Open on SAM.gov**.
 - **Summary**: the AI summary (a draft: check it against the solicitation). It's written for notices that match a saved search, within about 30 minutes.
 - **Full description**: click to expand. If it only shows a **Load description** button, SAM.gov sent a link; click it to fetch the text (descriptions of matched and high-fit notices are fetched automatically).
 - **Fit breakdown**, **Version history** (every amendment and what changed), **Contacts** and **Push history**.
@@ -172,6 +183,7 @@ BD leads with the Power User permission can also:
 - **Does a push overwrite the Opportunity?** No. Only the fields your admin set to update (usually the due date) change. Stage, pWin and other capture fields are never touched.
 - **Is the AI summary reliable?** It's a draft. Always confirm against the solicitation documents.
 - **Why is there no summary?** Summaries are written only for notices that match a saved search, when AI is turned on, and there's a daily AI limit.
+- **Find similar found too many (or too few) notices.** Pick the narrower choices (sub-agency, exact NAICS), add a keyword, or untick notice types. Too few: choose **Any** for PSC or set-aside, or the NAICS family.
 - **Where are the SAM.gov attachments?** On the Documents card. If they're not there, click **Get SAM.gov files**. Files over 6 MB open from SAM.gov.
 
 ## Quick reference
@@ -179,6 +191,7 @@ BD leads with the Power User permission can also:
 | I want to…                                  | Do this                                                    |
 | ------------------------------------------- | ---------------------------------------------------------- |
 | Be alerted about a kind of opportunity      | My Searches → template or **+** → Save search              |
+| Be alerted about notices like this one      | Notice page → **Find similar** → Save search               |
 | Be alerted about one notice                 | **Follow** on the notice, or **Watch** on its card         |
 | Hear about everything an agency posts       | Agency profile → **Watch this agency**                     |
 | Know when a forecast becomes a solicitation | Forecasts → **Watch**                                      |

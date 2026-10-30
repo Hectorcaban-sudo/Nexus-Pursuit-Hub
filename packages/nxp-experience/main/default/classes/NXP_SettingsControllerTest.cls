@@ -120,7 +120,9 @@ private class NXP_SettingsControllerTest {
             keys.add(c.key);
             System.assert(new Set<String>{ 'ok', 'warn', 'fail' }.contains(c.status), c.key + ' ' + c.status);
         }
-        System.assert(keys.containsAll(new Set<String>{ 'mail', 'bell', 'sam', 'jobs', 'files', 'profile', 'ai' }));
+        System.assert(
+            keys.containsAll(new Set<String>{ 'mail', 'bell', 'sam', 'jobs', 'saved', 'files', 'profile', 'ai' })
+        );
 
         Test.startTest();
         Integer jobs = NXP_SettingsController.rescheduleJobs();
@@ -128,6 +130,33 @@ private class NXP_SettingsControllerTest {
         Test.stopTest();
         System.assertEquals(NXP_SettingsController.EXPECTED_JOBS.size(), jobs);
         System.assertNotEquals(null, batchId);
+    }
+
+    @IsTest
+    static void reappliesSettingsAReleasePutBack() {
+        makeAdmin();
+        System.assertEquals(null, NXP_SettingsController.reapplySettings(), 'Nothing saved yet');
+        String current = NXP_Setting__mdt.getInstance('Inbox_Days') == null
+            ? '30'
+            : NXP_Setting__mdt.getInstance('Inbox_Days').Value__c;
+        // Saved here earlier; a release has since put the shipped value back.
+        insert new List<NXP_Setting_Change__c>{
+            new NXP_Setting_Change__c(
+                Setting__c = 'NXP_Setting.Inbox_Days',
+                New_Value__c = current == '45' ? '46' : '45',
+                Status__c = 'Saved'
+            ),
+            new NXP_Setting_Change__c(
+                Setting__c = 'NXP_Setting.AI_Enabled',
+                New_Value__c = 'maybe',
+                Status__c = 'Saved'
+            )
+        };
+        List<NXP_SettingsController.Change> drift = NXP_SettingsController.releaseDrift();
+        System.assertEquals(1, drift.size(), 'env-config settings are left alone');
+        System.assertEquals('NXP_Setting.Inbox_Days', drift[0].id);
+        System.assertEquals('test', NXP_SettingsController.reapplySettings());
+        System.assertEquals(1, [SELECT COUNT() FROM NXP_Setting_Change__c WHERE Status__c = 'Pending']);
     }
 
     @IsTest

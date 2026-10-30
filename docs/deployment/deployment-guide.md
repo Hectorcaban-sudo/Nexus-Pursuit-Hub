@@ -106,12 +106,12 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
 1. **Deploy:** `scripts/release.sh <env> <alias>` or `.\scripts\release.ps1 -Environment <env> -Org <alias>`. This deploys the packages and `env-config/<env>` and schedules the jobs.
 2. **Permission sets:** assign them to people.
 
-    | Permission set    | Who                                                                                               |
-    | ----------------- | ------------------------------------------------------------------------------------------------- |
-    | `NXP_User`        | Every BD user                                                                                     |
-    | `NXP_Power_User`  | Capture leads (bulk push, auto-push, team searches); add to `NXP_User`                            |
-    | `NXP_Admin`       | Nexus administrators (Feed Console run now, Inbound Emails, vehicles held, settings, all records) |
-    | `NXP_Integration` | The REST integration user, also the context user of the eBuy e-mail service                       |
+    | Permission set    | Who                                                                                                   |
+    | ----------------- | ----------------------------------------------------------------------------------------------------- |
+    | `NXP_User`        | Every BD user                                                                                         |
+    | `NXP_Power_User`  | Capture leads (bulk push, auto-push, team searches); add to `NXP_User`                                |
+    | `NXP_Admin`       | Nexus administrators (Feed Console run now, Inbound Emails, Settings tab, vehicles held, all records) |
+    | `NXP_Integration` | The REST integration user, also the context user of the eBuy e-mail service                           |
 
     ```bash
     sf org assign permset --name NXP_User --name NXP_Admin --target-org nxp-uat --on-behalf-of admin@example.gov
@@ -127,14 +127,15 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - REST integration user and External Client App ([REST API](../integration/rest-ingestion-api.md));
     - GSA eBuy e-mail: create the `NXP_Ebuy_Inbox` e-mail address, route eBuy mail to it and set `Ebuy_Allowed_Senders` ([admin guide](../guides/admin-guide.md#gsa-ebuy-e-mail));
     - Data Cloud connector ([Data Cloud ingestion](../integration/data-cloud-ingestion.md));
-    - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
+    - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Similar_Keywords` (Find similar), `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
     - the assistant ([agent manual build](../guides/agent-manual-build.md)).
 10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
 11. **Search templates:** as an `NXP_Admin` user, run `sf apex run --file scripts/apex/seed-search-templates.apex --target-org <alias>` to create the four starter templates under _Start from a template_ on My Searches (safe to run again; edit or delete them like any search).
 12. **E-mail:** Setup → Deliverability → _All email_ (a new sandbox is _System email only_, so no alert, digest or admin e-mail is sent). Optionally set an org-wide From address in `Alert_OrgWide_Email_Id`, and turn on Desktop and Mobile delivery for the _NXP Match Alert_ custom notification ([admin guide](../guides/admin-guide.md#e-mail-and-notifications)).
 13. **SAM.gov attachments:** the `NXP_SAM_Files` Named Credential uses the same SAM.gov key, so nothing to enter. After the first SAM.gov run, click **Get SAM.gov files** on one notice and check its Documents card; if it reports an unauthorized endpoint, add a Remote Site Setting for the host it names ([admin guide](../guides/admin-guide.md#samgov-attachments)).
 14. **Admin e-mail:** the daily problems e-mail goes to every active `NXP_Admin` user at 07:00. Set `Admin_Digest_Recipients` to send it elsewhere, or `Admin_Digest_Mode = Off`.
-15. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
+15. **Settings tab:** give Nexus admins **Customize Application** (needed to save there), open **Settings** in the app and fix anything red or amber in _Health checks_. From now on, change Nexus settings there rather than in Setup → Custom Metadata Types ([admin guide](../guides/admin-guide.md#the-settings-tab)).
+16. **Check:** [Test after a deployment](#test-after-a-deployment), then the [post-deployment checklist](post-deployment-checklist.md) (_First release in an org_ section).
 
 ## SAM.gov API key
 
@@ -217,6 +218,7 @@ The release script:
 4. **Logs the deployment** in `manifest/deployments.log`.
 5. **Deploys `env-config/<env>`**: feed switches, `Org_Environment`, `AI_Enabled`.
 6. **Schedules the jobs** (`scripts/post-deploy/schedule-jobs.apex`; existing NXP jobs are replaced).
+7. **Reapplies Settings tab values** (`scripts/post-deploy/reapply-settings.apex`): the package deployment put the shipped setting and fit rule values back; this saves again what admins set on the Settings tab (not the env-config ones).
 
 Then [test](#test-after-a-deployment) and complete the [post-deployment checklist](post-deployment-checklist.md).
 
@@ -230,7 +232,9 @@ An org that already runs Nexus needs these once, after the release (new installs
 4. Click **Read again** on documents that matter, so the new disagreement checks are created for them (only documents read after the release have them).
 5. Notices loaded before the release have no SAM.gov file links; they get them the next time SAM.gov sends them (an amendment, or a run whose window includes them).
 6. Click **Get SAM.gov files** on one notice to confirm downloads work ([SAM.gov attachments](../guides/admin-guide.md#samgov-attachments)).
-7. Review the new settings: `AI_Max_Calls_Per_Day`, `Admin_Digest_Mode`, `Admin_Digest_Recipients`, `Description_Min_Fit`, `Files_Auto_Download`, `Files_Min_Fit`.
+7. Review the new settings: `AI_Max_Calls_Per_Day`, `Admin_Digest_Mode`, `Admin_Digest_Recipients`, `Description_Min_Fit`, `Files_Auto_Download`, `Files_Min_Fit`, `Similar_Keywords_Template`. They are all on the new **Settings** tab.
+8. **Settings tab:** admins who save settings there need **Customize Application** (most System Administrators have it). Open **Settings** and check the _Health checks_ panel is all green.
+9. **Find similar with AI (optional):** create the `NXP_Similar_Keywords` prompt template from `packages/nxp-agents/reference/genAiPromptTemplates/` ([agent manual build](../guides/agent-manual-build.md)). Without it Find similar still works, with keywords from the notice title.
 
 <details>
 <summary>Manual equivalent (no scripts)</summary>
@@ -242,6 +246,7 @@ sf project deploy validate --source-dir packages/nxp-core packages/nxp-ingestion
 sf project deploy quick --job-id 0Af... --target-org nxp-prod
 (cd env-config/prod && sf project deploy start --source-dir force-app --target-org nxp-prod --api-version 68.0)
 sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-prod
+sf apex run --file scripts/post-deploy/reapply-settings.apex --target-org nxp-prod
 ```
 
 ```powershell
@@ -251,6 +256,7 @@ sf project deploy validate --source-dir packages/nxp-core packages/nxp-ingestion
 sf project deploy quick --job-id 0Af... --target-org nxp-prod
 Push-Location env-config/prod; sf project deploy start --source-dir force-app --target-org nxp-prod --api-version 68.0; Pop-Location
 sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-prod
+sf apex run --file scripts/post-deploy/reapply-settings.apex --target-org nxp-prod
 ```
 
 </details>

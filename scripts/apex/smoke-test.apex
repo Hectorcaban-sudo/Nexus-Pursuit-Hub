@@ -586,6 +586,18 @@ try {
     fails++;
 }
 
+try {
+    for (NXP_SettingsController.Check c : NXP_SettingsController.getHealth()) {
+        String level = c.status == 'ok' ? 'PASS' : c.status == 'warn' ? 'WARN' : 'FAIL';
+        out.add(level + '|Settings tab: ' + c.title + '|' + c.detail);
+        if (level == 'FAIL') {
+            fails++;
+        }
+    }
+} catch (Exception e) {
+    out.add('WARN|Settings tab|' + e.getMessage() + ' (run as a user with NXP_Admin to see the health checks)');
+}
+
 // 10. AI and errors -------------------------------------------------------------------------
 out.add(
     NXP_Settings.getBoolean('AI_Enabled', false)
