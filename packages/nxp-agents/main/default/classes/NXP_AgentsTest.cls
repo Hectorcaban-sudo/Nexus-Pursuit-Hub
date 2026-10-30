@@ -226,6 +226,35 @@ private class NXP_AgentsTest {
     }
 
     @IsTest
+    static void dailyAiLimitStopsCallsAndLeavesWorkPending() {
+        NXP_Gov_Notice__c n = notice();
+        NXP_AiService.responsesForTest = new Map<String, String>{ 'NXP_Solicitation_Summary' => 'A short summary.' };
+        NXP_Settings.setForTest('AI_Max_Calls_Per_Day', '1');
+        System.assertEquals('Test response', NXP_AiService.generate('X', new Map<String, Object>()));
+        System.assert(NXP_AiService.limitReached());
+        try {
+            NXP_AiService.generate('X', new Map<String, Object>());
+            System.assert(false, 'expected: limit reached');
+        } catch (NXP_AiService.AiLimitException e) {
+            System.assert(e.getMessage().contains('AI_Max_Calls_Per_Day'), e.getMessage());
+        }
+        NXP_AiService.flushUsage();
+        NXP_AI_Usage__c u = [SELECT Day__c, Calls__c FROM NXP_AI_Usage__c LIMIT 1];
+        System.assertEquals(Date.today(), u.Day__c);
+        System.assertEquals(1, u.Calls__c);
+        System.assertEquals(1, NXP_AiService.callsToday());
+
+        Test.startTest();
+        Database.executeBatch(new NXP_NoticeAnalystJob(NXP_NoticeAnalystJob.SUMMARIES), 5);
+        Test.stopTest();
+        n = [SELECT AI_Summary_Status__c FROM NXP_Gov_Notice__c WHERE Id = :n.Id];
+        System.assertEquals('Pending', n.AI_Summary_Status__c, 'Waits for tomorrow instead of failing');
+
+        NXP_Settings.setForTest('AI_Max_Calls_Per_Day', '0');
+        System.assert(!NXP_AiService.limitReached(), '0 means no limit');
+    }
+
+    @IsTest
     static void changeSummariesAndSchedule() {
         NXP_Gov_Notice__c n = notice();
         insert new NXP_Notice_Version__c(

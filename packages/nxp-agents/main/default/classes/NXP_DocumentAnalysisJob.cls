@@ -58,7 +58,7 @@ public without sharing class NXP_DocumentAnalysisJob implements Queueable, Datab
             analyze(todo[i]);
         }
         NXP_Logger.flush();
-        if (todo.size() > take && !Test.isRunningTest()) {
+        if (todo.size() > take && !Test.isRunningTest() && !NXP_AiService.limitReached()) {
             List<Id> rest = new List<Id>();
             for (Integer i = take; i < todo.size(); i++) {
                 rest.add(todo[i]);
@@ -91,6 +91,10 @@ public without sharing class NXP_DocumentAnalysisJob implements Queueable, Datab
             a.Result_Json__c = NXP_Text.truncate(JSON.serializePretty(result), 32768);
             a.Status__c = 'Complete';
             a.Status_Detail__c = null;
+        } catch (NXP_AiService.AiLimitException e) {
+            // Daily limit used up: stays Pending and is picked up by a later sweep.
+            NXP_Logger.warn('NXP_DocumentAnalysisJob', e.getMessage());
+            return;
         } catch (Exception e) {
             a.Status__c = 'Failed';
             a.Status_Detail__c = NXP_Text.truncate(e.getMessage(), 255);
@@ -98,5 +102,6 @@ public without sharing class NXP_DocumentAnalysisJob implements Queueable, Datab
         }
         a.Analyzed__c = Datetime.now();
         update a;
+        NXP_AiService.flushUsage();
     }
 }

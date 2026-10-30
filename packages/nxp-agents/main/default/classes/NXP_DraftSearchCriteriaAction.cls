@@ -64,6 +64,7 @@ public with sharing class NXP_DraftSearchCriteriaAction {
             }
             out.add(res);
         }
+        NXP_AiService.flushUsage();
         return out;
     }
 }

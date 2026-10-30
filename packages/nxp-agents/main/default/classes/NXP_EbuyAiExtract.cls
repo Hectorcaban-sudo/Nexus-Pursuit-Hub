@@ -15,6 +15,11 @@ public without sharing class NXP_EbuyAiExtract implements NXP_EbuyAiExtractor {
         if (attachmentDocumentId != null) {
             inputs.put('Input:Attachment', attachmentDocumentId);
         }
-        return NXP_AiService.generate(NXP_Settings.getString('Ebuy_AI_Template', 'NXP_Ebuy_RFQ_Extract'), inputs);
+        try {
+            return NXP_AiService.generate(NXP_Settings.getString('Ebuy_AI_Template', 'NXP_Ebuy_RFQ_Extract'), inputs);
+        } finally {
+            // The eBuy job makes no callouts after this, so the count can be saved now.
+            NXP_AiService.flushUsage();
+        }
     }
 }

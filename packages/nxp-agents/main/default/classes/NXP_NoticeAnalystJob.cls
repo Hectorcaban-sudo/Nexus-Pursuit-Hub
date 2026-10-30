@@ -29,7 +29,7 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
     }
 
     public void execute(SchedulableContext context) {
-        if (NXP_AiService.isEnabled()) {
+        if (NXP_AiService.isEnabled() && !NXP_AiService.limitReached()) {
             Database.executeBatch(new NXP_NoticeAnalystJob(SUMMARIES), 5);
         }
     }
@@ -101,6 +101,10 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
                         AI_Summary_Status__c = 'Complete'
                     )
                 );
+            } catch (NXP_AiService.AiLimitException e) {
+                // Daily limit used up: this and the rest stay Pending for tomorrow.
+                NXP_Logger.warn('NXP_NoticeAnalystJob', e.getMessage());
+                break;
             } catch (Exception e) {
                 updates.add(new NXP_Gov_Notice__c(Id = n.Id, AI_Summary_Status__c = 'Failed'));
                 NXP_Logger.warn('NXP_NoticeAnalystJob', 'Summary failed for ' + n.Id + ': ' + e.getMessage());
@@ -109,6 +113,7 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
         NXP_TriggerHandler.bypass('NXP_GovNoticeTriggerHandler');
         Database.update(updates, false, AccessLevel.SYSTEM_MODE);
         NXP_TriggerHandler.clearBypass('NXP_GovNoticeTriggerHandler');
+        NXP_AiService.flushUsage();
     }
 
     private static void summarizeChanges(List<NXP_Notice_Version__c> scope) {
@@ -124,10 +129,14 @@ public without sharing class NXP_NoticeAnalystJob implements Database.Batchable<
                 updates.add(
                     new NXP_Notice_Version__c(Id = v.Id, AI_Change_Summary__c = NXP_Text.truncate(text, 32768))
                 );
+            } catch (NXP_AiService.AiLimitException e) {
+                NXP_Logger.warn('NXP_NoticeAnalystJob', e.getMessage());
+                break;
             } catch (Exception e) {
                 NXP_Logger.warn('NXP_NoticeAnalystJob', 'Change summary failed for ' + v.Id + ': ' + e.getMessage());
             }
         }
         Database.update(updates, false, AccessLevel.SYSTEM_MODE);
+        NXP_AiService.flushUsage();
     }
 }
