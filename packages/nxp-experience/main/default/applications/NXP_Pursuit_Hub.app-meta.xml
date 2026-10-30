@@ -68,6 +68,8 @@
     <tabs>NXP_Gov_Agency__c</tabs>
     <tabs>NXP_Gov_Vendor__c</tabs>
     <tabs>NXP_Vehicle_Portfolio</tabs>
+    <tabs>standard-Dashboard</tabs>
+    <tabs>standard-report</tabs>
     <tabs>NXP_Feed_Console</tabs>
     <tabs>NXP_Inbound_Emails</tabs>
     <uiType>Lightning</uiType>
