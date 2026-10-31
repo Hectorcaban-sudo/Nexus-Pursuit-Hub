@@ -69,3 +69,13 @@ sf project deploy start --source-dir "packages/nxp-core/main/default/layouts" --
 'Database.executeBatch(new NXP_NoticeEnrichBatch(), 20);' | Out-File -Encoding ascii enrich.apex
 sf apex run --file enrich.apex --target-org staging
 Remove-Item enrich.apex
+
+
+git pull
+sf project deploy start --source-dir packages/nxp-core --target-org staging --api-version 68.0 --wait 30
+sf project deploy start --source-dir packages/nxp-ingestion --target-org staging --api-version 68.0 --wait 30
+sf project deploy start --source-dir packages/nxp-search --target-org staging --api-version 68.0 --wait 30
+sf project deploy start --source-dir packages/nxp-push --target-org staging --api-version 68.0 --wait 30
+sf project deploy start --source-dir packages/nxp-experience --target-org staging --api-version 68.0 --wait 30
+sf project deploy start --source-dir packages/nxp-agents --target-org staging --api-version 68.0 --wait 30
+sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org staging
