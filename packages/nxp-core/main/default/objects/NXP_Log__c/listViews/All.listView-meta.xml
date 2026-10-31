@@ -2,6 +2,7 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>All</fullName>
     <columns>NAME</columns>
+    <columns>CREATED_DATE</columns>
     <columns>NXP_Log__c.Level__c</columns>
     <columns>NXP_Log__c.Source__c</columns>
     <filterScope>Everything</filterScope>

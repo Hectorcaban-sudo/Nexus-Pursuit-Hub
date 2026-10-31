@@ -73,5 +73,6 @@
     <tabs>NXP_Feed_Console</tabs>
     <tabs>NXP_Inbound_Emails</tabs>
     <tabs>NXP_Settings</tabs>
+    <tabs>NXP_Log__c</tabs>
     <uiType>Lightning</uiType>
 </CustomApplication>

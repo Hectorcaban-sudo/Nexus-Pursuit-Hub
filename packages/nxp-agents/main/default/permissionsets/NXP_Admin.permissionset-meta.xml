@@ -1586,6 +1586,10 @@
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
+        <tab>NXP_Log__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>NXP_Forecasts</tab>
         <visibility>Visible</visibility>
     </tabSettings>

@@ -227,7 +227,7 @@ Change settings on the **Settings** tab ([The Settings tab](#the-settings-tab)),
 - Open **Inbound Emails** for eBuy messages marked _Needs Review_, _Rejected_ or _Failed_.
 - The **Nexus: Operations** dashboard shows feed, push, eBuy inbox, Document Reader and error health together; subscribe to it daily ([reports and dashboards](../design/reports-and-dashboards.md)).
 - During the GovWin parallel run, load each week's GovWin export with `scripts/load-govwin-export` and check **Nexus: Adoption and GovWin cut-over** ([data/govwin](../../data/govwin/README.md)).
-- Check reports on `NXP_Log__c` (Level = ERROR) and on `NXP_Push_Log__c` (Status = Failed).
+- Open the **NXP Logs** tab (admins; also in the App Launcher) → list view **Errors (last 7 days)**, and open a log to read its Message and Stack Trace. Check `NXP_Push_Log__c` (Status = Failed) too.
 - Check platform event subscriber status after deployments.
 - To pause everything: `scripts/post-deploy/unschedule-jobs.apex`. To resume: `schedule-jobs.apex`.
 

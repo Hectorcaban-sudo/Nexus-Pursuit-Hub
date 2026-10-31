@@ -176,6 +176,40 @@ private class NXP_IngestionTest {
     }
 
     @IsTest
+    static void sameNoticeTwiceInOnePageIsSavedOnce() {
+        Test.setMock(HttpCalloutMock.class, new Router());
+        Test.startTest();
+        // New: the same notice ID twice creates one notice.
+        List<NXP_IngestRecord> twice = samRecords();
+        twice.add(samRecords()[0]);
+        NXP_IngestionService.Result r1 = NXP_IngestionService.ingest(twice);
+        // Existing: two notices with its solicitation number update it once (was "Duplicate id in list").
+        NXP_IngestRecord older = new NXP_IngestRecord(NXP_IngestRecord.TYPE_NOTICE, 'SAMX:1', 'SAM_Opportunities');
+        older.put('Title__c', 'Zero Trust Architecture Engineering Support');
+        older.put('Solicitation_Number__c', '70B03C27R00000012');
+        older.put('Posted_Date__c', Date.newInstance(2026, 10, 1));
+        older.put('Estimated_Value__c', 1000000);
+        NXP_IngestRecord newer = new NXP_IngestRecord(NXP_IngestRecord.TYPE_NOTICE, 'SAMX:2', 'SAM_Opportunities');
+        newer.put('Title__c', 'Zero Trust Architecture Engineering Support');
+        newer.put('Solicitation_Number__c', '70B03C27R00000012');
+        newer.put('Posted_Date__c', Date.newInstance(2026, 10, 25));
+        newer.put('Estimated_Value__c', 9000000);
+        NXP_IngestionService.Result r2 = NXP_IngestionService.ingest(new List<NXP_IngestRecord>{ newer, older });
+        Test.stopTest();
+        System.assertEquals(2, r1.created, r1.errors);
+        System.assertEquals(1, r1.unchanged);
+        System.assertEquals(1, r2.updated, r2.errors);
+        System.assertEquals(1, r2.unchanged);
+        System.assertEquals(2, [SELECT COUNT() FROM NXP_Gov_Notice__c]);
+        NXP_Gov_Notice__c n = [
+            SELECT Estimated_Value__c
+            FROM NXP_Gov_Notice__c
+            WHERE Solicitation_Number__c = '70B03C27R00000012'
+        ];
+        System.assertEquals(9000000, n.Estimated_Value__c, 'The latest posted version is kept');
+    }
+
+    @IsTest
     static void invalidRecordsAreRejected() {
         NXP_IngestRecord noKey = new NXP_IngestRecord(NXP_IngestRecord.TYPE_NOTICE, null, 'X');
         NXP_IngestRecord badField = new NXP_IngestRecord(NXP_IngestRecord.TYPE_NOTICE, 'K1', 'X');

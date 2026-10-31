@@ -170,12 +170,35 @@ public without sharing class NXP_IngestionService {
         List<NXP_IngestRecord> updateRecs = new List<NXP_IngestRecord>();
         Map<Id, NXP_Notice_Version__c> pendingVersions = new Map<Id, NXP_Notice_Version__c>();
 
+        // The same notice can appear more than once in one page (SAM.gov repeats a notice, or two
+        // notices share a solicitation number and so one record). A record can be saved only once
+        // per call, so keep the latest posted version of each and skip the others.
+        Map<String, Integer> keepIndex = new Map<String, Integer>();
+        for (Integer i = 0; i < candidates.size(); i++) {
+            NXP_Gov_Notice__c existing = existingFor(candidates[i], existingByKey);
+            String target = existing != null ? String.valueOf(existing.Id) : 'NEW:' + candidates[i].Notice_Id__c;
+            Integer prior = keepIndex.get(target);
+            if (prior == null || !postedBefore(candidates[i], candidates[prior])) {
+                keepIndex.put(target, i);
+            }
+        }
+        Set<Integer> kept = new Set<Integer>(keepIndex.values());
+
         for (Integer i = 0; i < candidates.size(); i++) {
             NXP_Gov_Notice__c n = candidates[i];
             NXP_IngestRecord rec = valid[i];
-            NXP_Gov_Notice__c existing = existingByKey.get(n.Notice_Id__c);
-            if (existing == null && String.isNotBlank(n.Solicitation_Number__c)) {
-                existing = existingByKey.get('SOL:' + n.Solicitation_Number__c.toUpperCase());
+            NXP_Gov_Notice__c existing = existingFor(n, existingByKey);
+            if (!kept.contains(i)) {
+                result.unchanged++;
+                result.results.add(
+                    recordResult(
+                        rec,
+                        'Unchanged',
+                        existing == null ? null : existing.Id,
+                        'Repeated in this page; the latest version was saved'
+                    )
+                );
+                continue;
             }
             if (existing == null) {
                 prepareNew(n, rec);
@@ -297,6 +320,19 @@ public without sharing class NXP_IngestionService {
         n.Last_Change_Type__c = 'New';
         n.Last_Changed__c = Datetime.now();
         n.AI_Summary_Status__c = 'Not Requested';
+    }
+
+    private static NXP_Gov_Notice__c existingFor(NXP_Gov_Notice__c n, Map<String, NXP_Gov_Notice__c> existingByKey) {
+        NXP_Gov_Notice__c existing = existingByKey.get(n.Notice_Id__c);
+        if (existing == null && String.isNotBlank(n.Solicitation_Number__c)) {
+            existing = existingByKey.get('SOL:' + n.Solicitation_Number__c.toUpperCase());
+        }
+        return existing;
+    }
+
+    /** True when a was posted before b (unknown dates count as not before: the later one in the page wins). */
+    private static Boolean postedBefore(NXP_Gov_Notice__c a, NXP_Gov_Notice__c b) {
+        return a.Posted_Date__c != null && b.Posted_Date__c != null && a.Posted_Date__c < b.Posted_Date__c;
     }
 
     private static Map<String, NXP_Gov_Notice__c> findExisting(List<NXP_Gov_Notice__c> candidates) {
