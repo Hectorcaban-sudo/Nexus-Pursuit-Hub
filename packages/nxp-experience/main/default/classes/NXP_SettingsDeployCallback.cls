@@ -1,13 +1,18 @@
 /**
  * Called when a Settings tab save (a custom metadata deployment) finishes: marks its
- * NXP_Setting_Change__c rows Saved or Failed, with the reason.
+ * NXP_Setting_Change__c rows Saved or Failed, with the reason. The rows are found by the save key
+ * NXP_SettingsController stored on them.
  */
 public without sharing class NXP_SettingsDeployCallback implements Metadata.DeployCallback {
+    /** The key the save stored on its NXP_Setting_Change__c rows. */
+    private final String saveKey;
+
+    public NXP_SettingsDeployCallback(String saveKey) {
+        this.saveKey = saveKey;
+    }
+
     public void handleResult(Metadata.DeployResult result, Metadata.DeployCallbackContext context) {
-        // The save stored the id enqueueDeployment returned, which is the deployment's id.
-        String jobId = result != null && String.isNotBlank(result.id)
-            ? result.id
-            : context == null ? null : context.getCallbackJobId();
+        String jobId = saveKey;
         Boolean ok = result != null && result.status == Metadata.DeployStatus.Succeeded;
         String detail = null;
         if (!ok && result != null) {
@@ -27,18 +32,14 @@ public without sharing class NXP_SettingsDeployCallback implements Metadata.Depl
         mark(jobId, ok, detail);
     }
 
-    @TestVisible
-    private static void mark(String jobId, Boolean ok, String detail) {
+    public static void mark(String jobId, Boolean ok, String detail) {
         if (String.isBlank(jobId)) {
             return;
         }
-        // Ids can come back as 15 or 18 characters.
-        Set<String> ids = new Set<String>{ jobId, jobId.left(15) };
-        String prefix = jobId.left(15) + '%';
         List<NXP_Setting_Change__c> rows = [
             SELECT Id
             FROM NXP_Setting_Change__c
-            WHERE (Deploy_Id__c IN :ids OR Deploy_Id__c LIKE :prefix) AND Status__c = 'Pending'
+            WHERE Deploy_Id__c = :jobId AND Status__c = 'Pending'
         ];
         for (NXP_Setting_Change__c r : rows) {
             r.Status__c = ok ? 'Saved' : 'Failed';

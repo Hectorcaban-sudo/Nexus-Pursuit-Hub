@@ -160,6 +160,24 @@ private class NXP_SettingsControllerTest {
     }
 
     @IsTest
+    static void deploysInItsOwnTransactionAndRecordsAFailedStart() {
+        makeAdmin();
+        NXP_SettingsController.deployForTest = true;
+        Test.startTest();
+        // The history rows and the deployment are in separate transactions (no mixed DML).
+        String saveKey = NXP_SettingsController.saveSettings(
+            new List<NXP_SettingsController.Change>{ change('NXP_Setting.Admin_Digest_Mode', 'Daily') }
+        );
+        System.assert(saveKey.startsWith('NXP-'), saveKey);
+        System.assertEquals('Pending', NXP_SettingsController.getSaveStatus(saveKey).get('status'));
+        Test.stopTest();
+        // Tests can't deploy metadata, so the job records why the save could not start.
+        Map<String, String> status = NXP_SettingsController.getSaveStatus(saveKey);
+        System.assertEquals('Failed', status.get('status'));
+        System.assert(status.get('detail').contains('could not start'), status.get('detail'));
+    }
+
+    @IsTest
     static void nonAdminsAreRefused() {
         User u = new User(
             Alias = 'nxpset',

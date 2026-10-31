@@ -590,19 +590,56 @@ public with sharing class NXP_SettingsController {
         }
         checkFitWeights(current, byRecord);
 
-        Metadata.DeployContainer container = new Metadata.DeployContainer();
-        for (String record : byRecord.keySet()) {
-            container.addMetadata(toMetadata(record, byRecord.get(record)));
-        }
-        String jobId = 'test';
-        if (!Test.isRunningTest() || deployForTest) {
-            jobId = Metadata.Operations.enqueueDeployment(container, new NXP_SettingsDeployCallback());
-        }
+        // A deployment request is a setup object: it can't be created in the same transaction
+        // as the history rows. The rows are saved now, under a save key, and a Queueable starts
+        // the deployment; the callback marks the rows by that key.
+        String saveKey = Test.isRunningTest() && !deployForTest
+            ? 'test'
+            : 'NXP-' + EncodingUtil.convertToHex(Crypto.generateAesKey(128));
         for (NXP_Setting_Change__c r : rows) {
-            r.Deploy_Id__c = jobId;
+            r.Deploy_Id__c = saveKey;
         }
         insert as user rows;
-        return jobId;
+        if (saveKey != 'test') {
+            System.enqueueJob(new DeployJob(saveKey, byRecord));
+        }
+        return saveKey;
+    }
+
+    public class SaveException extends Exception {
+    }
+
+    /** Starts the custom metadata deployment for one save, in its own transaction. */
+    public class DeployJob implements Queueable {
+        private final String saveKey;
+        private final Map<String, Map<String, String>> byRecord;
+
+        public DeployJob(String saveKey, Map<String, Map<String, String>> byRecord) {
+            this.saveKey = saveKey;
+            this.byRecord = byRecord;
+        }
+
+        public void execute(QueueableContext context) {
+            try {
+                Metadata.DeployContainer container = new Metadata.DeployContainer();
+                for (String record : byRecord.keySet()) {
+                    container.addMetadata(toMetadata(record, byRecord.get(record)));
+                }
+                if (Test.isRunningTest()) {
+                    throw new SaveException('Tests cannot deploy metadata.');
+                }
+                Metadata.Operations.enqueueDeployment(container, new NXP_SettingsDeployCallback(saveKey));
+            } catch (Exception e) {
+                // Nothing was deployed, so the rows can be updated here.
+                NXP_SettingsDeployCallback.mark(
+                    saveKey,
+                    false,
+                    'The save could not start: ' +
+                        e.getMessage() +
+                        ' Saving settings needs the Customize Application permission.'
+                );
+            }
+        }
     }
 
     /**
