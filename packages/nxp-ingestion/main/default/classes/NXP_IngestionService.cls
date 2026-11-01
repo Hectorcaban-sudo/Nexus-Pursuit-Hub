@@ -562,9 +562,26 @@ public without sharing class NXP_IngestionService {
         Map<String, NXP_AgencyResolver.Resolved> agencies,
         Result result
     ) {
+        // A key can appear more than once in one page (USAspending lists an award per
+        // modification, and keys are matched ignoring case). Upserting it twice in one call fails
+        // both rows, so only the last occurrence is saved; the others count as unchanged.
+        Map<String, Integer> lastIndex = new Map<String, Integer>();
+        for (Integer i = 0; i < records.size(); i++) {
+            if (String.isNotBlank(records[i].externalKey)) {
+                lastIndex.put(records[i].externalKey.toLowerCase(), i);
+            }
+        }
         List<SObject> rows = new List<SObject>();
         List<NXP_IngestRecord> recs = new List<NXP_IngestRecord>();
-        for (NXP_IngestRecord rec : records) {
+        for (Integer i = 0; i < records.size(); i++) {
+            NXP_IngestRecord rec = records[i];
+            if (String.isNotBlank(rec.externalKey) && lastIndex.get(rec.externalKey.toLowerCase()) != i) {
+                result.unchanged++;
+                result.results.add(
+                    recordResult(rec, 'Unchanged', null, 'Repeated in this page; the last occurrence was saved')
+                );
+                continue;
+            }
             SObject row = type.newSObject();
             String error = applyValues(row, rec);
             if (error == null && String.isBlank(rec.externalKey)) {

@@ -469,6 +469,24 @@ private class NXP_IngestionTest {
     }
 
     @IsTest
+    static void awardRepeatedInOnePageIsSavedOnce() {
+        Test.setMock(HttpCalloutMock.class, new Router());
+        Test.startTest();
+        NXP_FeedConnector c = NXP_ConnectorSupport.connectorFor(NXP_ConnectorSupport.config('USAspending_Awards'));
+        List<NXP_IngestRecord> records = c.fetchPage(c.initialCheckpoint(null)).records;
+        NXP_IngestRecord again = c.fetchPage(c.initialCheckpoint(null)).records[0];
+        // Same award, key in another case: was "Duplicate external id specified" on both rows.
+        again.externalKey = again.externalKey.toLowerCase();
+        records.add(again);
+        NXP_IngestionService.Result r = NXP_IngestionService.ingest(records);
+        Test.stopTest();
+        System.assertEquals(0, r.rejected, r.errors);
+        System.assertEquals(1, r.created);
+        System.assertEquals(1, r.unchanged);
+        System.assertEquals(1, [SELECT COUNT() FROM NXP_Award_Summary__c]);
+    }
+
+    @IsTest
     static void feedConsoleController() {
         NXP_Feed_Run__c run = NXP_FeedRunService.start('REST_partner', NXP_FeedRunService.CH_REST, 'tester');
         NXP_IngestionService.Result r = new NXP_IngestionService.Result();
