@@ -127,7 +127,7 @@ To stop, click the button again: on a notice it reads **Unfollow**; on profiles,
 ## 6. Look ahead: forecasts, recompetes, agencies, vendors, vehicles
 
 - **Forecasts** tab: planned buys before a notice exists, grouped by when the agency expects to solicit (next 90 days, 3–6 months, 6–12 months, released). _Fits our company profile_ is on by default. Released forecasts link to their notice.
-- **Recompetes** tab: contract awards in your market on a timeline, with today marked. Orange bars end within 6 months. The **Follow-on** column shows the notice that names the award as its predecessor, or a likely notice or forecast from the same agency with the same NAICS.
+- **Recompetes** tab: contract awards in your market on a timeline, with today marked. Orange bars end within 6 months. Click an award's title to see its details below the list (incumbent, value, dates, follow-on), with **Open the award**, **Incumbent profile** and **Watch this recompete**. The **Follow-on** column shows the notice that names the award as its predecessor, or a likely notice or forecast from the same agency with the same NAICS.
 - **Vendor profile**: click an incumbent's name or open a Gov Vendor: their awards, where they overlap with your company profile, and open notices where they're the likely incumbent. Admins can **Refresh from SAM.gov**.
 - **Agency profile**: open a Gov Agency: _What's coming_ (open notices, forecasts and awards ending, in date order), who holds its awards, spend by NAICS, contracting contacts and whether your searches cover it. **Alert me on new notices here** starts a search for it.
 - **Vehicle Portfolio** tab: the contract vehicles you hold with their open notices (soonest due first), expiry (amber within 12 months) and whether a task-order inbox is set up. _Notices you can't bid alone_ lists open notices on vehicles you don't hold, for teaming. Admins record **We hold it** or **We no longer hold this**.
@@ -143,7 +143,9 @@ After a push, the due date (and any other field your admin chose) follows amendm
 
 ## 8. Dashboards
 
-**Dashboards → Nexus: Market and activity**: new notices by source and week, what happened to your matches, pushes to Opportunity, high-fit notices due soon that nobody has pushed, and eBuy RFQs by vehicle. Click a chart to open its report. It shows what you can see. **Reports** has the underlying reports.
+**Dashboards → Nexus: Market and activity**: new notices by source and week, what happened to your matches, pushes to Opportunity, high-fit notices due soon that nobody has pushed, and eBuy RFQs by vehicle. Click a chart to open its report. It shows what you can see. **Reports** has the underlying reports, including _NXP - Open notices by source_ (open notices grouped by source and notice type).
+
+**Gov Notices list views**: the **Gov Notices** tab has ready-made views: _Open notices_, _High fit (70+), open_, _Due in the next 14 days_, _Posted in the last 7 days_, _Amended in the last 7 days_, _Source: SAM.gov_, _Source: GSA eBuy_ and _Pushed to Opportunity_. Make your own with the gear icon → **New** (or **Clone** a view) and **Edit List Filters**: any notice field works as a filter, for example Source Feed, Notice Type, Set-Aside, NAICS or Fit Score. List views can't group rows; use **Display as → Kanban** to group by a picklist (Notice Type, Status or Market), or a report to group by anything else, such as source.
 
 ## 9. Ask the assistant
 

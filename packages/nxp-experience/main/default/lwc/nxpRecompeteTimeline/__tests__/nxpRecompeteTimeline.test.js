@@ -113,8 +113,11 @@ describe('c-nxp-recompete-timeline', () => {
         await flush();
         expect(getRecompetes).toHaveBeenLastCalledWith(expect.objectContaining({ monthsAhead: 24 }));
 
+        const scroll = jest.fn();
+        window.HTMLElement.prototype.scrollIntoView = scroll;
         el.shadowRoot.querySelectorAll('.select')[2].click();
         await flush();
+        expect(scroll).toHaveBeenCalled();
         const watchButton = el.shadowRoot.querySelector('.detail lightning-button.watch');
         expect(watchButton.label).toBe('Watching');
         watchButton.click();

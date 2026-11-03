@@ -6,6 +6,8 @@
     <columns>NXP_Gov_Notice__c.Agency_Path__c</columns>
     <columns>NXP_Gov_Notice__c.Response_Due__c</columns>
     <columns>NXP_Gov_Notice__c.Fit_Score__c</columns>
+    <columns>NXP_Gov_Notice__c.Source_Feed__c</columns>
+    <columns>NXP_Gov_Notice__c.Posted_Date__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

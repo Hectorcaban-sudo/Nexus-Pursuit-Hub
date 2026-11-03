@@ -80,7 +80,13 @@
                 <template for:each={view} for:item="r">
                     <div key={r.id} class={r.rowClass}>
                         <div class="award">
-                            <button class="select" type="button" data-id={r.id} onclick={handleSelect}>
+                            <button
+                                class="select"
+                                type="button"
+                                title="Show details"
+                                data-id={r.id}
+                                onclick={handleSelect}
+                            >
                                 {r.title}
                             </button>
                             <div class="sub">{r.piid} · {r.agency} · {r.naics}</div>

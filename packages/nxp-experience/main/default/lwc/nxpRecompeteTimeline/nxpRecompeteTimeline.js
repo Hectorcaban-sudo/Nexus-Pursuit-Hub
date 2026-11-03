@@ -40,6 +40,7 @@ export default class NxpRecompeteTimeline extends NavigationMixin(LightningEleme
     monthsAhead = 18;
     minValue = null;
     selectedId;
+    scrollToDetail = false;
 
     connectedCallback() {
         logUsage('Recompetes');
@@ -152,6 +153,18 @@ export default class NxpRecompeteTimeline extends NavigationMixin(LightningEleme
 
     handleSelect(event) {
         this.selectedId = event.currentTarget.dataset.id;
+        this.scrollToDetail = true;
+    }
+
+    renderedCallback() {
+        // The award's details sit below the list: bring them into view after a click.
+        if (this.scrollToDetail) {
+            this.scrollToDetail = false;
+            const detail = this.template.querySelector('.detail');
+            if (detail && detail.scrollIntoView) {
+                detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
     }
 
     handleOpen(event) {

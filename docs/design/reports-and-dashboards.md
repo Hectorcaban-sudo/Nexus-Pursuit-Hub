@@ -21,12 +21,13 @@ the deployment when the limit is reached.)
 
 ## Reports
 
-27 reports, all named `NXP - …` (folder _Nexus Pursuit Hub_) or `NXP Admin - …` (folder _Nexus Admin_). Every
+28 reports, all named `NXP - …` (folder _Nexus Pursuit Hub_) or `NXP Admin - …` (folder _Nexus Admin_). Every
 dashboard component links to its report. The main ones:
 
 | Report                                           | Use it to                                                               |
 | ------------------------------------------------ | ----------------------------------------------------------------------- |
 | NXP - High-fit, due soon, not pushed             | Daily check for notices worth a look before they close                  |
+| NXP - Open notices by source                     | Open notices grouped by source feed and notice type                     |
 | NXP Admin - Matches by saved search              | See which searches produce matches that get pushed, and which are noise |
 | NXP - Pushes by month and source                 | Track how much work flows to Opportunity, and from where                |
 | NXP Admin - Feed runs by feed / Failed feed runs | Feed health                                                             |
