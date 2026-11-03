@@ -24,7 +24,7 @@
     </filter>
     <format>Summary</format>
     <groupingsDown>
-        <field>NXP_Gov_Notice__c$Source_Feed__c</field>
+        <field>NXP_Gov_Notice__c$Source__c</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <groupingsDown>

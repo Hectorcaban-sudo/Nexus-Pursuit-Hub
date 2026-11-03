@@ -20,11 +20,11 @@ Windows: if PowerShell refuses to run scripts, run `Set-ExecutionPolicy -Scope C
 
 ## Folders
 
-| Folder         | Contents                                                                                                                                                                                                                             |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `lib/`         | Shared helpers: `common.sh` and `common.ps1` (package order, API version, running anonymous Apex, production check); `generate-analytics.py` (the shipped reports and dashboards)                                                    |
-| `apex/`        | Anonymous Apex: sample data (`seed-profile`, `seed-searches`, `seed-ebuy-email`, `refresh-sample-dates`, `delete-sample-data`), `compare-govwin`, `smoke-test`, and admin helpers (`run-feed-now`, `feed-health`, `rescore-notices`) |
-| `post-deploy/` | `schedule-jobs.apex`, `unschedule-jobs.apex`, `reapply-settings.apex`                                                                                                                                                                |
-| `uninstall/`   | `pre-uninstall.apex`: stops NXP jobs and removes NXP permission set assignments                                                                                                                                                      |
+| Folder         | Contents                                                                                                                                                                                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lib/`         | Shared helpers: `common.sh` and `common.ps1` (package order, API version, running anonymous Apex, production check); `generate-analytics.py` (the shipped reports and dashboards)                                                                       |
+| `apex/`        | Anonymous Apex: sample data (`seed-profile`, `seed-searches`, `seed-ebuy-email`, `refresh-sample-dates`, `delete-sample-data`), `compare-govwin`, `smoke-test`, and admin helpers (`run-feed-now`, `feed-health`, `rescore-notices`, `backfill-source`) |
+| `post-deploy/` | `schedule-jobs.apex`, `unschedule-jobs.apex`, `reapply-settings.apex`                                                                                                                                                                                   |
+| `uninstall/`   | `pre-uninstall.apex`: stops NXP jobs and removes NXP permission set assignments                                                                                                                                                                         |
 
 Run any anonymous Apex file on its own with `sf apex run --file scripts/apex/<file>.apex --target-org <alias>`.

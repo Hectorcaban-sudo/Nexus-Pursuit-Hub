@@ -161,6 +161,10 @@
                 <field>Source_Feed__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Source__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Status__c</field>
             </layoutItems>

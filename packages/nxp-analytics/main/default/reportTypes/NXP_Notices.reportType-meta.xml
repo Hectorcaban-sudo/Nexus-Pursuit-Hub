@@ -38,6 +38,11 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
+            <field>Source__c</field>
+            <table>NXP_Gov_Notice__c</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
             <field>Agency_Path__c</field>
             <table>NXP_Gov_Notice__c</table>
         </columns>

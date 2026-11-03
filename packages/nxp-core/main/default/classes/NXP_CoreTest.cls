@@ -211,4 +211,20 @@ private class NXP_CoreTest {
         }
         Test.stopTest();
     }
+
+    @IsTest
+    static void sourceIsSetFromSourceFeed() {
+        System.assertEquals('SAM.gov', NXP_GovNoticeTriggerHandler.sourceFor('SAM_Opportunities'));
+        System.assertEquals('GSA eBuy', NXP_GovNoticeTriggerHandler.sourceFor('EMAIL_GSA_eBuy'));
+        System.assertEquals('Partner API', NXP_GovNoticeTriggerHandler.sourceFor('REST_Partner'));
+        System.assertEquals('Other', NXP_GovNoticeTriggerHandler.sourceFor('DataCloud'));
+        System.assertEquals(null, NXP_GovNoticeTriggerHandler.sourceFor(null));
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Title__c = 'Source test',
+            Notice_Id__c = 'SRC-1',
+            Source_Feed__c = 'SAM_Opportunities'
+        );
+        insert n;
+        System.assertEquals('SAM.gov', [SELECT Source__c FROM NXP_Gov_Notice__c WHERE Id = :n.Id].Source__c);
+    }
 }
