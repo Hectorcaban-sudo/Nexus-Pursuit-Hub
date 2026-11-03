@@ -510,6 +510,10 @@ private class NXP_IngestionTest {
     @IsTest
     static void helpers() {
         System.assertEquals('a\n\nb', NXP_ConnectorSupport.htmlToText('<p>a</p><p>b</p>').replace(' ', ''));
+        System.assertEquals(
+            'Thermal \u2013 Hastened (DUTCH) \u2019s',
+            NXP_ConnectorSupport.htmlToText('<p>Thermal &amp;ndash; Hastened (DUTCH) &#8217;s</p>')
+        );
         System.assertEquals('2', NXP_ConnectorSupport.parseParams('a=1&b=2&bad').get('b'));
         System.assertEquals('Pre-solicitation', NXP_SamOpportunityConnector.normalizeType('Presolicitation'));
         System.assertEquals('Other', NXP_SamOpportunityConnector.normalizeType('Justification'));

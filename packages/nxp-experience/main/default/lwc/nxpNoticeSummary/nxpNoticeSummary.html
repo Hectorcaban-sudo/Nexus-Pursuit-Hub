@@ -111,6 +111,16 @@
                     <template lwc:else>
                         <p class="slds-text-color_weak">{summaryNote}</p>
                     </template>
+                    <template lwc:if={canSummarize}>
+                        <lightning-button
+                            class="generate-summary slds-m-top_x-small"
+                            variant="base"
+                            label={summarizeLabel}
+                            icon-name="utility:sparkles"
+                            disabled={summarizing}
+                            onclick={handleGenerateSummary}
+                        ></lightning-button>
+                    </template>
                     <template lwc:if={canLoadDescription}>
                         <div class="slds-m-top_medium load-description">
                             <lightning-button

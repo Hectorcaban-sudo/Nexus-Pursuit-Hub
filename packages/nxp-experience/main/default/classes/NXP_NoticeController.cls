@@ -20,6 +20,9 @@ public with sharing class NXP_NoticeController {
         /** Points where a read document disagrees with the notice and nobody has checked them yet. */
         @AuraEnabled
         public List<DocumentCheck> checks = new List<DocumentCheck>();
+        /** AI is on and the daily limit not reached: the page offers Generate AI summary. */
+        @AuraEnabled
+        public Boolean canSummarize = false;
     }
 
     public class DocumentCheck {
@@ -76,6 +79,8 @@ public with sharing class NXP_NoticeController {
         d.pushLogs = NXP_PushController.getPushLogs(noticeId);
         d.following = NXP_SearchController.isFollowing(noticeId);
         d.checks = openChecks(noticeId);
+        NXP_SummaryGenerator generator = summaryGenerator();
+        d.canSummarize = generator != null && generator.isEnabled();
         return d;
     }
 
@@ -167,5 +172,54 @@ public with sharing class NXP_NoticeController {
             );
         }
         return n.Description__c;
+    }
+
+    @TestVisible
+    private static NXP_SummaryGenerator generatorOverride;
+
+    private static NXP_SummaryGenerator summaryGenerator() {
+        if (generatorOverride != null) {
+            return generatorOverride;
+        }
+        Type t = Type.forName('NXP_NoticeSummaryAi');
+        return t == null ? null : (NXP_SummaryGenerator) t.newInstance();
+    }
+
+    /**
+     * Writes the AI summary of one notice now (one AI call), for notices without one or whose summary
+     * failed, and saves it on the notice.
+     */
+    @AuraEnabled
+    public static String generateSummary(Id noticeId) {
+        NXP_Gov_Notice__c n = new NXP_GovNoticeSelector(AccessLevel.USER_MODE).byId(noticeId);
+        if (n == null) {
+            throw new AuraHandledException('Notice not found or not visible to you.');
+        }
+        NXP_SummaryGenerator generator = summaryGenerator();
+        if (generator == null || !generator.isEnabled()) {
+            throw new AuraHandledException(
+                'AI is off, or today\'s AI limit is used up. Ask your admin, or try again tomorrow.'
+            );
+        }
+        String text;
+        try {
+            text = generator.summarize(noticeId);
+        } catch (Exception e) {
+            NXP_Logger.warn('NXP_NoticeController', 'Summary failed for ' + noticeId + ': ' + e.getMessage());
+            NXP_Logger.flush();
+            throw new AuraHandledException('The AI summary could not be generated: ' + e.getMessage());
+        }
+        if (String.isBlank(text)) {
+            throw new AuraHandledException('The AI returned an empty summary. Try again later.');
+        }
+        text = NXP_Text.truncate(text, 32768);
+        // Notices are read-only for most users; only the summary is written.
+        NXP_TriggerHandler.bypass('NXP_GovNoticeTriggerHandler');
+        Database.update(
+            new NXP_Gov_Notice__c(Id = n.Id, AI_Summary__c = text, AI_Summary_Status__c = 'Complete'),
+            AccessLevel.SYSTEM_MODE
+        );
+        NXP_TriggerHandler.clearBypass('NXP_GovNoticeTriggerHandler');
+        return text;
     }
 }

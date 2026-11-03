@@ -71,7 +71,7 @@ Cards stay in the inbox for 30 days, or until you dismiss or push them.
 Click a notice title. The page shows:
 
 - **Header**: days to respond, fit score with its top reasons (**All rules** jumps to the full breakdown), due date, value, set-aside, NAICS/PSC and sources. Buttons: **Push to Opportunity** (or **Open Opportunity record** once pushed), **Follow**, **Find similar** ([Start from a notice](#start-from-a-notice-find-similar)), **Open on SAM.gov**.
-- **Summary**: the AI summary (a draft: check it against the solicitation). It's written for notices that match a saved search, within about 30 minutes.
+- **Summary**: the AI summary (a draft: check it against the solicitation). It's written for notices that match a saved search, within about 30 minutes. For any other notice, or when the summary failed, click **Generate AI summary** (or **Try the AI summary again**) to write it now; it takes a few seconds and counts toward the daily AI limit. The button shows only when AI is on.
 - **Full description**: click to expand. If it only shows a **Load description** button, SAM.gov sent a link; click it to fetch the text (descriptions of matched and high-fit notices are fetched automatically).
 - **Fit breakdown**, **Version history** (every amendment and what changed), **Contacts** and **Push history**.
 - **Documents**: the notice's files.
@@ -184,7 +184,7 @@ BD leads with the Power User permission can also:
 - **I get no e-mails at all.** Check your search's alert setting and channels, then ask your admin whether org e-mail is turned on.
 - **Does a push overwrite the Opportunity?** No. Only the fields your admin set to update (usually the due date) change. Stage, pWin and other capture fields are never touched.
 - **Is the AI summary reliable?** It's a draft. Always confirm against the solicitation documents.
-- **Why is there no summary?** Summaries are written only for notices that match a saved search, when AI is turned on, and there's a daily AI limit.
+- **Why is there no summary?** Summaries are written automatically only for notices that match a saved search, when AI is turned on, and there's a daily AI limit. Click **Generate AI summary** on the notice to write one now.
 - **Find similar found too many (or too few) notices.** Pick the narrower choices (sub-agency, exact NAICS), add a keyword, or untick notice types. Too few: choose **Any** for PSC or set-aside, or the NAICS family.
 - **Where are the SAM.gov attachments?** On the Documents card. If they're not there, click **Get SAM.gov files**. Files over 6 MB open from SAM.gov.
 

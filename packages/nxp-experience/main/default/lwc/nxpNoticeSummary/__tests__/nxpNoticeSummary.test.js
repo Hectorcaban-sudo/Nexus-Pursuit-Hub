@@ -3,9 +3,13 @@ import NxpNoticeSummary from 'c/nxpNoticeSummary';
 import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
 import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
+import generateSummary from '@salesforce/apex/NXP_NoticeController.generateSummary';
 
 jest.mock('@salesforce/apex/NXP_NoticeController.getDetail', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.loadDescription', () => ({ default: jest.fn() }), {
+    virtual: true
+});
+jest.mock('@salesforce/apex/NXP_NoticeController.generateSummary', () => ({ default: jest.fn() }), {
     virtual: true
 });
 jest.mock('@salesforce/apex/NXP_DocumentController.markChecked', () => ({ default: jest.fn() }), {
@@ -51,6 +55,50 @@ describe('c-nxp-notice-summary', () => {
         expect(el.shadowRoot.querySelector('.rule-score').textContent).toBe('30 / 30');
         expect(el.shadowRoot.querySelector('.v-name').textContent).toContain('Amendment 1');
     });
+    it('offers the AI summary again when it failed', async () => {
+        const base = { breakdown: [], versions: [], contacts: [], pushLogs: [], following: false, sources: [] };
+        getDetail.mockResolvedValueOnce({
+            ...base,
+            canSummarize: true,
+            notice: { Id: 'n3', AI_Summary_Status__c: 'Failed', Description__c: 'Thermal cameras' }
+        });
+        getDetail.mockResolvedValueOnce({
+            ...base,
+            canSummarize: true,
+            notice: { Id: 'n3', AI_Summary_Status__c: 'Complete', AI_Summary__c: 'Short summary.' }
+        });
+        generateSummary.mockResolvedValue('Short summary.');
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n3';
+        document.body.appendChild(el);
+        await flush();
+        const button = el.shadowRoot.querySelector('.generate-summary');
+        expect(button.label).toBe('Try the AI summary again');
+        button.click();
+        await flush();
+        await flush();
+        expect(generateSummary).toHaveBeenCalledWith({ noticeId: 'n3' });
+        expect(el.shadowRoot.querySelector('.generate-summary')).toBeNull();
+    });
+
+    it('hides the button when AI is off', async () => {
+        getDetail.mockResolvedValue({
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            following: false,
+            sources: [],
+            canSummarize: false,
+            notice: { Id: 'n4', AI_Summary_Status__c: 'Failed' }
+        });
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n4';
+        document.body.appendChild(el);
+        await flush();
+        expect(el.shadowRoot.querySelector('.generate-summary')).toBeNull();
+    });
+
     it('loads a SAM.gov description on request', async () => {
         const base = {
             breakdown: [],

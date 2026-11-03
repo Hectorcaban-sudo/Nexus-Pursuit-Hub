@@ -366,4 +366,14 @@ private class NXP_AgentsTest {
         r.noticeId = noticeId;
         return r;
     }
+
+    @IsTest
+    static void noticeSummaryOnRequest() {
+        NXP_Gov_Notice__c n = notice();
+        NXP_AiService.responsesForTest = new Map<String, String>{ 'NXP_Solicitation_Summary' => 'A short summary.' };
+        NXP_NoticeSummaryAi ai = new NXP_NoticeSummaryAi();
+        System.assert(ai.isEnabled());
+        System.assertEquals('A short summary.', ai.summarize(n.Id));
+        System.assertEquals(1, NXP_AiService.callsToday());
+    }
 }

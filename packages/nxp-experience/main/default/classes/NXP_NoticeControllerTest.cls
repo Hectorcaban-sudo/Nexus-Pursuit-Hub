@@ -163,4 +163,53 @@ private class NXP_NoticeControllerTest {
             System.assert(e.getMessage().contains('not attached'));
         }
     }
+
+    private class FakeGenerator implements NXP_SummaryGenerator {
+        Boolean enabled = true;
+        String text = 'Short summary.';
+        public Boolean isEnabled() {
+            return enabled;
+        }
+        public String summarize(Id noticeId) {
+            if (text == null) {
+                throw new CalloutException('model unavailable');
+            }
+            return text;
+        }
+    }
+
+    @IsTest
+    static void generateSummaryOnRequest() {
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Notice_Id__c = 'EXP-SUM',
+            Title__c = 'Thermal cameras',
+            Status__c = 'Active',
+            AI_Summary_Status__c = 'Failed'
+        );
+        insert n;
+        FakeGenerator g = new FakeGenerator();
+        NXP_NoticeController.generatorOverride = g;
+        System.assert(NXP_NoticeController.getDetail(n.Id).canSummarize);
+
+        System.assertEquals('Short summary.', NXP_NoticeController.generateSummary(n.Id));
+        n = [SELECT AI_Summary__c, AI_Summary_Status__c FROM NXP_Gov_Notice__c WHERE Id = :n.Id];
+        System.assertEquals('Complete', n.AI_Summary_Status__c);
+        System.assertEquals('Short summary.', n.AI_Summary__c);
+
+        g.text = null;
+        try {
+            NXP_NoticeController.generateSummary(n.Id);
+            System.assert(false, 'expected a failure');
+        } catch (AuraHandledException e) {
+            System.assert(true);
+        }
+        g.enabled = false;
+        System.assert(!NXP_NoticeController.getDetail(n.Id).canSummarize);
+        try {
+            NXP_NoticeController.generateSummary(n.Id);
+            System.assert(false, 'expected: AI off');
+        } catch (AuraHandledException e) {
+            System.assert(true);
+        }
+    }
 }

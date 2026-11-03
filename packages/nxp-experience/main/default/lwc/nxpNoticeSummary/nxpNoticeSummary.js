@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import followNotice from '@salesforce/apex/NXP_SearchController.followNotice';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
+import generateSummary from '@salesforce/apex/NXP_NoticeController.generateSummary';
 import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
 import NxpPushDialog from 'c/nxpPushDialog';
 import NxpFindSimilar from 'c/nxpFindSimilar';
@@ -13,6 +14,7 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     detail;
     loading = true;
     loadingDescription = false;
+    summarizing = false;
 
     connectedCallback() {
         logUsage('Notice');
@@ -78,7 +80,9 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
             case 'Failed':
                 return 'The AI summary could not be generated. The full description is below.';
             default:
-                return 'An AI summary is generated once the notice matches a saved search.';
+                return this.canSummarize
+                    ? 'No AI summary yet: summaries are written for notices that match a saved search, or on request.'
+                    : 'An AI summary is generated once the notice matches a saved search.';
         }
     }
 
@@ -91,6 +95,35 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     get canLoadDescription() {
         const d = this.notice.Description__c;
         return !!(this.notice.Needs_Description__c && d && d.startsWith('http'));
+    }
+
+    /** No summary, none on its way, and AI available: offer to write one now. */
+    get canSummarize() {
+        return (
+            !!this.detail &&
+            this.detail.canSummarize === true &&
+            !this.summaryText &&
+            this.notice.AI_Summary_Status__c !== 'Pending'
+        );
+    }
+
+    get summarizeLabel() {
+        if (this.summarizing) {
+            return 'Writing the summary…';
+        }
+        return this.notice.AI_Summary_Status__c === 'Failed' ? 'Try the AI summary again' : 'Generate AI summary';
+    }
+
+    async handleGenerateSummary() {
+        this.summarizing = true;
+        try {
+            await generateSummary({ noticeId: this.recordId });
+            await this.load();
+        } catch (e) {
+            toastError(this, e, 'No AI summary');
+        } finally {
+            this.summarizing = false;
+        }
     }
 
     async handleLoadDescription() {

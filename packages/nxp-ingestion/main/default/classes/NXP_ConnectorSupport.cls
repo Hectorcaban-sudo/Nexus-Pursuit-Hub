@@ -41,12 +41,13 @@ public inherited sharing class NXP_ConnectorSupport {
             return null;
         }
         String text = html.replaceAll('(?i)<br\\s*/?>', '\n').replaceAll('(?i)</p>', '\n\n').replaceAll('<[^>]+>', ' ');
-        text = text.replace('&nbsp;', ' ')
-            .replace('&amp;', '&')
-            .replace('&lt;', '<')
-            .replace('&gt;', '>')
-            .replace('&quot;', '"')
-            .replace('&#39;', '\'');
+        // Every named and numeric entity (&ndash;, &rsquo;, &#8217;…). SAM.gov sometimes escapes
+        // them twice (&amp;ndash;), so decode a second time when entities are left.
+        text = text.replace('&nbsp;', ' ').unescapeHtml4();
+        if (Pattern.compile('&(#[0-9]+|[a-zA-Z]+);').matcher(text).find()) {
+            text = text.unescapeHtml4();
+        }
+        text = text.replace('\u00A0', ' ');
         return text.replaceAll('[ \\t]+', ' ').replaceAll('\\n\\s*\\n\\s*\\n+', '\n\n').trim();
     }
 }
