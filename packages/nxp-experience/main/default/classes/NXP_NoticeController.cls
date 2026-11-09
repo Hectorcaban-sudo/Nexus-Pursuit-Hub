@@ -222,4 +222,54 @@ public with sharing class NXP_NoticeController {
         NXP_TriggerHandler.clearBypass('NXP_GovNoticeTriggerHandler');
         return text;
     }
+
+    // ------------------------------------------------------------- Analyze this notice
+
+    @AuraEnabled(cacheable=true)
+    public static List<NXP_NoticeAnalysisService.Kind> getAnalysisKinds() {
+        return NXP_NoticeAnalysisService.kinds();
+    }
+
+    /** Bid / no-bid brief, SWOT, competitors, gaps, win themes or teaming for one notice. */
+    @AuraEnabled
+    public static NXP_NoticeAnalysisService.Analysis analyzeNotice(Id noticeId, String kind) {
+        try {
+            return NXP_NoticeAnalysisService.analyze(noticeId, kind);
+        } catch (NXP_NoticeAnalysisService.AnalysisException e) {
+            throw new AuraHandledException(e.getMessage());
+        } catch (Exception e) {
+            NXP_Logger.warn(
+                'NXP_NoticeController',
+                'Analysis ' + kind + ' failed for ' + noticeId + ': ' + e.getMessage()
+            );
+            NXP_Logger.flush();
+            throw new AuraHandledException('The analysis could not be written: ' + e.getMessage());
+        }
+    }
+
+    /** Saves an analysis (as returned by analyzeNotice, in JSON) as a file on the notice. */
+    @AuraEnabled
+    public static Id saveAnalysis(Id noticeId, String analysisJson) {
+        try {
+            NXP_NoticeAnalysisService.Analysis a = (NXP_NoticeAnalysisService.Analysis) JSON.deserialize(
+                analysisJson,
+                NXP_NoticeAnalysisService.Analysis.class
+            );
+            return NXP_NoticeAnalysisService.save(noticeId, a);
+        } catch (NXP_NoticeAnalysisService.AnalysisException e) {
+            throw new AuraHandledException(e.getMessage());
+        } catch (DmlException e) {
+            throw new AuraHandledException('The analysis could not be saved: ' + e.getDmlMessage(0));
+        }
+    }
+
+    /** The analysis as text, for Copy. */
+    @AuraEnabled
+    public static String analysisText(Id noticeId, String analysisJson) {
+        NXP_NoticeAnalysisService.Analysis a = (NXP_NoticeAnalysisService.Analysis) JSON.deserialize(
+            analysisJson,
+            NXP_NoticeAnalysisService.Analysis.class
+        );
+        return NXP_NoticeAnalysisService.toText(a, new NXP_GovNoticeSelector(AccessLevel.USER_MODE).byId(noticeId));
+    }
 }
