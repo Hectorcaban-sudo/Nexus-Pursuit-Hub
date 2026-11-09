@@ -49,6 +49,7 @@
 | 33  | Admin           | cap AI calls per day                                                                                                                            | `AI_Max_Calls_Per_Day`               |
 | 34  | BD user         | start a saved search from a notice I like, with AI-suggested keywords, and see what it would find before saving                                 | Find similar                         |
 | 35  | Admin           | change every Nexus setting in one screen, see whether e-mail, jobs, the SAM.gov key and AI work, and keep my changes across releases            | Settings tab                         |
+| 36  | BD user         | see the next steps for this kind of notice, tick them with my team, and have them carried into the Opportunity when I push                      | Playbook (Next steps)                |
 
 ## GovWin IQ coverage
 

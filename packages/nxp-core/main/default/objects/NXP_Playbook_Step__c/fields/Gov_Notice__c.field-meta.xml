@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gov_Notice__c</fullName>
+    <description>The notice.</description>
+    <label>Gov Notice</label>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <referenceTo>NXP_Gov_Notice__c</referenceTo>
+    <relationshipLabel>Playbook Steps</relationshipLabel>
+    <relationshipName>Playbook_Steps</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

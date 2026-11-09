@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Playbook__c</fullName>
+    <description>Developer name of the NXP Playbook rule.</description>
+    <label>Playbook</label>
+    <length>80</length>
+    <required>false</required>
+    <type>Text</type>
+</CustomField>

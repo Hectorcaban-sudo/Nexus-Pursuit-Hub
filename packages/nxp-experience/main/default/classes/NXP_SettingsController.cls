@@ -360,6 +360,11 @@ public with sharing class NXP_SettingsController {
         },
         new List<String>{ 'ebuy', 'GSA eBuy', 'The eBuy e-mail inbox' },
         new List<String>{ 'fit', 'Fit score rules', 'Rule weights; active weights must add up to 100' },
+        new List<String>{
+            'playbooks',
+            'Playbooks',
+            'Next steps shown on notices. Rules are checked by Order; the first that fits a notice wins. New rules are added in Setup (NXP Playbook).'
+        },
         new List<String>{ 'push', 'Push to Opportunity', 'Push mapping rows and the Opportunity fields stay in Setup' },
         new List<String>{ 'other', 'Other settings', 'Settings this screen has no description for. Change with care.' }
     };
@@ -524,6 +529,107 @@ public with sharing class NXP_SettingsController {
                 );
         }
 
+        for (NXP_Playbook__mdt r : [
+            SELECT
+                DeveloperName,
+                MasterLabel,
+                Active__c,
+                Order__c,
+                Description__c,
+                Notice_Types__c,
+                Sources__c,
+                Set_Aside__c,
+                Vehicle_Held__c,
+                Min_Fit__c,
+                Steps__c
+            FROM NXP_Playbook__mdt
+            ORDER BY Order__c ASC NULLS LAST, MasterLabel
+        ]) {
+            String base = 'NXP_Playbook.' + r.DeveloperName + '.';
+            String g = r.MasterLabel;
+            List<Item> rows = byKey.get('playbooks').items;
+            rows.add(
+                item(base + 'Active__c', 'On', r.Description__c, 'Boolean', String.valueOf(r.Active__c), g, false)
+            );
+            rows.add(
+                item(
+                    base + 'Order__c',
+                    'Order',
+                    'Lower numbers are checked first.',
+                    'Integer',
+                    num(r.Order__c),
+                    g,
+                    false
+                )
+            );
+            rows.add(
+                item(
+                    base + 'Notice_Types__c',
+                    'Notice types',
+                    'Comma-separated, for example Sources Sought, RFI. Blank: any type.',
+                    'Text',
+                    r.Notice_Types__c,
+                    g,
+                    false
+                )
+            );
+            rows.add(
+                item(
+                    base + 'Sources__c',
+                    'Sources',
+                    'Comma-separated: SAM.gov, GSA eBuy, Partner API, Other. Blank: any source.',
+                    'Text',
+                    r.Sources__c,
+                    g,
+                    false
+                )
+            );
+            Item aside = item(base + 'Set_Aside__c', 'Set-aside', '', 'Picklist', blankAny(r.Set_Aside__c), g, false);
+            aside.options = new List<Option>{
+                new Option('Any', 'Any'),
+                new Option('Set-aside only', 'Set-aside only'),
+                new Option('Full and open only', 'Full and open only')
+            };
+            rows.add(aside);
+            Item held = item(
+                base + 'Vehicle_Held__c',
+                'Vehicle we hold',
+                '',
+                'Picklist',
+                blankAny(r.Vehicle_Held__c),
+                g,
+                false
+            );
+            held.options = new List<Option>{
+                new Option('Any', 'Any'),
+                new Option('Yes', 'Yes'),
+                new Option('No', 'No')
+            };
+            rows.add(held);
+            rows.add(
+                item(
+                    base + 'Min_Fit__c',
+                    'Lowest fit',
+                    '0 = any fit.',
+                    'Integer',
+                    r.Min_Fit__c == null ? '0' : num(r.Min_Fit__c),
+                    g,
+                    false
+                )
+            );
+            rows.add(
+                item(
+                    base + 'Steps__c',
+                    'Steps',
+                    'One per line. "| 10" = due 10 days before the response date; "| +2" = 2 days after it was posted.',
+                    'LongText',
+                    r.Steps__c,
+                    g,
+                    false
+                )
+            );
+        }
+
         for (NXP_Setting_Change__c c : [
             SELECT Label__c, Old_Value__c, New_Value__c, Status__c, Detail__c, CreatedBy.Name, CreatedDate
             FROM NXP_Setting_Change__c
@@ -584,6 +690,7 @@ public with sharing class NXP_SettingsController {
                     Label__c = ((i.subgroup == null ? '' : i.subgroup + ': ') + i.label).left(255),
                     Old_Value__c = i.value == null ? null : i.value.left(255),
                     New_Value__c = value == null ? null : value.left(255),
+                    Full_Value__c = value,
                     Status__c = 'Pending'
                 )
             );
@@ -665,7 +772,7 @@ public with sharing class NXP_SettingsController {
         }
         Map<String, String> lastSaved = new Map<String, String>();
         for (NXP_Setting_Change__c c : [
-            SELECT Setting__c, New_Value__c
+            SELECT Setting__c, New_Value__c, Full_Value__c
             FROM NXP_Setting_Change__c
             WHERE Status__c = 'Saved'
             WITH USER_MODE
@@ -673,7 +780,7 @@ public with sharing class NXP_SettingsController {
             LIMIT 2000
         ]) {
             if (!lastSaved.containsKey(c.Setting__c)) {
-                lastSaved.put(c.Setting__c, c.New_Value__c);
+                lastSaved.put(c.Setting__c, c.Full_Value__c != null ? c.Full_Value__c : c.New_Value__c);
             }
         }
         List<Change> out = new List<Change>();
@@ -729,7 +836,11 @@ public with sharing class NXP_SettingsController {
                 throw new AuraHandledException(i.label + ': choose one of the listed values.');
             }
         }
-        if (value != null && value.length() > 255) {
+        if (i.type == 'LongText') {
+            if (value != null && value.length() > 5000) {
+                throw new AuraHandledException(i.label + ': 5,000 characters at most.');
+            }
+        } else if (value != null && value.length() > 255) {
             throw new AuraHandledException(i.label + ': 255 characters at most.');
         }
         return value;
@@ -1154,6 +1265,10 @@ public with sharing class NXP_SettingsController {
         i.subgroup = subgroup;
         i.releaseManaged = managed;
         return i;
+    }
+
+    private static String blankAny(String v) {
+        return String.isBlank(v) ? 'Any' : v;
     }
 
     private static String num(Decimal d) {

@@ -23,6 +23,9 @@ public with sharing class NXP_NoticeController {
         /** AI is on and the daily limit not reached: the page offers Generate AI summary. */
         @AuraEnabled
         public Boolean canSummarize = false;
+        /** Next steps from the playbook that fits this notice (null when none fits). */
+        @AuraEnabled
+        public NXP_PlaybookService.Plan playbook;
     }
 
     public class DocumentCheck {
@@ -81,6 +84,7 @@ public with sharing class NXP_NoticeController {
         d.checks = openChecks(noticeId);
         NXP_SummaryGenerator generator = summaryGenerator();
         d.canSummarize = generator != null && generator.isEnabled();
+        d.playbook = NXP_PlaybookService.planFor(d.notice);
         return d;
     }
 
@@ -221,5 +225,17 @@ public with sharing class NXP_NoticeController {
         );
         NXP_TriggerHandler.clearBypass('NXP_GovNoticeTriggerHandler');
         return text;
+    }
+
+    /** Ticks or unticks a playbook step for the team; returns the updated next steps. */
+    @AuraEnabled
+    public static NXP_PlaybookService.Plan setPlaybookStep(Id noticeId, Integer stepNumber, Boolean done) {
+        try {
+            return NXP_PlaybookService.setDone(noticeId, stepNumber, done);
+        } catch (NXP_PlaybookService.PlaybookException e) {
+            throw new AuraHandledException(e.getMessage());
+        } catch (DmlException e) {
+            throw new AuraHandledException('The step could not be saved: ' + e.getDmlMessage(0));
+        }
     }
 }

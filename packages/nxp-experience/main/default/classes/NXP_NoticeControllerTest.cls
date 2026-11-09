@@ -212,4 +212,35 @@ private class NXP_NoticeControllerTest {
             System.assert(true);
         }
     }
+
+    @IsTest
+    static void playbookOnTheNoticePage() {
+        NXP_PlaybookService.rulesOverride = new List<NXP_Playbook__mdt>{
+            new NXP_Playbook__mdt(
+                DeveloperName = 'Early',
+                MasterLabel = 'Early',
+                Active__c = true,
+                Order__c = 1,
+                Notice_Types__c = 'Sources Sought',
+                Steps__c = 'Read it\nAnswer it | 5'
+            )
+        };
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Notice_Id__c = 'EXP-PB',
+            Title__c = 'Thermal cameras',
+            Notice_Type__c = 'Sources Sought',
+            Status__c = 'Active'
+        );
+        insert n;
+        NXP_NoticeController.Detail d = NXP_NoticeController.getDetail(n.Id);
+        System.assertEquals('Early', d.playbook.playbook);
+        NXP_PlaybookService.Plan p = NXP_NoticeController.setPlaybookStep(n.Id, 2, true);
+        System.assertEquals(1, p.doneCount);
+        try {
+            NXP_NoticeController.setPlaybookStep(n.Id, 5, true);
+            System.assert(false, 'expected a refusal');
+        } catch (AuraHandledException e) {
+            System.assert(true);
+        }
+    }
 }

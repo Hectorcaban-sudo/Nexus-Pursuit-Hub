@@ -111,6 +111,7 @@ export default class NxpAdminSettings extends NavigationMixin(LightningElement) 
                 isBoolean: i.type === 'Boolean',
                 isInteger: i.type === 'Integer',
                 isText: i.type === 'Text',
+                isLongText: i.type === 'LongText',
                 isPicklist: i.type === 'Picklist',
                 changed,
                 rowClass: changed ? 'row row_changed' : 'row',

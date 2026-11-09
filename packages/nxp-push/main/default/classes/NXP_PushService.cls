@@ -166,6 +166,7 @@ public without sharing class NXP_PushService {
             }
         }
 
+        Map<Id, Id> created = new Map<Id, Id>();
         if (!toCreate.isEmpty()) {
             List<SObject> rows = new List<SObject>();
             List<NXP_Gov_Notice__c> built = new List<NXP_Gov_Notice__c>();
@@ -198,6 +199,7 @@ public without sharing class NXP_PushService {
                     );
                     logs.add(log(n.Id, t.targetObject(), saved[i].getId(), 'Success', mode, pusher, null));
                     pushedTargets.put(n.Id, saved[i].getId());
+                    created.put(n.Id, saved[i].getId());
                 } else {
                     String message = errorText(saved[i].getErrors());
                     results.put(n.Id, result(n.Id, 'Failed', null, message));
@@ -217,6 +219,7 @@ public without sharing class NXP_PushService {
         }
 
         markPushed(pushedTargets, pusher);
+        addPlaybook(created, notices, access);
         if (includeDocuments != false) {
             linkDocuments(pushedTargets);
         }
@@ -225,6 +228,52 @@ public without sharing class NXP_PushService {
         }
         NXP_Logger.flush();
         return results.values();
+    }
+
+    /**
+     * Adds the notice's playbook (steps done and left) to the Description of records the push created,
+     * so capture sees what BD already did. Skipped when the target has no Description field.
+     */
+    private static void addPlaybook(Map<Id, Id> created, List<NXP_Gov_Notice__c> notices, AccessLevel access) {
+        if (created.isEmpty()) {
+            return;
+        }
+        try {
+            SObjectType type = created.values()[0].getSObjectType();
+            Schema.SObjectField descField = type.getDescribe().fields.getMap().get('description');
+            if (descField == null || !descField.getDescribe().isUpdateable()) {
+                return;
+            }
+            Integer max = descField.getDescribe().getLength();
+            Map<Id, SObject> current = new Map<Id, SObject>(
+                Database.queryWithBinds(
+                    'SELECT Id, Description FROM ' + type + ' WHERE Id IN :ids',
+                    new Map<String, Object>{ 'ids' => created.values() },
+                    AccessLevel.SYSTEM_MODE
+                )
+            );
+            List<SObject> updates = new List<SObject>();
+            for (NXP_Gov_Notice__c n : notices) {
+                Id targetId = created.get(n.Id);
+                if (targetId == null || !current.containsKey(targetId)) {
+                    continue;
+                }
+                String text = NXP_PlaybookService.pushText(n);
+                if (String.isBlank(text)) {
+                    continue;
+                }
+                String existing = (String) current.get(targetId).get('Description');
+                SObject row = type.newSObject(targetId);
+                row.put('Description', ((String.isBlank(existing) ? '' : existing + '\n\n') + text).left(max));
+                updates.add(row);
+            }
+            if (!updates.isEmpty()) {
+                Database.update(updates, false, access);
+            }
+        } catch (Exception e) {
+            // The push worked; the playbook text is a convenience.
+            NXP_Logger.warn('NXP_PushService', 'Playbook not added to the pushed record: ' + e.getMessage());
+        }
     }
 
     /** Applies Push Mapping sync rules to records pushed earlier when their notice is amended. */

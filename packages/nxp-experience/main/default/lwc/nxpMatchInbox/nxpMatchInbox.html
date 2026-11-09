@@ -47,6 +47,15 @@
                         message-toggle-active=""
                         message-toggle-inactive=""
                     ></lightning-input>
+                    <lightning-input
+                        type="toggle"
+                        class="overdue-toggle"
+                        label={overdueLabel}
+                        checked={overdueOnly}
+                        onchange={handleOverdueToggle}
+                        message-toggle-active=""
+                        message-toggle-inactive=""
+                    ></lightning-input>
                     <lightning-combobox
                         label="Sort"
                         variant="label-inline"
@@ -137,6 +146,13 @@
                                 breakdown={c.breakdown}
                                 score={c.fit}
                             ></c-nxp-fit-reasons>
+                            <template lwc:if={c.hasNextStep}>
+                                <p class="next-step">
+                                    <strong>Next:</strong> {c.nextStep}
+                                    <span class={c.nextStepClass}>{c.nextStepDue}</span>
+                                    <span class="next-count">{c.stepsLabel}</span>
+                                </p>
+                            </template>
                             <template lwc:if={c.hasSummary}><p class="summary">{c.summary}</p></template>
                             <div class="why">
                                 Matched <strong>{c.searchName}</strong

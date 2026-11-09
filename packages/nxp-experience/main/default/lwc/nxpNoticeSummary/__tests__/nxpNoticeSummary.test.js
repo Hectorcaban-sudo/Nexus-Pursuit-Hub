@@ -4,9 +4,13 @@ import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
 import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
 import generateSummary from '@salesforce/apex/NXP_NoticeController.generateSummary';
+import setPlaybookStep from '@salesforce/apex/NXP_NoticeController.setPlaybookStep';
 
 jest.mock('@salesforce/apex/NXP_NoticeController.getDetail', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.loadDescription', () => ({ default: jest.fn() }), {
+    virtual: true
+});
+jest.mock('@salesforce/apex/NXP_NoticeController.setPlaybookStep', () => ({ default: jest.fn() }), {
     virtual: true
 });
 jest.mock('@salesforce/apex/NXP_NoticeController.generateSummary', () => ({ default: jest.fn() }), {
@@ -55,6 +59,65 @@ describe('c-nxp-notice-summary', () => {
         expect(el.shadowRoot.querySelector('.rule-score').textContent).toBe('30 / 30');
         expect(el.shadowRoot.querySelector('.v-name').textContent).toContain('Amendment 1');
     });
+    it('shows the playbook next steps and ticks a step', async () => {
+        const plan = (done) => ({
+            playbook: 'Sources_Sought_RFI',
+            label: 'Sources Sought / RFI',
+            reasons: ['Notice type: Sources Sought', '25 days left'],
+            doneCount: done ? 1 : 0,
+            decideBy: '2026-11-25',
+            steps: [
+                { stepNumber: 1, text: 'Read the questions', done, doneBy: done ? 'Ana' : null },
+                { stepNumber: 2, text: 'Send a capability statement', due: '2026-11-01', overdue: true, done: false }
+            ]
+        });
+        getDetail.mockResolvedValue({
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            following: false,
+            sources: [],
+            notice: { Id: 'n5', Notice_Type__c: 'Sources Sought' },
+            playbook: plan(false)
+        });
+        setPlaybookStep.mockResolvedValue(plan(true));
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n5';
+        document.body.appendChild(el);
+        await flush();
+        const card = el.shadowRoot.querySelector('.playbook');
+        expect(card.textContent).toContain('Sources Sought / RFI');
+        expect(card.querySelector('.playbook-progress').textContent).toContain('0 of 2 done');
+        expect(card.querySelectorAll('.reason')).toHaveLength(2);
+        expect(card.querySelector('.due_overdue').textContent).toContain('Overdue');
+        const box = card.querySelector('.step-check');
+        box.checked = true;
+        box.dispatchEvent(new CustomEvent('change'));
+        await flush();
+        await flush();
+        expect(setPlaybookStep).toHaveBeenCalledWith({ noticeId: 'n5', stepNumber: 1, done: true });
+        expect(el.shadowRoot.querySelector('.playbook-progress').textContent).toContain('1 of 2 done');
+        expect(el.shadowRoot.querySelector('.step_done').textContent).toContain('Ana');
+    });
+
+    it('shows no next steps when no playbook fits', async () => {
+        getDetail.mockResolvedValue({
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            following: false,
+            sources: [],
+            notice: { Id: 'n6' }
+        });
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n6';
+        document.body.appendChild(el);
+        await flush();
+        expect(el.shadowRoot.querySelector('.playbook')).toBeNull();
+    });
+
     it('offers the AI summary again when it failed', async () => {
         const base = { breakdown: [], versions: [], contacts: [], pushLogs: [], following: false, sources: [] };
         getDetail.mockResolvedValueOnce({

@@ -82,6 +82,29 @@ private class NXP_PushTest {
     }
 
     @IsTest
+    static void pushAddsThePlaybookToTheDescription() {
+        useOpportunityMapping();
+        NXP_PlaybookService.rulesOverride = new List<NXP_Playbook__mdt>{
+            new NXP_Playbook__mdt(
+                DeveloperName = 'High_Fit',
+                MasterLabel = 'High-fit solicitation',
+                Active__c = true,
+                Order__c = 1,
+                Notice_Types__c = 'Solicitation',
+                Steps__c = 'Read the evaluation factors\nPush for capture review'
+            )
+        };
+        NXP_Gov_Notice__c n = notice('PB');
+        NXP_PlaybookService.setDone(n.Id, 1, true);
+        NXP_PushService.PushResult r = NXP_PushController.pushNoticeFrom(n.Id, true, 'Match Inbox');
+        System.assertEquals('Success', r.status, r.message);
+        String description = [SELECT Description FROM Opportunity WHERE Id = :r.targetId].Description;
+        System.assert(description.contains('Nexus playbook: High-fit solicitation'), description);
+        System.assert(description.contains('[x] Read the evaluation factors'), description);
+        System.assert(description.contains('[ ] Push for capture review'), description);
+    }
+
+    @IsTest
     static void existingRecordIsLinkedNotDuplicated() {
         useOpportunityMapping();
         NXP_Gov_Notice__c n = notice('B');

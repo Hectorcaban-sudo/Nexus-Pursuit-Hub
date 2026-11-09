@@ -127,6 +127,35 @@ describe('c-nxp-match-inbox', () => {
         });
     });
 
+    it('shows the playbook hint and filters overdue steps', async () => {
+        getInbox.mockResolvedValue([
+            {
+                ...ITEMS[0],
+                nextStep: 'Send a capability statement',
+                nextStepDue: '2026-11-01',
+                stepsOverdue: true,
+                stepsDone: 1,
+                stepCount: 4
+            },
+            ITEMS[1]
+        ]);
+        const el = createElement('c-nxp-match-inbox', { is: NxpMatchInbox });
+        document.body.appendChild(el);
+        await flush();
+        await flush();
+        const hints = el.shadowRoot.querySelectorAll('.next-step');
+        expect(hints).toHaveLength(1);
+        expect(hints[0].textContent).toContain('Send a capability statement');
+        expect(hints[0].querySelector('.next-due_overdue').textContent).toContain('overdue');
+        expect(hints[0].textContent).toContain('1 of 4 done');
+        const toggle = el.shadowRoot.querySelector('.overdue-toggle');
+        expect(toggle.label).toBe('Steps overdue (1)');
+        toggle.checked = true;
+        toggle.dispatchEvent(new CustomEvent('change'));
+        await flush();
+        expect(el.shadowRoot.querySelectorAll('.title')).toHaveLength(1);
+    });
+
     it('shows the empty state', async () => {
         getInbox.mockResolvedValue([]);
         const el = createElement('c-nxp-match-inbox', { is: NxpMatchInbox });

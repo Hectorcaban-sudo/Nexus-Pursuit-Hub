@@ -97,6 +97,42 @@
                 </section>
             </template>
 
+            <template lwc:if={playbook}>
+                <section class="card playbook" aria-label="Next steps">
+                    <div class="card-head">
+                        <h2 class="slds-text-heading_small">Next steps</h2>
+                        <span class="playbook-progress">{playbookProgress}</span>
+                    </div>
+                    <p class="playbook-why">
+                        <span class="slds-text-color_weak">Playbook:</span>
+                        <strong>{playbook.label}</strong>
+                        <template for:each={playbook.reasons} for:item="r">
+                            <span key={r} class="reason">{r}</span>
+                        </template>
+                    </p>
+                    <ul class="steps">
+                        <template for:each={playbookSteps} for:item="s">
+                            <li key={s.stepNumber} class={s.rowClass}>
+                                <lightning-input
+                                    type="checkbox"
+                                    class="step-check"
+                                    label={s.text}
+                                    checked={s.done}
+                                    data-step={s.stepNumber}
+                                    disabled={savingStep}
+                                    onchange={handleStep}
+                                ></lightning-input>
+                                <span class={s.dueClass}>{s.dueText}</span>
+                            </li>
+                        </template>
+                    </ul>
+                    <p class="slds-text-color_weak slds-text-body_small">
+                        Ticks are shared with your team. Pushing to Opportunity copies the steps into its description.
+                        Capture happens in Opportunity.
+                    </p>
+                </section>
+            </template>
+
             <div class="columns">
                 <section class="card summary" aria-label="AI summary">
                     <div class="card-head">

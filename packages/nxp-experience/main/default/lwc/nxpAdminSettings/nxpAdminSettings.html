@@ -96,6 +96,16 @@
                                                 onchange={handleValue}
                                             ></lightning-input>
                                         </template>
+                                        <template lwc:if={i.isLongText}>
+                                            <lightning-textarea
+                                                class="long-text"
+                                                label={i.label}
+                                                variant="label-hidden"
+                                                value={i.current}
+                                                data-id={i.id}
+                                                onchange={handleValue}
+                                            ></lightning-textarea>
+                                        </template>
                                         <template lwc:if={i.isPicklist}>
                                             <lightning-combobox
                                                 label={i.label}

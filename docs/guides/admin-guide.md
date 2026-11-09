@@ -52,6 +52,22 @@ Nexus sends two kinds of message; who gets what is in [How Nexus works](how-it-w
 
 **Admin problems e-mail**: every active `NXP_Admin` user gets it at 07:00 when something failed. Change who with `Admin_Digest_Recipients` and when with `Admin_Digest_Mode` ([Monitoring](#monitoring)).
 
+## Playbooks
+
+Playbook rules (`NXP_Playbook__mdt`) give notices their **Next steps**. Rules are checked by **Order**; the first active rule whose conditions all fit wins:
+
+| Condition    | Values                                                              |
+| ------------ | ------------------------------------------------------------------- |
+| Notice Types | Comma-separated notice types; blank = any                           |
+| Sources      | Comma-separated: SAM.gov, GSA eBuy, Partner API, Other; blank = any |
+| Set-Aside    | Any, Set-aside only, Full and open only                             |
+| Vehicle Held | Any, Yes (on a vehicle we hold), No                                 |
+| Min Fit      | Lowest fit score; 0 = any                                           |
+
+**Steps** are one per line. Add `| 10` for a due date 10 days before the response date, or `| +2` for 2 days after the notice was posted. A date before the notice was posted becomes the posted date.
+
+Five starter rules ship (the recompete one is off). They are placeholders: replace them with your BD team's qualification steps on **Settings → Playbooks**. New rules are added in Setup → Custom Metadata Types → NXP Playbook → New, then edited on the Settings tab. Ticks are kept in **Playbook Steps** (`NXP_Playbook_Step__c`), one row per notice and step, shared with everyone.
+
 ## The Settings tab
 
 **Settings** (in the Nexus Pursuit Hub app, admins only) puts the Nexus settings in one screen, so you rarely need Setup → Custom Metadata Types.

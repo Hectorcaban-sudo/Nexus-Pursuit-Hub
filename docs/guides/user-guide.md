@@ -76,6 +76,15 @@ Click a notice title. The page shows:
 - **Fit breakdown**, **Version history** (every amendment and what changed), **Contacts** and **Push history**.
 - **Documents**: the notice's files.
 
+### Next steps (playbook)
+
+Many notices show a **Next steps** card: 3 to 5 steps for this kind of notice, with due dates, picked by your admins' playbook rules (for example _Sources Sought / RFI_ or _eBuy RFQ on a vehicle we hold_). The chips say why this playbook applies.
+
+- Tick a step when it's done. Ticks are shared: your team sees who did it and when.
+- Overdue steps are amber. The Match Inbox card shows the next step and its due date, and **Steps overdue** shows only cards with an overdue step.
+- The playbook stops at the decision. **Push to Opportunity** copies the steps, done and not done, into the Opportunity's description; capture continues there.
+- No card means no playbook fits this notice.
+
 ### Documents
 
 - **SAM.gov files** are downloaded automatically for notices that match a search or score 70+. For any other notice, click **Get SAM.gov files**; they arrive one by one over a few minutes (click refresh). Files over 6 MB stay on SAM.gov.
