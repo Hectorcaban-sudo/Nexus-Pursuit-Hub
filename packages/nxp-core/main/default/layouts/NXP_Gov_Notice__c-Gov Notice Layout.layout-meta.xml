@@ -165,6 +165,14 @@
                 <field>Source__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Pursuit_Likelihood__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Pursuit_Scored__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Status__c</field>
             </layoutItems>
@@ -200,6 +208,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Fit_Breakdown__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Pursuit_Factors__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

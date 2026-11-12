@@ -114,6 +114,12 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
         return this.notice.AI_Summary_Status__c === 'Failed' ? 'Try the AI summary again' : 'Generate AI summary';
     }
 
+    get hasPursuit() {
+        return (
+            this.notice && this.notice.Pursuit_Likelihood__c !== null && this.notice.Pursuit_Likelihood__c !== undefined
+        );
+    }
+
     async handleGenerateSummary() {
         this.summarizing = true;
         try {

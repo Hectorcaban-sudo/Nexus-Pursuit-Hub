@@ -12,7 +12,8 @@ import { formatMoney, dueLabel, daysUntil, toast, toastError, logUsage } from 'c
 const SORTS = [
     { label: 'Fit score, then due date', value: 'fit' },
     { label: 'Due date', value: 'due' },
-    { label: 'Newest match', value: 'newest' }
+    { label: 'Newest match', value: 'newest' },
+    { label: 'Likely to pursue', value: 'pursuit' }
 ];
 
 export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
@@ -75,6 +76,8 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
                 noticeId: n.Id,
                 title: n.Title__c || n.Name,
                 fit: n.Fit_Score__c,
+                pursuit: n.Pursuit_Likelihood__c,
+                pursuitFactors: n.Pursuit_Factors__c,
                 breakdown: n.Fit_Breakdown__c,
                 type: n.Notice_Type__c,
                 setAside: n.Set_Aside__c,
@@ -99,6 +102,8 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
         });
         if (this.sortBy === 'due') {
             list.sort((a, b) => a.dueRaw - b.dueRaw);
+        } else if (this.sortBy === 'pursuit') {
+            list.sort((a, b) => (b.pursuit ?? -1) - (a.pursuit ?? -1) || (b.fit || 0) - (a.fit || 0));
         } else if (this.sortBy === 'newest') {
             list.sort((a, b) => b.matchedRaw - a.matchedRaw);
         } else {

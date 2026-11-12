@@ -52,6 +52,17 @@ Nexus sends two kinds of message; who gets what is in [How Nexus works](how-it-w
 
 **Admin problems e-mail**: every active `NXP_Admin` user gets it at 07:00 when something failed. Change who with `Admin_Digest_Recipients` and when with `Admin_Digest_Mode` ([Monitoring](#monitoring)).
 
+## Likely to pursue
+
+An optional, explainable prediction of which notices BD will pursue, learned from your own pushes and dismissals (no AI service; it runs in Apex).
+
+1. **Turn it on:** Settings → **Likely to Pursue** → _Likely to Pursue on_. Leave _Decisions needed before predicting_ at 200 unless you know you need more.
+2. **Train it:** it trains nightly at 02:50, or click **Train now** in the health checks. Until there are enough decisions (200, with at least 20 pushed and 20 dismissed) the check says how many it has; no notice is scored.
+3. **Read the health check:** it shows when it was trained and how well it did on the newest 20% of decisions it hadn't learned from: how often a pushed notice ranked above a dismissed one (50% = chance). Under 60% it's flagged as weak.
+4. **Models** are kept in **Pursuit Models** (`NXP_Pursuit_Model__c`): each run, its decisions, its accuracy and the counts it learned.
+
+Tell users it is not a win probability, and that dismissing with reasons makes it better. If BD's focus changes (a new market, a new vehicle), expect it to lag until new decisions build up.
+
 ## The Settings tab
 
 **Settings** (in the Nexus Pursuit Hub app, admins only) puts the Nexus settings in one screen, so you rarely need Setup → Custom Metadata Types.
@@ -60,7 +71,7 @@ Nexus sends two kinds of message; who gets what is in [How Nexus works](how-it-w
 - **Change and save:** changed settings are marked _Changed_ and a bar at the bottom counts them. **Save changes** saves them together (about 30 seconds) and the toast says when they are in effect; **Discard** throws them away. Values are checked first: numbers can't be negative, and active fit rule weights must still add up to 100.
 - **After a release:** deploying the packages puts the shipped values back for every setting and fit rule. The release scripts then run `scripts/post-deploy/reapply-settings.apex`, which saves again the last value you gave each setting here, so your changes survive. If you deploy packages by hand, click **Reapply my settings** in the health checks (the _Settings saved here_ check lists what a release put back).
 - **Reset by each release:** settings with this badge (`AI_Enabled`, `Org_Environment` and the feed switches, intervals, lookback and page size) are set by `env-config/<env>` on purpose and are not reapplied. Change them here for today, but make the lasting change in `env-config` too.
-- **Health checks** (right): e-mail delivery (Deliverability), bell notifications (NXP Match Alert), the SAM.gov key and feed (**Test the key** makes one SAM.gov call), scheduled jobs (**Reschedule all** reschedules the seven Nexus jobs as you), settings saved here (**Reapply my settings** after a release put shipped values back), SAM.gov file downloads (Remote Site Settings), the Company Profile (**Rescore notices** re-scores open notices, for example after you change fit weights) and AI (today's calls against the daily limit). Links open the right Setup page where Setup is needed.
+- **Health checks** (right): e-mail delivery (Deliverability), bell notifications (NXP Match Alert), the SAM.gov key and feed (**Test the key** makes one SAM.gov call), scheduled jobs (**Reschedule all** reschedules the eight Nexus jobs as you), settings saved here (**Reapply my settings** after a release put shipped values back), SAM.gov file downloads (Remote Site Settings), the Company Profile (**Rescore notices** re-scores open notices, for example after you change fit weights) and AI (today's calls against the daily limit). Links open the right Setup page where Setup is needed.
 - **Recent changes:** who changed what, from what to what, and whether the save worked. A _Failed_ save shows the reason and nothing is changed. The history is kept in the **Setting Changes** object (`NXP_Setting_Change__c`).
 
 What you need: `NXP_Admin` and the **Customize Application** permission (saving deploys custom metadata, like editing it in Setup). Without Customize Application the save fails with a message saying so.
@@ -79,6 +90,7 @@ Still in Setup: the SAM.gov API key (Named Credentials), permission sets and use
 | NXP Daily Digest             | 06:30          | Daily alert e-mails                                                                       |
 | NXP Weekly Digest            | 06:30 Monday   | Weekly alert e-mails                                                                      |
 | NXP Admin Digest             | 07:00          | Problems e-mail to admins                                                                 |
+| NXP Pursuit Prediction       | :50 every hour | Likely to Pursue for new notices; retrains at 02:50 (only when it's on)                   |
 
 Matching and Real Time alerts don't need a schedule: they run as notices arrive. To pause everything: `scripts/post-deploy/unschedule-jobs.apex`; to resume, `schedule-jobs.apex`.
 

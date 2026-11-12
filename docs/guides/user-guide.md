@@ -45,7 +45,7 @@ To change a search, click it in the list on the left, edit, and **Save search**.
 
 ## 2. Work the Match Inbox
 
-Every match lands in **Match Inbox**, best fit first (or sort by due date or newest). The left column lists your searches with their new counts; click one to see only its matches.
+Every match lands in **Match Inbox**, best fit first (or sort by due date, newest or likely to pursue). The left column lists your searches with their new counts; click one to see only its matches.
 
 Each card shows:
 
@@ -55,6 +55,15 @@ Each card shows:
 - The **buyer**, **value** and **days left** (bold when 7 days or fewer).
 - The **AI summary**, when one is ready.
 - **Why it matched**: the search and the words or codes it matched on.
+- **Likely to pursue** (when your admins turn it on): the chance BD pursues this notice, learned from what was pushed and dismissed before. Hover for the factors behind it.
+
+### Likely to pursue
+
+Nexus learns from your team's decisions: a notice pushed to Opportunity counts as pursued, a notice dismissed from the inbox counts as passed. From those it estimates, for each open notice, how likely you are to pursue it, and shows the factors that moved it most, for example _↑ Department: Homeland Security, pushed 12 of 15 before_ or _↓ Set-aside: 8(a), pushed 0 of 9 before_.
+
+- It's **not a win probability** and not a fit score. It reflects what BD chose before, so it can steer you away from new markets on purpose; use it with the fit score, not instead of it.
+- It gets better as you push and dismiss, **with reasons**. Notices you never act on teach it nothing.
+- On the notice page it's next to the fit score, with the full list of factors on the right.
 
 | Button                  | Does                                                                                                  |
 | ----------------------- | ----------------------------------------------------------------------------------------------------- |

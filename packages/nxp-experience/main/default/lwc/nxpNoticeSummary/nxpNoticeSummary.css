@@ -208,3 +208,6 @@
     display: flex;
     gap: 0.5rem;
 }
+.pursuit-chip {
+    align-self: center;
+}

@@ -1,0 +1,19 @@
+<template>
+    <template lwc:if={hasValue}>
+        <span class={chipClass} title={tooltip}>{label}</span>
+        <template lwc:if={detailed}>
+            <template lwc:if={hasFactors}>
+                <ul class="factors" aria-label="Why">
+                    <template for:each={factorList} for:item="f">
+                        <li key={f.key}>
+                            <span class={f.arrowClass} aria-hidden="true">{f.arrow}</span>
+                            <span>{f.text}</span>
+                            <span class="history">{f.history}</span>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <p class="note">Learned from what BD pushed and dismissed before. Not a win probability.</p>
+        </template>
+    </template>
+</template>

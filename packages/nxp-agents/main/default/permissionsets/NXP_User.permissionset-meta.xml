@@ -530,6 +530,21 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Pursuit_Factors__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Pursuit_Likelihood__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>NXP_Gov_Notice__c.Pursuit_Scored__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>NXP_Gov_Notice__c.Fit_Breakdown__c</field>
         <readable>true</readable>
     </fieldPermissions>

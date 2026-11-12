@@ -187,6 +187,24 @@ public with sharing class NXP_SettingsController {
             'false'
         },
         new List<String>{
+            'prediction',
+            'Pursuit_Prediction_Enabled',
+            'Likely to Pursue on',
+            'Learns from what BD pushed and dismissed, and shows each open notice\'s chance of being pursued. Trained nightly.',
+            'Boolean',
+            '',
+            'false'
+        },
+        new List<String>{
+            'prediction',
+            'Pursuit_Min_Decisions',
+            'Decisions needed before predicting',
+            'Pushed plus dismissed notices it must learn from first (at least 20 of each).',
+            'Integer',
+            '',
+            '200'
+        },
+        new List<String>{
             'ai',
             'AI_Max_Calls_Per_Day',
             'Most AI calls per day',
@@ -361,6 +379,11 @@ public with sharing class NXP_SettingsController {
         new List<String>{ 'alerts', 'Alerts and e-mail', 'How users and admins are told about matches and problems' },
         new List<String>{ 'feeds', 'SAM.gov and feeds', 'Which feeds run and how often' },
         new List<String>{ 'searches', 'Searches and inbox', 'Limits that keep matching fast' },
+        new List<String>{
+            'prediction',
+            'Likely to Pursue',
+            'A model of which notices BD pursues, learned from pushes and dismissals. Not a win probability.'
+        },
         new List<String>{ 'ai', 'AI', 'Summaries, Document Reader, eBuy extraction, criteria drafts' },
         new List<String>{
             'files',
@@ -1012,6 +1035,38 @@ public with sharing class NXP_SettingsController {
             }
         }
         out.add(ai);
+
+        Check pursuit = check('pursuit', 'Likely to Pursue');
+        List<NXP_Pursuit_Model__c> models = [
+            SELECT Status__c, Trained__c, Detail__c, AUC__c
+            FROM NXP_Pursuit_Model__c
+            WITH SYSTEM_MODE
+            ORDER BY Trained__c DESC
+            LIMIT 1
+        ];
+        if (!NXP_Settings.getBoolean('Pursuit_Prediction_Enabled', false)) {
+            ok(
+                pursuit,
+                'Off. Turn it on under Likely to Pursue when BD has pushed and dismissed a few hundred notices.'
+            );
+        } else if (models.isEmpty()) {
+            warn(pursuit, 'On, not trained yet. It trains nightly at 02:50, or now.');
+        } else if (models[0].Status__c == 'Active') {
+            NXP_Pursuit_Model__c m = models[0];
+            String detail = 'Trained ' + m.Trained__c.format('MMM d h:mm a') + '. ' + m.Detail__c;
+            if (m.AUC__c != null && m.AUC__c < 0.6) {
+                warn(pursuit, detail + ' That is weak: treat the scores as a rough hint.');
+            } else {
+                ok(pursuit, detail);
+            }
+        } else {
+            warn(pursuit, models[0].Detail__c);
+        }
+        if (NXP_Settings.getBoolean('Pursuit_Prediction_Enabled', false)) {
+            pursuit.action = 'trainPursuit';
+            pursuit.actionLabel = 'Train now';
+        }
+        out.add(pursuit);
         return out;
     }
 
@@ -1022,7 +1077,8 @@ public with sharing class NXP_SettingsController {
         'NXP Notice Analyst :15',
         'NXP Notice Analyst :45',
         'NXP Push Retry',
-        'NXP Admin Digest'
+        'NXP Admin Digest',
+        'NXP Pursuit Prediction'
     };
 
     /** One small SAM.gov call (a single record from yesterday) to check the key. */
@@ -1087,7 +1143,15 @@ public with sharing class NXP_SettingsController {
         }
         System.schedule('NXP Push Retry', '0 20 * * * ?', new NXP_PushRetryJob());
         NXP_AdminDigestJob.scheduleDefaults();
+        NXP_PursuitJob.scheduleDefaults();
         return [SELECT COUNT() FROM CronTrigger WHERE CronJobDetail.Name LIKE 'NXP %'];
+    }
+
+    /** Trains the Likely to Pursue model now; it then scores the open notices. */
+    @AuraEnabled
+    public static Id trainPursuitModel() {
+        requireAdmin();
+        return Database.executeBatch(new NXP_PursuitTrainBatch(), 2000);
     }
 
     /** Re-scores open notices in the background (after a Company Profile or fit rule change). */

@@ -121,12 +121,15 @@ private class NXP_SettingsControllerTest {
             System.assert(new Set<String>{ 'ok', 'warn', 'fail' }.contains(c.status), c.key + ' ' + c.status);
         }
         System.assert(
-            keys.containsAll(new Set<String>{ 'mail', 'bell', 'sam', 'jobs', 'saved', 'files', 'profile', 'ai' })
+            keys.containsAll(
+                new Set<String>{ 'mail', 'bell', 'sam', 'jobs', 'saved', 'files', 'profile', 'ai', 'pursuit' }
+            )
         );
 
         Test.startTest();
         Integer jobs = NXP_SettingsController.rescheduleJobs();
         Id batchId = NXP_SettingsController.rescoreNotices();
+        System.assertNotEquals(null, NXP_SettingsController.trainPursuitModel());
         Test.stopTest();
         System.assertEquals(NXP_SettingsController.EXPECTED_JOBS.size(), jobs);
         System.assertNotEquals(null, batchId);

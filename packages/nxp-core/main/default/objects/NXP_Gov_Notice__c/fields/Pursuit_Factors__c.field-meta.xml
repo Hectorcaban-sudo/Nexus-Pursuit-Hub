@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pursuit_Factors__c</fullName>
+    <description
+    >JSON list of the factors that moved Likely to Pursue most: label, value, pursued, decided, direction.</description>
+    <label>Pursuit Factors</label>
+    <length>4000</length>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

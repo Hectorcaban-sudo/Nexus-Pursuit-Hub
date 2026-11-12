@@ -118,23 +118,28 @@ When you decide to pursue, **Push to Opportunity** shows exactly which values wi
 
 The **Nexus Pursuit Assistant** (Agentforce panel) answers questions from Nexus data: drafts and saves searches, explains a fit score, says what changed or what the documents require, finds the incumbent and recompetes, previews and pushes notices. It always shows a preview and waits for **yes** before it saves or pushes anything.
 
-## 9. Settings
+## 9. Likely to pursue (optional)
+
+When an admin turns on `Pursuit_Prediction_Enabled`, a nightly job learns from decisions already in Nexus: pushed notices are _pursued_, notices dismissed in the Match Inbox and never pushed are _passed_. For each factor (department, agency, NAICS group, notice type, set-aside, source, vehicle, value band, fit band) it counts how often each value was pursued, and combines those counts into a likelihood for every open notice (a naive Bayes model). New notices are scored hourly. It waits until there are `Pursuit_Min_Decisions` (200) decisions with at least 20 of each kind, and it checks itself: before learning from everything it is tested on the newest 20% of decisions, and the result is shown in the Settings health check. Nothing leaves Salesforce and no AI service is used.
+
+## 10. Settings
 
 Admins change Nexus settings on the **Settings** tab rather than in Setup: alert, feed, search, AI, file, eBuy, fit rule and push settings, each with a description. Saving deploys the custom metadata (about 30 seconds) and records who changed what in **Setting Changes**. Deploying a release puts shipped values back; the release scripts then reapply what admins saved there, except the values `env-config` sets on purpose (AI on or off, feed switches). The tab's health checks show whether e-mail, the bell, the SAM.gov key, the jobs, file downloads, the Company Profile and AI are working.
 
-## 10. What runs on its own
+## 11. What runs on its own
 
-| Job                | When                   | Does                                                                          |
-| ------------------ | ---------------------- | ----------------------------------------------------------------------------- |
-| NXP Feed Scheduler | Every hour at :05      | Runs due feeds; after SAM.gov runs, fetches descriptions and files as above   |
-| Matching           | Continuously           | Checks new and changed notices against saved searches; sends Real Time alerts |
-| NXP Notice Analyst | :15 and :45 every hour | AI summaries, amendment summaries, documents waiting to be read               |
-| NXP Push Retry     | Every hour at :20      | Retries failed auto-pushes                                                    |
-| NXP Daily Digest   | 06:30 daily            | Daily e-mail digests                                                          |
-| NXP Weekly Digest  | 06:30 Mondays          | Weekly e-mail digests                                                         |
-| NXP Admin Digest   | 07:00 daily            | Problems e-mail to admins                                                     |
+| Job                    | When                              | Does                                                                          |
+| ---------------------- | --------------------------------- | ----------------------------------------------------------------------------- |
+| NXP Feed Scheduler     | Every hour at :05                 | Runs due feeds; after SAM.gov runs, fetches descriptions and files as above   |
+| Matching               | Continuously                      | Checks new and changed notices against saved searches; sends Real Time alerts |
+| NXP Notice Analyst     | :15 and :45 every hour            | AI summaries, amendment summaries, documents waiting to be read               |
+| NXP Push Retry         | Every hour at :20                 | Retries failed auto-pushes                                                    |
+| NXP Daily Digest       | 06:30 daily                       | Daily e-mail digests                                                          |
+| NXP Weekly Digest      | 06:30 Mondays                     | Weekly e-mail digests                                                         |
+| NXP Admin Digest       | 07:00 daily                       | Problems e-mail to admins                                                     |
+| NXP Pursuit Prediction | :50 every hour; retrains at 02:50 | Likely to Pursue for new notices (only when it's on)                          |
 
-## 11. Limits to know
+## 12. Limits to know
 
 - **SAM.gov key**: each call counts against the key's daily limit. Personal keys expire every 90 days; production should use a System Account key. When the limit is reached, feeds and downloads wait until the key resets.
 - **AI**: at most `AI_Max_Calls_Per_Day` (500) AI calls a day. After that, summaries and document reading wait for the next day.

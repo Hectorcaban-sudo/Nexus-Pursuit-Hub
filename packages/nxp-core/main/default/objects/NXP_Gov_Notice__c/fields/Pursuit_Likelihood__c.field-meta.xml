@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pursuit_Likelihood__c</fullName>
+    <description
+    >Predicted chance (0-100) that BD pursues this notice (pushes it rather than dismissing it), learned from past pushes and dismissals. Empty until the model has enough decisions.</description>
+    <inlineHelpText
+    >How likely we are to pursue this notice, judged from what we pushed and dismissed before. Not a win probability.</inlineHelpText>
+    <label>Likely to Pursue</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <type>Number</type>
+</CustomField>

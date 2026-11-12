@@ -13,6 +13,9 @@ jest.mock('@salesforce/apex/NXP_SettingsController.getSaveStatus', () => ({ defa
 jest.mock('@salesforce/apex/NXP_SettingsController.testSamKey', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_SettingsController.rescheduleJobs', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_SettingsController.reapplySettings', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_SettingsController.trainPursuitModel', () => ({ default: jest.fn() }), {
+    virtual: true
+});
 jest.mock('@salesforce/apex/NXP_SettingsController.rescoreNotices', () => ({ default: jest.fn() }), { virtual: true });
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));

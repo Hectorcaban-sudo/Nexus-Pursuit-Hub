@@ -120,6 +120,10 @@
                                     ><span class="chip chip_warn">Changed: {c.changeType}</span></template
                                 >
                                 <template lwc:if={c.watching}><span class="chip chip_light">Watching</span></template>
+                                <c-nxp-pursuit-chip
+                                    likelihood={c.pursuit}
+                                    factors={c.pursuitFactors}
+                                ></c-nxp-pursuit-chip>
                                 <template lwc:if={c.hasChecks}
                                     ><span class="chip chip_bad" title="The documents disagree with the notice"
                                         >{c.checksLabel}</span

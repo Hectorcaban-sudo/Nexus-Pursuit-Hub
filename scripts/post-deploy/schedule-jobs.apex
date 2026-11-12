@@ -9,4 +9,5 @@ NXP_DigestBatch.scheduleDefaults(); // daily 06:30, weekly Monday 06:30
 NXP_NoticeAnalystJob.scheduleDefaults(); // AI summaries at :15 and :45, two jobs (only when AI_Enabled)
 System.schedule('NXP Push Retry', '0 20 * * * ?', new NXP_PushRetryJob()); // failed auto-pushes, hourly
 NXP_AdminDigestJob.scheduleDefaults(); // problems e-mail to admins, daily 07:00
+NXP_PursuitJob.scheduleDefaults(); // Likely to Pursue: scores new notices hourly at :50, retrains at 02:50 (only when Pursuit_Prediction_Enabled)
 System.debug('Nexus Pursuit Hub jobs scheduled.');

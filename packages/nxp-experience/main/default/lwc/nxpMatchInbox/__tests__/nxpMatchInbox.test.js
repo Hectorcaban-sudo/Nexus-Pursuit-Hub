@@ -127,6 +127,23 @@ describe('c-nxp-match-inbox', () => {
         });
     });
 
+    it('shows Likely to pursue and sorts by it', async () => {
+        getInbox.mockResolvedValue([
+            { ...ITEMS[0], notice: { ...ITEMS[0].notice, Pursuit_Likelihood__c: 20 } },
+            { ...ITEMS[1], notice: { ...ITEMS[1].notice, Pursuit_Likelihood__c: 80 } }
+        ]);
+        const el = createElement('c-nxp-match-inbox', { is: NxpMatchInbox });
+        document.body.appendChild(el);
+        await flush();
+        await flush();
+        expect(el.shadowRoot.querySelectorAll('c-nxp-pursuit-chip')).toHaveLength(2);
+        const sort = el.shadowRoot.querySelector('lightning-combobox');
+        sort.dispatchEvent(new CustomEvent('change', { detail: { value: 'pursuit' } }));
+        await flush();
+        const chips = el.shadowRoot.querySelectorAll('c-nxp-pursuit-chip');
+        expect(chips[0].likelihood).toBe(80);
+    });
+
     it('shows the empty state', async () => {
         getInbox.mockResolvedValue([]);
         const el = createElement('c-nxp-match-inbox', { is: NxpMatchInbox });

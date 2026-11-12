@@ -7,6 +7,7 @@ import getSaveStatus from '@salesforce/apex/NXP_SettingsController.getSaveStatus
 import testSamKey from '@salesforce/apex/NXP_SettingsController.testSamKey';
 import rescheduleJobs from '@salesforce/apex/NXP_SettingsController.rescheduleJobs';
 import rescoreNotices from '@salesforce/apex/NXP_SettingsController.rescoreNotices';
+import trainPursuitModel from '@salesforce/apex/NXP_SettingsController.trainPursuitModel';
 import reapplySettings from '@salesforce/apex/NXP_SettingsController.reapplySettings';
 import { formatDate, toast, toastError, logUsage } from 'c/nxpUtils';
 
@@ -291,6 +292,13 @@ export default class NxpAdminSettings extends NavigationMixin(LightningElement) 
             } else if (action === 'rescore') {
                 await rescoreNotices();
                 toast(this, 'Rescoring', 'Open notices are being re-scored in the background.');
+            } else if (action === 'trainPursuit') {
+                await trainPursuitModel();
+                toast(
+                    this,
+                    'Training',
+                    'Likely to Pursue is learning from past decisions; check back in a few minutes.'
+                );
             } else if (action === 'reapply') {
                 await this.reapply();
                 return;

@@ -12,6 +12,11 @@
                         <template lwc:if={dueDisputed}><span class="tile-flag">Check the date below</span></template>
                     </div>
                     <c-nxp-fit-badge score={notice.Fit_Score__c}></c-nxp-fit-badge>
+                    <c-nxp-pursuit-chip
+                        class="pursuit-chip"
+                        likelihood={notice.Pursuit_Likelihood__c}
+                        factors={notice.Pursuit_Factors__c}
+                    ></c-nxp-pursuit-chip>
                 </div>
                 <dl class="facts">
                     <div>
@@ -163,6 +168,17 @@
                                     <div class="rule-reason">{r.reason}</div>
                                 </div>
                             </template>
+                        </section>
+                    </template>
+
+                    <template lwc:if={hasPursuit}>
+                        <section class="card pursuit" aria-label="Likely to pursue">
+                            <h2 class="slds-text-heading_small">Likely to pursue</h2>
+                            <c-nxp-pursuit-chip
+                                likelihood={notice.Pursuit_Likelihood__c}
+                                factors={notice.Pursuit_Factors__c}
+                                detailed
+                            ></c-nxp-pursuit-chip>
                         </section>
                     </template>
 
