@@ -47,6 +47,7 @@ Nexus Pursuit Hub is a Salesforce-native market-intelligence app that replaces G
 | Agents built manually in Government Cloud; guardrails enforced in Apex                                                                      | [0004](../adr/0004-manual-agents-apex-guardrails.md)  |
 | API 68.0 everywhere                                                                                                                         | [0005](../adr/0005-api-68.md)                         |
 | Releases by scripted `sf` commands, no CI/CD for now                                                                                        | [0006](../adr/0006-scripted-releases.md)              |
+| The assistant is deployed from Agent Script where the org supports it; manual build elsewhere                                               | [0007](../adr/0007-agent-script.md)                   |
 
 ## Non-functional targets
 
