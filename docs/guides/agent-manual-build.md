@@ -1,6 +1,8 @@
 # Building the Nexus Pursuit Assistant manually (Government Cloud)
 
-Agent Script is not available in Government Cloud, so the agent is configured by hand in Agentforce Builder. The reference blueprint is `packages/nxp-agents/reference/aiAuthoringBundles/NXP_Pursuit_Assistant/NXP_Pursuit_Assistant.agent`; use the same names and text.
+**If your org has the new Agentforce Builder with Agent Script, use the [Agent Script build](agent-script-build.md) instead**: it deploys this whole design from one file.
+
+This guide is for orgs without Agent Script, where the agent is configured by hand in Agentforce Builder. The script, `packages/nxp-agent-script/main/default/aiAuthoringBundles/NXP_Pursuit_Assistant/NXP_Pursuit_Assistant.agent`, has the same names and text, so it can be used as the spec.
 
 ## Before you start
 

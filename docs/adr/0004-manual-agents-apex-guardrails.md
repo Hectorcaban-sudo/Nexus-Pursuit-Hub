@@ -1,6 +1,6 @@
 # ADR 0004: Agents built manually; guardrails in Apex
 
-- Status: Accepted
+- Status: Accepted; amended by [ADR 0007](0007-agent-script.md) for orgs with Agent Script
 - Date: 2026-10-28
 
 ## Context

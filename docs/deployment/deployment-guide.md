@@ -128,7 +128,7 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - GSA eBuy e-mail: create the `NXP_Ebuy_Inbox` e-mail address, route eBuy mail to it and set `Ebuy_Allowed_Senders` ([admin guide](../guides/admin-guide.md#gsa-ebuy-e-mail));
     - Data Cloud connector ([Data Cloud ingestion](../integration/data-cloud-ingestion.md));
     - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Similar_Keywords` (Find similar), `NXP_Notice_Analysis` (Analyze this notice), `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
-    - the assistant ([agent manual build](../guides/agent-manual-build.md)).
+    - the assistant: [Agent Script build](../guides/agent-script-build.md) where the org has the new Agentforce Builder, otherwise the [agent manual build](../guides/agent-manual-build.md).
 10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
 11. **Search templates:** as an `NXP_Admin` user, run `sf apex run --file scripts/apex/seed-search-templates.apex --target-org <alias>` to create the four starter templates under _Start from a template_ on My Searches (safe to run again; edit or delete them like any search).
 12. **E-mail:** Setup → Deliverability → _All email_ (a new sandbox is _System email only_, so no alert, digest or admin e-mail is sent). Optionally set an org-wide From address in `Alert_OrgWide_Email_Id`, and turn on Desktop and Mobile delivery for the _NXP Match Alert_ custom notification ([admin guide](../guides/admin-guide.md#e-mail-and-notifications)).
@@ -345,7 +345,7 @@ sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-prod
 
 ## Agent release
 
-Government Cloud can't deploy Agent Script, so the Nexus Pursuit Assistant is built by hand in each org ([agent manual build](../guides/agent-manual-build.md#step-by-step)), or built once and retrieved into `packages/nxp-agents/main/default/` so it ships with the release. Either way, after deployment:
+Where the org has Agent Script, deploy and publish the assistant from `packages/nxp-agent-script` ([Agent Script build](../guides/agent-script-build.md#deploy-check-and-publish)); the release scripts don't deploy it. Otherwise build it by hand ([agent manual build](../guides/agent-manual-build.md#step-by-step)). Either way, after deployment:
 
 1. Activate the agent in the target org. Activation is never automatic.
 2. Give users access (the `NXP_User` permission set covers the Apex actions).

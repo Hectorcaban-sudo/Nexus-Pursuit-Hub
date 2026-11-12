@@ -9,13 +9,13 @@ Government opportunity intelligence on Salesforce. Nexus Pursuit Hub replaces th
 
 ![Solution architecture](docs/diagrams/01-solution-architecture.jpg)
 
-|           |                                                                                                                               |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Platform  | Salesforce (Government Cloud supported), Salesforce DX source format, **API 68.0**                                            |
-| Naming    | Every object and component starts with `NXP_` (LWCs: `nxp` + camelCase)                                                       |
-| Packaging | Seven unlocked packages, no namespace. They can also be deployed straight from source with `sf project deploy`.               |
-| AI        | Agentforce assistant built manually in Agentforce Builder; prompt templates run by batch Apex; Agent Script kept as reference |
-| Release   | Scripted `sf` commands (`scripts/release.sh`), no CI/CD pipeline                                                              |
+|           |                                                                                                                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Platform  | Salesforce (Government Cloud supported), Salesforce DX source format, **API 68.0**                                                                                  |
+| Naming    | Every object and component starts with `NXP_` (LWCs: `nxp` + camelCase)                                                                                             |
+| Packaging | Seven unlocked packages, no namespace. They can also be deployed straight from source with `sf project deploy`.                                                     |
+| AI        | Agentforce assistant defined in Agent Script (`packages/nxp-agent-script`), or built by hand where Agent Script isn't available; prompt templates run by batch Apex |
+| Release   | Scripted `sf` commands (`scripts/release.sh`), no CI/CD pipeline                                                                                                    |
 
 ## What it does
 
@@ -52,7 +52,7 @@ packages/
   nxp-experience/  Lightning app, tabs, record page, LWCs
   nxp-agents/      agent actions, AI jobs (Notice Analyst, Document Reader, eBuy AI), permission sets
   nxp-analytics/   report types, reports and dashboards (installs last)
-    reference/     Agent Script + prompt templates (not deployed in Government Cloud)
+    reference/     prompt templates (created in Prompt Builder)
 env-config/<env>/  per-environment settings (each a small DX project)
 datacloud/         Ingestion API schema and bulk upload script
 data/              seed data and API fixtures
@@ -94,14 +94,14 @@ Every script has a PowerShell twin; see [scripts/README.md](scripts/README.md). 
 
 Start at **[docs/README.md](docs/README.md)**. The most-used pages:
 
-| Audience      | Read                                                                                                                                                                                                   |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Everyone      | [Solution architecture](docs/architecture/solution-architecture.md) · [Functional design](docs/design/functional-design.md)                                                                            |
-| Developers    | [Developer guide](docs/guides/developer-guide.md) · [Technical architecture](docs/architecture/technical-architecture.md) · [Testing guide](docs/guides/testing-guide.md)                              |
-| Admins        | [How Nexus works](docs/guides/how-it-works.md) · [Admin guide](docs/guides/admin-guide.md) · [Training guide](docs/guides/training-guide.md) · [Agent manual build](docs/guides/agent-manual-build.md) |
-| Release leads | [Deployment guide](docs/deployment/deployment-guide.md) · [Post-deployment checklist](docs/deployment/post-deployment-checklist.md)                                                                    |
-| Integrators   | [REST ingestion API](docs/integration/rest-ingestion-api.md) · [Data Cloud ingestion](docs/integration/data-cloud-ingestion.md)                                                                        |
-| BD users      | [How Nexus works](docs/guides/how-it-works.md) · [User guide](docs/guides/user-guide.md)                                                                                                               |
+| Audience      | Read                                                                                                                                                                                                                                                             |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Everyone      | [Solution architecture](docs/architecture/solution-architecture.md) · [Functional design](docs/design/functional-design.md)                                                                                                                                      |
+| Developers    | [Developer guide](docs/guides/developer-guide.md) · [Technical architecture](docs/architecture/technical-architecture.md) · [Testing guide](docs/guides/testing-guide.md)                                                                                        |
+| Admins        | [How Nexus works](docs/guides/how-it-works.md) · [Admin guide](docs/guides/admin-guide.md) · [Training guide](docs/guides/training-guide.md) · [Agent Script build](docs/guides/agent-script-build.md) · [Agent manual build](docs/guides/agent-manual-build.md) |
+| Release leads | [Deployment guide](docs/deployment/deployment-guide.md) · [Post-deployment checklist](docs/deployment/post-deployment-checklist.md)                                                                                                                              |
+| Integrators   | [REST ingestion API](docs/integration/rest-ingestion-api.md) · [Data Cloud ingestion](docs/integration/data-cloud-ingestion.md)                                                                                                                                  |
+| BD users      | [How Nexus works](docs/guides/how-it-works.md) · [User guide](docs/guides/user-guide.md)                                                                                                                                                                         |
 
 ## Status
 

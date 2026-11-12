@@ -7,8 +7,7 @@ package.xml
 **/tsconfig.json
 **/*.ts
 
-# Agent Script reference bundles and prompt-template references.
-# Government Cloud orgs cannot deploy Agent Script; these are the reference design.
+# Prompt-template references (created in Prompt Builder, not deployed).
 packages/nxp-agents/reference/**
 
 # LWC configuration files
