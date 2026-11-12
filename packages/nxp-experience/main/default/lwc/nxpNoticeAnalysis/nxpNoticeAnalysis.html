@@ -1,0 +1,135 @@
+<template>
+    <section class="card analysis" aria-label="Analyze this notice">
+        <div class="head">
+            <h2 class="slds-text-heading_small">Analyze this notice</h2>
+            <span class="hint">Uses this notice, its documents, the award history and our Company Profile.</span>
+        </div>
+        <div class="chips" role="group" aria-label="Analysis type">
+            <template for:each={chips} for:item="k">
+                <button
+                    key={k.key}
+                    type="button"
+                    class={k.className}
+                    aria-pressed={k.pressed}
+                    data-key={k.key}
+                    disabled={loading}
+                    onclick={handleKind}
+                >
+                    <lightning-icon icon-name="utility:sparkles" size="xx-small" alternative-text=""></lightning-icon>
+                    <span>{k.label}</span>
+                </button>
+            </template>
+        </div>
+
+        <template lwc:if={loading}>
+            <div class="loading" role="status">
+                <lightning-spinner alternative-text="Writing" size="small" variant="brand"></lightning-spinner>
+                <span>{loadingText}</span>
+            </div>
+        </template>
+        <template lwc:if={error}>
+            <p class="error" role="alert">{error}</p>
+        </template>
+
+        <template lwc:if={hasResult}>
+            <template lwc:if={result.note}>
+                <p class="note">{result.note}</p>
+            </template>
+            <template lwc:if={hasVerdict}>
+                <div class="verdict-row">
+                    <span class={verdictClass}>{result.verdict}</span>
+                    <span class="verdict-text"
+                        >{result.summary}
+                        <template lwc:if={result.confidence}>
+                            Confidence: <strong>{result.confidence}</strong>.</template
+                        >
+                    </span>
+                </div>
+            </template>
+            <template lwc:elseif={result.summary}>
+                <p class="summary">{result.summary}</p>
+            </template>
+
+            <div class="quads">
+                <template for:each={sections} for:item="s">
+                    <div key={s.key} class={s.className}>
+                        <h3 class="quad-title">{s.title}</h3>
+                        <ul>
+                            <template for:each={s.items} for:item="it">
+                                <li key={it.key}>
+                                    <span>{it.text}</span>
+                                    <span class="tags">
+                                        <template for:each={it.sources} for:item="src">
+                                            <span key={src.key} class="tag">{src.label}</span>
+                                        </template>
+                                        <template lwc:if={it.assumption}>
+                                            <span class="tag tag_assumption">Assumption to check</span>
+                                        </template>
+                                    </span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+            </div>
+
+            <template lwc:if={hasStrategies}>
+                <h3 class="sub">Top strategies, ranked</h3>
+                <div class="table-wrap">
+                    <table class="strategies">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Strategy</th>
+                                <th scope="col">Pairs</th>
+                                <th scope="col">Impact</th>
+                                <th scope="col">Effort</th>
+                                <th scope="col">First step</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={strategies} for:item="s">
+                                <tr key={s.key}>
+                                    <td>{s.rank}</td>
+                                    <td>{s.text}</td>
+                                    <td>{s.pairs}</td>
+                                    <td>{s.impact}</td>
+                                    <td>{s.effort}</td>
+                                    <td>{s.firstStep}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+
+            <template lwc:if={result.text}>
+                <lightning-formatted-text class="raw" value={result.text}></lightning-formatted-text>
+            </template>
+
+            <details class="facts">
+                <summary>Facts used</summary>
+                <ul>
+                    <template for:each={facts} for:item="f">
+                        <li key={f.key}><span class="tag">{f.source}</span> {f.text}</li>
+                    </template>
+                </ul>
+            </details>
+
+            <div class="actions">
+                <lightning-button
+                    class="save"
+                    variant="brand"
+                    label="Save to the notice"
+                    disabled={saving}
+                    onclick={handleSave}
+                ></lightning-button>
+                <lightning-button class="copy" label="Copy" onclick={handleCopy}></lightning-button>
+                <lightning-button class="regenerate" label="Regenerate" onclick={handleRegenerate}></lightning-button>
+                <span class="hint"
+                    >AI draft: every point shows where it came from; amber tags are assumptions to check.</span
+                >
+            </div>
+        </template>
+    </section>
+</template>

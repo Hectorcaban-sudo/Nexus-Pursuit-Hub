@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+    >Analyze this notice: bid / no-bid brief, SWOT, competitors, gaps, win themes, teaming. Apex sends the question and the facts.</description>
+    <developerName>NXP_Notice_Analysis</developerName>
+    <masterLabel>NXP Notice Analysis</masterLabel>
+    <templateVersions>
+        <content
+        >You are a capture analyst for a government contractor, reviewing one federal opportunity: {!$Input:Notice.Title__c}.
+
+Task: {!$Input:Question}
+
+Facts:
+{!$Input:Facts}</content>
+        <inputs>
+            <apiName>Notice</apiName>
+            <definition>SOBJECT://NXP_Gov_Notice__c</definition>
+            <masterLabel>Notice</masterLabel>
+            <referenceName>Input:Notice</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Question</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Question</masterLabel>
+            <referenceName>Input:Question</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Facts</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Facts</masterLabel>
+            <referenceName>Input:Facts</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

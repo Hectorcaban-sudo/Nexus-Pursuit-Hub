@@ -14,6 +14,7 @@ This guide is for orgs without Agent Script, where the agent is configured by ha
     - `NXP_Amendment_Impact`: input _Version_, an `NXP_Notice_Version__c` record.
     - `NXP_Search_Criteria_Draft`: input _Request_, text.
     - `NXP_Document_Analysis` (Document Reader): input _Notice_, an `NXP_Gov_Notice__c` record, plus a **File** input _Document_ added in Prompt Builder (see the [admin guide](admin-guide.md#document-reader)).
+    - `NXP_Notice_Analysis` (optional, **Analyze this notice** and the assistant's NXP Analyze Notice): inputs _Notice_ (an `NXP_Gov_Notice__c` record), _Question_ and _Facts_ (text). Apex sends the question and the facts; the template returns JSON.
     - `NXP_Similar_Keywords` (optional, **Find similar** keywords): input _Notice_, an `NXP_Gov_Notice__c` record. It returns one keyword expression; without it Find similar uses title words.
     - `NXP_Ebuy_RFQ_Extract` (optional, eBuy e-mail): input _Email_, an `NXP_Inbound_Email__c` record; add a File input _Attachment_ only if you turn on `Ebuy_AI_Read_Attachments`.
 
@@ -36,7 +37,7 @@ This guide is for orgs without Agent Script, where the agent is configured by ha
     You do not manage capture, pipeline or proposals; those live in Opportunity.
     ```
 
-3. **Remove default subagents** you don't need, then create these four. Each subagent has three text fields in Builder. Paste them exactly as shown below:
+3. **Remove default subagents** you don't need, then create these five. Each subagent has three text fields in Builder. Paste them exactly as shown below:
     - **Classification description** decides which subagent a request goes to.
     - **Scope** sets what the subagent may and may not do once it has the request.
     - **Instructions** say how to do the work. Add one instruction per line.
@@ -109,12 +110,13 @@ Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts.
 **Scope**
 
 ```text
-Your job is only to answer market questions from award data already loaded in Nexus Pursuit Hub: who holds a contract now, and which awards are ending soon.
-You can: find the incumbent and predecessor award for a notice; list awards expiring in a time window, filtered by agency, NAICS or value.
+Your job is only to answer market questions from award data already loaded in Nexus Pursuit Hub: who holds a contract now, which awards are ending soon, and who wins most in a market.
+You can: find the incumbent and predecessor award for a notice; list awards expiring in a time window, filtered by agency, NAICS or value; list the vendors with the most awards in a NAICS, optionally at one agency.
 You cannot answer agency spending totals, vendor profiles or forecasts in chat; there is no action for them. Point the user to the Agencies, Vendor profile and Forecasts screens.
 You cannot estimate, extrapolate or use outside knowledge for any number. If an action did not return it, say it is not available.
 You do not predict who will win, set win probabilities or give teaming advice.
 You do not explain a notice's requirements or fit score; that belongs to Notice Briefing.
+You do not write a bid / no-bid brief, SWOT, win themes or teaming advice for a notice; that belongs to Opportunity Analysis.
 ```
 
 **Instructions**
@@ -123,6 +125,33 @@ You do not explain a notice's requirements or fit score; that belongs to Notice 
 Use the most specific action.
 Always state the data window the action returned.
 Do not estimate numbers the actions did not return.
+```
+
+### Opportunity Analysis (`NXP_Opportunity_Analysis`)
+
+**Classification description**
+
+```text
+Bid or no-bid, SWOT, competitors, requirement gaps, win themes and teaming partners for the notice the user has open.
+```
+
+**Scope**
+
+```text
+Your job is only to analyze the one notice the user has open, with the NXP Analyze Notice action.
+You can: recommend bid or no-bid; write an opportunity SWOT with ranked strategies; describe the incumbent and likely bidders; list requirements we may not meet; draft win themes; suggest what a teaming partner should bring.
+Every point comes from the action. You cannot add facts, vendors, dates or amounts it did not return, or use outside knowledge.
+You do not set pWin, plan capture, price or write proposals; those are managed in Opportunity.
+You do not answer market-wide questions (who wins most, recompetes); that belongs to Market Intel.
+```
+
+**Instructions**
+
+```text
+Pick the analysis type closest to the question; use brief when unsure.
+Show the analysis as returned, with its source tags.
+Tell the user that items marked (assumption) need checking.
+If the action returns a note (AI off or the daily limit used up), say so and show the facts it returned.
 ```
 
 ### Push (`NXP_Push`)
@@ -164,7 +193,9 @@ Auto-push needs the Power User permission; explain if refused.
 | Agency spending, vendor profiles, forecasts                                     | Nobody in chat. Point the user to the Agencies, Vendor and Forecasts screens. |
 | Push one notice, push status, auto-push rule                                    | Push                                                                          |
 | Bulk push                                                                       | Nobody. Point the user to the Match Inbox.                                    |
-| Capture, pipeline, stage, pWin, proposals, pricing, bid/no-bid                  | Nobody. These are managed in Opportunity.                                     |
+| Bid / no-bid, SWOT, competitors, gaps, win themes, teaming for the open notice  | Opportunity Analysis                                                          |
+| Who wins most in a NAICS or at an agency                                        | Market Intel                                                                  |
+| Capture, pipeline, stage, pWin, proposals, pricing                              | Nobody. These are managed in Opportunity.                                     |
 | Feeds, eBuy e-mail intake, push mapping, settings (admin tasks)                 | Nobody. Point the user to the Feed Console, Inbound Emails or Setup.          |
 | Anything not about government opportunities                                     | Nobody. Built-in off-topic handling declines politely.                        |
 
@@ -172,20 +203,22 @@ Keep the default **Off Topic** subagent if Builder created one, so out-of-scope 
 
 4. **Add actions** to each subagent: New Action → Apex → select the class.
 
-| Subagent        | Action (Apex class)                                         | Require user confirmation | Show output in conversation |
-| --------------- | ----------------------------------------------------------- | ------------------------- | --------------------------- |
-| Search Builder  | NXP Draft Search Criteria (`NXP_DraftSearchCriteriaAction`) | –                         | Summary                     |
-| Search Builder  | NXP Preview Search (`NXP_PreviewSearchAction`)              | –                         | Match count, Top matches    |
-| Search Builder  | NXP Save Search (`NXP_SaveSearchAction`)                    | **Yes**                   | Message                     |
-| Notice Briefing | NXP Explain Fit Score (`NXP_ExplainFitScoreAction`)         | –                         | Explanation                 |
-| Notice Briefing | NXP Compare Versions (`NXP_CompareVersionsAction`)          | –                         | Changes                     |
-| Notice Briefing | NXP Notice Documents (`NXP_NoticeDocumentsAction`)          | –                         | Documents                   |
-| Market Intel    | NXP Find Incumbent (`NXP_FindIncumbentAction`)              | –                         | Answer                      |
-| Market Intel    | NXP Recompete Query (`NXP_RecompeteQueryAction`)            | –                         | Recompetes                  |
-| Push            | NXP Preview Push (`NXP_PreviewPushAction`)                  | –                         | Preview                     |
-| Push            | NXP Push To Opportunity (`NXP_PushToOpportunityAction`)     | **Yes**                   | Status, Message             |
-| Push            | NXP Push Status (`NXP_PushStatusAction`)                    | –                         | Status                      |
-| Push            | NXP Set Auto-Push Rule (`NXP_SetAutoPushRuleAction`)        | **Yes**                   | Message                     |
+| Subagent             | Action (Apex class)                                         | Require user confirmation | Show output in conversation |
+| -------------------- | ----------------------------------------------------------- | ------------------------- | --------------------------- |
+| Search Builder       | NXP Draft Search Criteria (`NXP_DraftSearchCriteriaAction`) | –                         | Summary                     |
+| Search Builder       | NXP Preview Search (`NXP_PreviewSearchAction`)              | –                         | Match count, Top matches    |
+| Search Builder       | NXP Save Search (`NXP_SaveSearchAction`)                    | **Yes**                   | Message                     |
+| Notice Briefing      | NXP Explain Fit Score (`NXP_ExplainFitScoreAction`)         | –                         | Explanation                 |
+| Notice Briefing      | NXP Compare Versions (`NXP_CompareVersionsAction`)          | –                         | Changes                     |
+| Notice Briefing      | NXP Notice Documents (`NXP_NoticeDocumentsAction`)          | –                         | Documents                   |
+| Market Intel         | NXP Find Incumbent (`NXP_FindIncumbentAction`)              | –                         | Answer                      |
+| Market Intel         | NXP Recompete Query (`NXP_RecompeteQueryAction`)            | –                         | Recompetes                  |
+| Market Intel         | NXP Market Leaders (`NXP_MarketLeadersAction`)              | –                         | Leaders                     |
+| Opportunity Analysis | NXP Analyze Notice (`NXP_AnalyzeNoticeAction`)              | –                         | Analysis, Note              |
+| Push                 | NXP Preview Push (`NXP_PreviewPushAction`)                  | –                         | Preview                     |
+| Push                 | NXP Push To Opportunity (`NXP_PushToOpportunityAction`)     | **Yes**                   | Status, Message             |
+| Push                 | NXP Push Status (`NXP_PushStatusAction`)                    | –                         | Status                      |
+| Push                 | NXP Set Auto-Push Rule (`NXP_SetAutoPushRuleAction`)        | **Yes**                   | Message                     |
 
 Mark _Preview token_ outputs as **not** shown to the user but available to the agent. They are passed to Save Search and Push To Opportunity.
 The [next section](#action-input-and-output-descriptions) gives the exact text and settings for every input and output.
@@ -205,7 +238,7 @@ For each action, Builder has these fields:
     - _Instructions_: what the value means.
     - _Show in conversation_: the value is shown to the user. When this is off, only the agent sees it and can pass it to the next action.
 
-**Gov Notice record Id** appears on seven actions, with the same instructions each time (repeated in each table below so you can copy it from there):
+**Gov Notice record Id** appears on eight actions, with the same instructions each time (repeated in each table below so you can copy it from there):
 
 ```text
 Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id.
@@ -330,6 +363,49 @@ Use when the user asks which contracts are ending soon or which recompetes are c
 | Input  | Months ahead  | How many months ahead to look for awards ending. Use the user's number; otherwise leave empty for 18.           | Require **No** · Collect **Yes** |
 | Input  | Minimum value | Lowest award value in dollars, as a plain number (10000000 for $10M). Leave empty for any value.                | Require **No** · Collect **Yes** |
 | Output | Recompetes    | Awards ending in the window, one per line, and the data window used. Always repeat the data window to the user. | Show **Yes**                     |
+
+#### NXP Market Leaders (Market Intel)
+
+Agent action instructions:
+
+```text
+Use when the user asks who wins most, who the main competitors are, or who holds the most work in a NAICS, optionally at one agency.
+```
+
+| Kind   | Field      | Instructions                                                                                                                                                                             | Settings                          |
+| ------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Input  | NAICS      | A NAICS code, or a prefix ending in \* such as 5415\*. Required: ask the user if they did not give one.                                                                                  | Require **Yes** · Collect **Yes** |
+| Input  | Agency     | Agency name or part of it, for example Homeland Security. Leave empty for all agencies.                                                                                                  | Require **No** · Collect **Yes**  |
+| Input  | Years back | How many years of awards to count. Use the user's number; otherwise leave empty for 5.                                                                                                   | Require **No** · Collect **Yes**  |
+| Output | Leaders    | Up to 10 vendors, one per line, with their number of awards and total obligated dollars, and the data window used. Always repeat the data window. Do not add vendors that are not in it. | Show **Yes**                      |
+
+#### NXP Analyze Notice (Opportunity Analysis)
+
+Agent action instructions:
+
+```text
+Use when the user asks whether to bid, for a SWOT, who the incumbent and competitors are, which requirements we may not meet, win themes or teaming partners for the notice they have open.
+```
+
+| Kind   | Field                | Instructions                                                                                                                                                                                                                  | Settings                         |
+| ------ | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Input  | Gov Notice record Id | Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id. | Require **Yes** · Collect **No** |
+| Input  | Analysis type        | brief (bid or no-bid), swot, competitors (incumbent, likely bidders), gaps (requirements we may not meet), themes (win themes) or teaming. Pick the closest to the question; brief when unsure.                               | Require **Yes** · Collect **No** |
+| Output | Analysis             | Markdown analysis: each item ends with its sources in [ ] or (assumption). Show it as it is with the tags; say (assumption) items need checking. Add no vendors, dates or amounts that are not in it.                         | Show **Yes**                     |
+| Output | Note                 | Why there is no AI part (AI off or the daily limit used up), or empty. Tell the user when it is not empty.                                                                                                                    | Show **Yes**                     |
+
+The analysis uses the `NXP_Notice_Analysis` prompt template (one AI call). Create it from `packages/nxp-agents/reference/genAiPromptTemplates/` like the other templates.
+
+#### Starter questions
+
+If your Agent Builder offers suggested or starter prompts, add these. Otherwise put them in the training handout:
+
+- _Bid / no-bid brief for this notice_
+- _Opportunity SWOT for this notice_
+- _Who is the incumbent, and who else is likely to bid?_
+- _Which requirements might we not meet?_
+- _Which recompetes in NAICS 5415\* end in the next 12 months?_
+- _Who wins most in NAICS 541512 at Homeland Security?_
 
 #### NXP Preview Push (Push)
 

@@ -16,6 +16,17 @@ jest.mock('@salesforce/apex/NXP_DocumentController.markChecked', () => ({ defaul
     virtual: true
 });
 jest.mock('@salesforce/apex/NXP_SearchController.followNotice', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock(
+    '@salesforce/apex/NXP_NoticeController.getAnalysisKinds',
+    () => {
+        const { createApexTestWireAdapter: create } = require('@salesforce/sfdx-lwc-jest');
+        return { default: create(jest.fn()) };
+    },
+    { virtual: true }
+);
+jest.mock('@salesforce/apex/NXP_NoticeController.analyzeNotice', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_NoticeController.saveAnalysis', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_NoticeController.analysisText', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('c/nxpPushDialog', () => ({ __esModule: true, default: { open: jest.fn() } }));
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));

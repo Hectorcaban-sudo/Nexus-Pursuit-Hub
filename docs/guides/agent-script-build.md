@@ -66,14 +66,16 @@ sf agent preview start --authoring-bundle NXP_Pursuit_Assistant --use-live-actio
 
 Then send messages with `sf agent preview send` and end with `sf agent preview end`. Or open the agent in Agentforce Builder and use its preview panel on a Gov Notice page. Check at least:
 
-| Say                                                 | Expect                                                                      |
-| --------------------------------------------------- | --------------------------------------------------------------------------- |
-| "Alert me daily about DHS zero trust work over $5M" | Search Builder drafts, previews (count and top five) and asks before saving |
-| "Save it" before any preview                        | No save; it previews first                                                  |
-| On a notice: "Why is the fit score 36?"             | Notice Briefing explains the fit rules                                      |
-| On a notice: "Who is the incumbent?"                | Market Intel names the predecessor award, or says none was found            |
-| On a notice: "Push this to Opportunity", then "yes" | Preview with mapped values, a confirmation, then the Opportunity            |
-| "What's our pWin on this?"                          | Declines: managed in Opportunity                                            |
+| Say                                                   | Expect                                                                                    |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| "Alert me daily about DHS zero trust work over $5M"   | Search Builder drafts, previews (count and top five) and asks before saving               |
+| "Save it" before any preview                          | No save; it previews first                                                                |
+| On a notice: "Why is the fit score 36?"               | Notice Briefing explains the fit rules                                                    |
+| On a notice: "Who is the incumbent?"                  | Market Intel names the predecessor award, or says none was found                          |
+| On a notice: "Push this to Opportunity", then "yes"   | Preview with mapped values, a confirmation, then the Opportunity                          |
+| On a notice: "Should we bid on this?"                 | Opportunity Analysis returns a bid / no-bid brief with source tags and (assumption) marks |
+| "Who wins most in NAICS 541512 at Homeland Security?" | Market Intel lists vendors with award counts and the data window                          |
+| "What's our pWin on this?"                            | Declines: managed in Opportunity                                                          |
 
 Validation passing doesn't prove behaviour: read the trace in the preview (which subagent, which action ran, which inputs) for each test.
 

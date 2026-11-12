@@ -47,7 +47,7 @@ Copy into the release ticket and tick each item.
 - [ ] Org-wide e-mail address set in `Alert_OrgWide_Email_Id` (optional)
 - [ ] REST integration user, External Client App and NXP_Integration set up (if used)
 - [ ] Data Cloud `NXP_Awards` connector and data stream created (if used)
-- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used); `NXP_Similar_Keywords` (for Find similar, optional); `NXP_Document_Analysis` with a File input and `Document_Analysis_Enabled` (if the Document Reader is used); ATO covers sending solicitation documents and eBuy RFQs to the model
+- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used); `NXP_Similar_Keywords` (for Find similar, optional); `NXP_Notice_Analysis` (for Analyze this notice, optional); `NXP_Document_Analysis` with a File input and `Document_Analysis_Enabled` (if the Document Reader is used); ATO covers sending solicitation documents and eBuy RFQs to the model
 - [ ] Nexus Pursuit Assistant built or deployed, tested with `tests/agents/assistant.yaml` (≥ 90%), activated, access assigned
 
 ## GovWin cut-over

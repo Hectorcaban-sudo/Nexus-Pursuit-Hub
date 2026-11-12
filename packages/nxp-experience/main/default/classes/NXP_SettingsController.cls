@@ -223,6 +223,15 @@ public with sharing class NXP_SettingsController {
             'NXP_Similar_Keywords'
         },
         new List<String>{
+            'ai',
+            'Notice_Analysis_Template',
+            'Analyze this notice prompt template',
+            'Bid / no-bid brief, SWOT, competitors, gaps, win themes and teaming on the notice page and in the assistant.',
+            'Text',
+            '',
+            'NXP_Notice_Analysis'
+        },
+        new List<String>{
             'files',
             'Description_Min_Fit',
             'Fetch descriptions automatically from fit',

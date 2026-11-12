@@ -117,7 +117,15 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NXP_AnalyzeNoticeAction</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_FindIncumbentAction</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NXP_MarketLeadersAction</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>

@@ -186,7 +186,8 @@ AI is optional; everything works without it. With it: AI summaries of matched no
 2. Set `AI_Enabled = true`. For the Document Reader also set `Document_Analysis_Enabled = true`.
 3. Set `AI_Max_Calls_Per_Day` to fit your Einstein credits (default 500); the **Settings → AI** section shows today's count. When it's used up, summaries and document reading wait for the next day and the problems e-mail says so. Today's count: Setup → Custom Settings → **NXP AI Usage** → Manage.
 4. The assistant is built by hand in Agentforce Builder: [agent manual build](agent-manual-build.md).
-5. **Find similar** (notice page) drafts its keywords with `NXP_Similar_Keywords` (setting `Similar_Keywords_Template`). Without it, or with AI off, Find similar uses words from the notice title instead.
+5. **Analyze this notice** (notice page) and the assistant's **NXP Analyze Notice** use `NXP_Notice_Analysis` (setting `Notice_Analysis_Template`): one AI call per click, with facts gathered by Apex. Without the template or with AI off, users still see the facts.
+6. **Find similar** (notice page) drafts its keywords with `NXP_Similar_Keywords` (setting `Similar_Keywords_Template`). Without it, or with AI off, Find similar uses words from the notice title instead.
 
 ## Settings (`NXP_Setting__mdt`)
 

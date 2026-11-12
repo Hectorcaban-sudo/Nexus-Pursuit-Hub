@@ -76,6 +76,25 @@ Click a notice title. The page shows:
 - **Fit breakdown**, **Version history** (every amendment and what changed), **Contacts** and **Push history**.
 - **Documents**: the notice's files.
 
+### Analyze this notice
+
+Under the header, **Analyze this notice** answers six questions about the notice:
+
+| Button                       | You get                                                                                       |
+| ---------------------------- | --------------------------------------------------------------------------------------------- |
+| Bid / no-bid brief           | Bid, Lean bid, Lean no-bid or No-bid, the reasons each way, what would change it, next steps  |
+| Opportunity SWOT             | Strengths, weaknesses, opportunities and threats for us on this notice, and ranked strategies |
+| Incumbent and competitors    | The incumbent, likely bidders and how we compare                                              |
+| Requirements we may not meet | Requirements we meet, those we may not, questions for the contracting officer                 |
+| Win themes                   | Themes with proof points, discriminators, incumbent weaknesses to address                     |
+| Teaming partners             | What a partner should bring and candidates from the award data                                |
+
+It uses only Nexus data: the notice and its documents (Document Reader), the award history at the agency, the incumbent, our Company Profile and the vehicles we hold. **Every point shows its source**; an amber **Assumption to check** tag means no fact backs it. **Facts used** lists everything it was given.
+
+- **Save to the notice** keeps it as a file under Documents; it goes with the notice when you push it. **Copy** puts it on the clipboard for an e-mail; **Regenerate** writes it again.
+- Each click is one AI call (daily AI limit). With AI off you still get the facts.
+- You can ask the same questions in the assistant: "Bid / no-bid brief for this notice", "Who wins most in NAICS 541512 at Homeland Security?".
+
 ### Documents
 
 - **SAM.gov files** are downloaded automatically for notices that match a search or score 70+. For any other notice, click **Get SAM.gov files**; they arrive one by one over a few minutes (click refresh). Files over 6 MB stay on SAM.gov.
@@ -200,5 +219,6 @@ BD leads with the Power User permission can also:
 | Know when a contract is being recompeted    | Recompetes → **Watch this recompete**                      |
 | Get rid of noise                            | **Dismiss** with a reason, then tighten the search         |
 | Read the description or files               | Notice page → **Load description** / **Get SAM.gov files** |
+| Decide whether to bid                       | Notice → **Analyze this notice** → **Bid / no-bid brief**  |
 | Send a notice to capture                    | **Push to Opportunity**                                    |
 | Change how often I'm told                   | My Searches → open the search → Alerts → Save              |

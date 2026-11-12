@@ -46,7 +46,7 @@ start_agent agent_router:
          | - Follow, watch or dismiss a notice, read a document again, mark a document check as done: the notice page.
          | - Agency spending, vendor profiles, forecasts: the Agencies, Vendor and Forecasts screens.
          | - Bulk push: the Match Inbox.
-         | - Capture, pipeline, stage, pWin, proposals, pricing, bid/no-bid: these are managed in Opportunity.
+         | - Capture, pipeline, stage, pWin, proposals, pricing: these are managed in Opportunity.
          | - Feeds, eBuy e-mail intake, push mapping, settings: admin tasks on the Feed Console, Inbound Emails and Settings tabs.
          | - Anything not about government opportunities: decline politely.
       actions:
@@ -55,7 +55,9 @@ start_agent agent_router:
          go_notice_briefing: @utils.transition to @subagent.notice_briefing
             description: "Questions about a specific notice, solicitation, its documents, amendments or fit score."
          go_market_intel: @utils.transition to @subagent.market_intel
-            description: "Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts."
+            description: "Incumbents, recompetes, who wins most in a market, agency spending, vendors and forecasts."
+         go_opportunity_analysis: @utils.transition to @subagent.opportunity_analysis
+            description: "Bid or no-bid, SWOT, competitors, requirement gaps, win themes and teaming partners for the notice the user has open."
          go_push: @utils.transition to @subagent.push
             description: "Sending notices to Opportunity, checking push status, or setting auto-push rules."
 
@@ -268,7 +270,7 @@ subagent notice_briefing:
 
 subagent market_intel:
    label: "Market Intel"
-   description: "Incumbents, recompetes, likely bidders, agency spending, vendors and forecasts."
+   description: "Incumbents, recompetes, who wins most in a market, agency spending, vendors and forecasts."
 
    actions:
       find_incumbent:
@@ -317,15 +319,41 @@ subagent market_intel:
                filter_from_agent: False
                is_displayable: True
          target: "apex://NXP_RecompeteQueryAction"
+      market_leaders:
+         label: "NXP Market Leaders"
+         description: "Use when the user asks who wins most, who the main competitors are, or who holds the most work in a NAICS, optionally at one agency."
+         inputs:
+            naics: string
+               label: "NAICS"
+               description: "A NAICS code, or a prefix ending in * such as 5415*. Required: ask the user if they did not give one."
+               is_required: True
+               is_user_input: True
+            agency: string
+               label: "Agency"
+               description: "Agency name or part of it, for example Homeland Security. Leave empty for all agencies."
+               is_required: False
+               is_user_input: True
+            yearsBack: integer
+               label: "Years back"
+               description: "How many years of awards to count. Use the user's number; otherwise leave empty for 5."
+               is_required: False
+               is_user_input: True
+         outputs:
+            leaders: string
+               description: "Up to 10 vendors, one per line, with their number of awards and total obligated dollars, and the data window used. Always repeat the data window. Do not add vendors that are not in it."
+               filter_from_agent: False
+               is_displayable: True
+         target: "apex://NXP_MarketLeadersAction"
 
    reasoning:
       instructions: ->
-         | Your job is only to answer market questions from award data already loaded in Nexus Pursuit Hub: who holds a contract now and which awards are ending soon.
+         | Your job is only to answer market questions from award data already loaded in Nexus Pursuit Hub: who holds a contract now which awards are ending soon, and who wins most in a market.
          | Use {!@actions.incumbent} for who holds the work on the notice the user has open, and {!@actions.recompetes} for awards ending in a time window.
+         | Use {!@actions.leaders} for who wins most in a NAICS, optionally at one agency.
          | Always state the data window the action returned. Never estimate, extrapolate or use outside knowledge for any number; if an action did not return it, say it is not available.
          | Agency spending totals, vendor profiles and forecasts have no action: point the user to the Agencies, Vendor profile and Forecasts screens.
          | You do not predict who will win or set win probabilities.
-         | You do not give teaming advice.
+         | Bid / no-bid, SWOT, win themes and teaming for a notice belong to Opportunity Analysis.
       actions:
          incumbent: @actions.find_incumbent
             with noticeId=...
@@ -334,6 +362,57 @@ subagent market_intel:
             with naics=...
             with monthsAhead=...
             with minValue=...
+         leaders: @actions.market_leaders
+            with naics=...
+            with agency=...
+            with yearsBack=...
+
+subagent opportunity_analysis:
+   label: "Opportunity Analysis"
+   description: "Bid or no-bid, SWOT, competitors, requirement gaps, win themes and teaming partners for the notice the user has open."
+
+   actions:
+      analyze_notice:
+         label: "NXP Analyze Notice"
+         description: "Use when the user asks whether to bid, for a SWOT, who the incumbent and competitors are, which requirements we may not meet, win themes or teaming partners for the notice they have open."
+         include_in_progress_indicator: True
+         progress_indicator_message: "Writing the analysis..."
+         inputs:
+            noticeId: object
+               label: "Gov Notice record Id"
+               description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
+               is_required: True
+               is_user_input: False
+               complex_data_type_name: "lightning__recordInfoType"
+            analysisType: string
+               label: "Analysis type"
+               description: "brief (bid or no-bid), swot, competitors (incumbent, likely bidders), gaps (requirements we may not meet), themes (win themes) or teaming. Pick the closest to the question; brief when unsure."
+               is_required: True
+               is_user_input: False
+         outputs:
+            analysis: string
+               description: "Markdown analysis: each item ends with its sources in [ ] or (assumption). Show it as it is with the tags; say (assumption) items need checking. Add no vendors, dates or amounts that are not in it."
+               filter_from_agent: False
+               is_displayable: True
+            note: string
+               description: "Why there is no AI part (AI off or the daily limit used up), or empty. Tell the user when it is not empty."
+               filter_from_agent: False
+               is_displayable: True
+         target: "apex://NXP_AnalyzeNoticeAction"
+
+   reasoning:
+      instructions: ->
+         | Your job is only to analyze the one notice the user has open, with {!@actions.analyze}.
+         | The notice is the Gov Notice record the user has open (its Salesforce record Id, 15 or 18 characters). If no notice page is open and the user gave no record, ask them to open the notice. Never guess an Id.
+         | Pick the analysis type closest to the question: brief (bid or no-bid), swot, competitors, gaps, themes or teaming; use brief when unsure.
+         | Show the analysis as returned, with its source tags, and say that items marked (assumption) need checking.
+         | If the action returns a note (AI off or the daily limit used up), say so and show the facts it returned.
+         | Never add facts, vendors, dates or amounts the action did not return, or use outside knowledge.
+         | You do not set pWin, plan capture, price or write proposals; those are managed in Opportunity. Market-wide questions belong to Market Intel.
+      actions:
+         analyze: @actions.analyze_notice
+            with noticeId=...
+            with analysisType=...
 
 subagent push:
    label: "Push"
