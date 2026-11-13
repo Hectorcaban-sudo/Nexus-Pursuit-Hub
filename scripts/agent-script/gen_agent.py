@@ -26,11 +26,12 @@ def q(s):
 def typed(name, apex_type, indent):
     """Parameter declaration lines for an Apex type, in the shapes the Agent Script recipes use with Apex.
 
-    Integer needs object + lightning__integerType; record Ids travel as text.
+    Integer needs object + lightning__integerType; Id needs object + lightning__recordIdType (the org's validator asks for both).
     """
-    if apex_type == "Integer":
-        return [f"{I*indent}{name}: object"], [f"{I*(indent+1)}complex_data_type_name: \"lightning__integerType\""]
-    simple = {"Id": "string", "String": "string", "Decimal": "number", "Boolean": "boolean"}[apex_type]
+    complex = {"Integer": "lightning__integerType", "Id": "lightning__recordIdType"}
+    if apex_type in complex:
+        return [f"{I*indent}{name}: object"], [f"{I*(indent+1)}complex_data_type_name: \"{complex[apex_type]}\""]
+    simple = {"String": "string", "Decimal": "number", "Boolean": "boolean"}[apex_type]
     return [f"{I*indent}{name}: {simple}"], []
 
 

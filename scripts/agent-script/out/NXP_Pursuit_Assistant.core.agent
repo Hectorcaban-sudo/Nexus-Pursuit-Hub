@@ -118,8 +118,9 @@ subagent search_builder:
                description: "The Preview token output of NXP Preview Search for these same criteria, from this conversation. Never make one up."
                is_required: True
          outputs:
-            searchId: string
+            searchId: object
                description: "Id of the new saved search. Do not show it. Keep it in case the user then asks to turn on auto-push for this search."
+               complex_data_type_name: "lightning__recordIdType"
             message: string
                description: "What happened, including the reason if the save was refused. Tell the user."
          target: "apex://NXP_SaveSearchAction"
@@ -158,8 +159,9 @@ subagent notice_briefing:
          label: "NXP Explain Fit Score"
          description: "Use when the user asks why a notice has its fit score, or what is helping or hurting the score."
          inputs:
-            noticeId: string
+            noticeId: object
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
          outputs:
             explanation: string
@@ -169,8 +171,9 @@ subagent notice_briefing:
          label: "NXP Compare Versions"
          description: "Use when the user asks what changed in a notice, what an amendment did, or whether the due date moved."
          inputs:
-            noticeId: string
+            noticeId: object
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
             versions: object
                description: "How many recent amendments to compare. Use the number the user asked for; otherwise leave empty for 3."
@@ -184,8 +187,9 @@ subagent notice_briefing:
          label: "NXP Notice Documents"
          description: "Use when the user asks what the solicitation documents say or require: requirements, evaluation factors, page limits, key dates, clearances, risks, or where a document disagrees with the notice."
          inputs:
-            noticeId: string
+            noticeId: object
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
          outputs:
             documents: string
@@ -220,8 +224,9 @@ subagent market_intel:
          label: "NXP Find Incumbent"
          description: "Use when the user asks who holds the work now, who the incumbent is, or what the previous award was for a notice."
          inputs:
-            noticeId: string
+            noticeId: object
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
          outputs:
             answer: string
@@ -275,24 +280,27 @@ subagent push:
          label: "NXP Preview Push"
          description: "Use first whenever the user wants to send a notice to Opportunity. Shows the values that would be sent and whether a matching Opportunity already exists. Sends nothing."
          inputs:
-            noticeId: string
+            noticeId: object
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
          outputs:
             preview: string
                description: "The values that will be sent to Opportunity and whether a matching record already exists. Show it in full before asking for a yes."
             previewToken: string
                description: "Proof the user saw this preview. Do not show it. Pass it to NXP Push To Opportunity for this same notice."
-            existingRecordId: string
+            existingRecordId: object
                description: "Set when a matching Opportunity already exists. The push will link to it instead of creating a new one; tell the user that."
+               complex_data_type_name: "lightning__recordIdType"
          target: "apex://NXP_PreviewPushAction"
       push_to_opportunity:
          label: "NXP Push To Opportunity"
          description: "Use only after NXP Preview Push has been shown for this notice and the user has said yes. Creates the Opportunity, or links the existing one."
          require_user_confirmation: True
          inputs:
-            noticeId: string
+            noticeId: object
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no page is open, ask the user to open it. Must be the notice that was previewed. Never guess."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
             previewToken: string
                description: "The Preview token output of NXP Preview Push for this same notice, from this conversation. Never make one up."
@@ -300,8 +308,9 @@ subagent push:
          outputs:
             status: string
                description: "Success, Linked Existing or Failed."
-            recordId: string
+            recordId: object
                description: "Id of the Opportunity created or linked. Offer to open it."
+               complex_data_type_name: "lightning__recordIdType"
             message: string
                description: "What happened, including the reason if it failed. Tell the user."
          target: "apex://NXP_PushToOpportunityAction"
@@ -309,8 +318,9 @@ subagent push:
          label: "NXP Push Status"
          description: "Use when the user asks whether a notice was pushed, whether a push failed, or why."
          inputs:
-            noticeId: string
+            noticeId: object
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
          outputs:
             status: string
@@ -321,8 +331,9 @@ subagent push:
          description: "Use when the user asks to turn auto-push on, off or change its threshold on one of their saved searches. Power Users only. Confirm the search and the setting with the user first."
          require_user_confirmation: True
          inputs:
-            searchId: string
+            searchId: object
                description: "Id of a saved search the user owns. Take it from the Saved search Id output of NXP Save Search in this conversation, or from the saved search record page the user has open. Never guess."
+               complex_data_type_name: "lightning__recordIdType"
                is_required: True
             mode: string
                description: "Exactly one of: Off, Fit Threshold, All Matches."
