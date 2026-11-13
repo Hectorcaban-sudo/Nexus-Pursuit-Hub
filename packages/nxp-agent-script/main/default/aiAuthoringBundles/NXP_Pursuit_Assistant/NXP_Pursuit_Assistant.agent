@@ -69,62 +69,38 @@ subagent search_builder:
       draft_criteria:
          label: "NXP Draft Search Criteria"
          description: "Use first whenever the user describes a search or alert they want, or asks to change one. Turns their words into draft criteria. Saves nothing."
-         include_in_progress_indicator: True
-         progress_indicator_message: "Drafting the search..."
          inputs:
             text: string
-               label: "Request text"
                description: "The user's own words describing what they want alerts about: agencies, NAICS codes, set-asides, keywords, value, due dates and how often. Pass them unchanged; do not summarize."
                is_required: True
-               is_user_input: True
          outputs:
             criteriaJson: string
                description: "Machine-readable draft criteria. Do not show it to the user. Pass it unchanged to NXP Preview Search and then to NXP Save Search."
-               filter_from_agent: False
-               is_displayable: False
             frequency: string
                description: "Real Time, Daily or Weekly when the user asked for one; empty otherwise. Pass it to NXP Save Search."
-               filter_from_agent: False
-               is_displayable: True
             summary: string
                description: "Readable summary of the draft criteria. Show it so the user can correct anything before the preview."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_DraftSearchCriteriaAction"
       preview_search:
          label: "NXP Preview Search"
          description: "Use after NXP Draft Search Criteria and before any save. Shows how many notices match now, how many matched over the last 13 weeks, and the top five."
-         include_in_progress_indicator: True
-         progress_indicator_message: "Counting matches..."
          inputs:
             criteriaJson: string
-               label: "Criteria JSON"
                description: "The Criteria JSON output of NXP Draft Search Criteria, unchanged. If the user wants a change, run NXP Draft Search Criteria again with the corrected request first."
                is_required: True
-               is_user_input: False
          outputs:
             matchCount: object
                description: "Number of active notices that match now."
                complex_data_type_name: "lightning__integerType"
-               filter_from_agent: False
-               is_displayable: True
             backtestTotal: object
                description: "Number of notices that would have matched over the last 13 weeks. Tells the user how busy the alert will be."
                complex_data_type_name: "lightning__integerType"
-               filter_from_agent: False
-               is_displayable: True
             topMatches: string
                description: "Up to five matching notices, one per line, each starting with its notice ID in brackets. Show them as a list and keep the IDs."
-               filter_from_agent: False
-               is_displayable: True
             summary: string
                description: "Readable summary of the criteria that were previewed."
-               filter_from_agent: False
-               is_displayable: True
             previewToken: string
                description: "Proof the user saw this preview. Do not show it. Pass it to NXP Save Search. It works only for these criteria and this user, and expires at the end of the day."
-               filter_from_agent: False
-               is_displayable: False
          target: "apex://NXP_PreviewSearchAction"
       save_search:
          label: "NXP Save Search"
@@ -132,35 +108,22 @@ subagent search_builder:
          require_user_confirmation: True
          inputs:
             name: string
-               label: "Search name"
                description: "Short name for the search. Use the name the user gave. If they gave none, suggest one based on the summary and confirm it with them."
                is_required: True
-               is_user_input: True
             criteriaJson: string
-               label: "Criteria JSON"
                description: "The same Criteria JSON that was passed to NXP Preview Search, unchanged."
                is_required: True
-               is_user_input: False
             frequency: string
-               label: "Alert frequency"
                description: "Real Time, Daily, Weekly or None. Use the user's choice; if they did not choose, leave it empty for Daily."
                is_required: False
-               is_user_input: True
             previewToken: string
-               label: "Preview token"
                description: "The Preview token output of NXP Preview Search for these same criteria, from this conversation. Never make one up."
                is_required: True
-               is_user_input: False
          outputs:
-            searchId: object
+            searchId: string
                description: "Id of the new saved search. Do not show it. Keep it in case the user then asks to turn on auto-push for this search."
-               complex_data_type_name: "lightning__recordInfoType"
-               filter_from_agent: False
-               is_displayable: False
             message: string
                description: "What happened, including the reason if the save was refused. Tell the user."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_SaveSearchAction"
 
    reasoning:
@@ -197,56 +160,38 @@ subagent notice_briefing:
          label: "NXP Explain Fit Score"
          description: "Use when the user asks why a notice has its fit score, or what is helping or hurting the score."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
          outputs:
             explanation: string
                description: "The score and the points each rule added, starting with the notice ID. Show it as given; do not recalculate or round."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_ExplainFitScoreAction"
       compare_versions:
          label: "NXP Compare Versions"
          description: "Use when the user asks what changed in a notice, what an amendment did, or whether the due date moved."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
-            versions: integer
-               label: "How many recent versions"
+            versions: object
                description: "How many recent amendments to compare. Use the number the user asked for; otherwise leave empty for 3."
+               complex_data_type_name: "lightning__integerType"
                is_required: False
-               is_user_input: True
          outputs:
             changes: string
                description: "Field-by-field changes for each amendment, newest first, with the notice ID."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_CompareVersionsAction"
       notice_documents:
          label: "NXP Notice Documents"
          description: "Use when the user asks what the solicitation documents say or require: requirements, evaluation factors, page limits, key dates, clearances, risks, or where a document disagrees with the notice."
-         include_in_progress_indicator: True
-         progress_indicator_message: "Reading the document results..."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
          outputs:
             documents: string
                description: "What the Document Reader found in each file: requirements, evaluation factors, dates, risks, and where a file disagrees with the notice; also files not read yet. Say it was read by AI and should be checked against the files."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_NoticeDocumentsAction"
 
    reasoning:
@@ -277,72 +222,51 @@ subagent market_intel:
          label: "NXP Find Incumbent"
          description: "Use when the user asks who holds the work now, who the incumbent is, or what the previous award was for a notice."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
          outputs:
             answer: string
                description: "The incumbent vendor, the predecessor award and its end date, or a statement that none was found. Do not add vendors that are not in it."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_FindIncumbentAction"
       recompete_query:
          label: "NXP Recompete Query"
          description: "Use when the user asks which contracts are ending soon or which recompetes are coming, optionally by agency, NAICS or size."
          inputs:
             agency: string
-               label: "Agency"
                description: "Agency name or part of it, for example Veterans Affairs. Leave empty for all agencies."
                is_required: False
-               is_user_input: True
             naics: string
-               label: "NAICS"
                description: "A NAICS code, or a prefix ending in * such as 5415*. Leave empty for all codes."
                is_required: False
-               is_user_input: True
-            monthsAhead: integer
-               label: "Months ahead"
+            monthsAhead: object
                description: "How many months ahead to look for awards ending. Use the user's number; otherwise leave empty for 18."
+               complex_data_type_name: "lightning__integerType"
                is_required: False
-               is_user_input: True
             minValue: number
-               label: "Minimum value"
                description: "Lowest award value in dollars, as a plain number (10000000 for $10M). Leave empty for any value."
                is_required: False
-               is_user_input: True
          outputs:
             recompetes: string
                description: "Awards ending in the window, one per line, and the data window used. Always repeat the data window to the user."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_RecompeteQueryAction"
       market_leaders:
          label: "NXP Market Leaders"
          description: "Use when the user asks who wins most, who the main competitors are, or who holds the most work in a NAICS, optionally at one agency."
          inputs:
             naics: string
-               label: "NAICS"
                description: "A NAICS code, or a prefix ending in * such as 5415*. Required: ask the user if they did not give one."
                is_required: True
-               is_user_input: True
             agency: string
-               label: "Agency"
                description: "Agency name or part of it, for example Homeland Security. Leave empty for all agencies."
                is_required: False
-               is_user_input: True
-            yearsBack: integer
-               label: "Years back"
+            yearsBack: object
                description: "How many years of awards to count. Use the user's number; otherwise leave empty for 5."
+               complex_data_type_name: "lightning__integerType"
                is_required: False
-               is_user_input: True
          outputs:
             leaders: string
                description: "Up to 10 vendors, one per line, with their number of awards and total obligated dollars, and the data window used. Always repeat the data window. Do not add vendors that are not in it."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_MarketLeadersAction"
 
    reasoning:
@@ -375,29 +299,18 @@ subagent opportunity_analysis:
       analyze_notice:
          label: "NXP Analyze Notice"
          description: "Use when the user asks whether to bid, for a SWOT, who the incumbent and competitors are, which requirements we may not meet, win themes or teaming partners for the notice they have open."
-         include_in_progress_indicator: True
-         progress_indicator_message: "Writing the analysis..."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
             analysisType: string
-               label: "Analysis type"
                description: "brief (bid or no-bid), swot, competitors (incumbent, likely bidders), gaps (requirements we may not meet), themes (win themes) or teaming. Pick the closest to the question; brief when unsure."
                is_required: True
-               is_user_input: False
          outputs:
             analysis: string
                description: "Markdown analysis: each item ends with its sources in [ ] or (assumption). Show it as it is with the tags; say (assumption) items need checking. Add no vendors, dates or amounts that are not in it."
-               filter_from_agent: False
-               is_displayable: True
             note: string
                description: "Why there is no AI part (AI off or the daily limit used up), or empty. Tell the user when it is not empty."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_AnalyzeNoticeAction"
 
    reasoning:
@@ -422,105 +335,65 @@ subagent push:
       preview_push:
          label: "NXP Preview Push"
          description: "Use first whenever the user wants to send a notice to Opportunity. Shows the values that would be sent and whether a matching Opportunity already exists. Sends nothing."
-         include_in_progress_indicator: True
-         progress_indicator_message: "Preparing the push preview..."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
          outputs:
             preview: string
                description: "The values that will be sent to Opportunity and whether a matching record already exists. Show it in full before asking for a yes."
-               filter_from_agent: False
-               is_displayable: True
             previewToken: string
                description: "Proof the user saw this preview. Do not show it. Pass it to NXP Push To Opportunity for this same notice."
-               filter_from_agent: False
-               is_displayable: False
-            existingRecordId: object
+            existingRecordId: string
                description: "Set when a matching Opportunity already exists. The push will link to it instead of creating a new one; tell the user that."
-               complex_data_type_name: "lightning__recordInfoType"
-               filter_from_agent: False
-               is_displayable: False
          target: "apex://NXP_PreviewPushAction"
       push_to_opportunity:
          label: "NXP Push To Opportunity"
          description: "Use only after NXP Preview Push has been shown for this notice and the user has said yes. Creates the Opportunity, or links the existing one."
          require_user_confirmation: True
-         include_in_progress_indicator: True
-         progress_indicator_message: "Pushing to Opportunity..."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no page is open, ask the user to open it. Must be the notice that was previewed. Never guess."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
             previewToken: string
-               label: "Preview token"
                description: "The Preview token output of NXP Preview Push for this same notice, from this conversation. Never make one up."
                is_required: True
-               is_user_input: False
          outputs:
             status: string
                description: "Success, Linked Existing or Failed."
-               filter_from_agent: False
-               is_displayable: True
-            recordId: object
+            recordId: string
                description: "Id of the Opportunity created or linked. Offer to open it."
-               complex_data_type_name: "lightning__recordInfoType"
-               filter_from_agent: False
-               is_displayable: False
             message: string
                description: "What happened, including the reason if it failed. Tell the user."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_PushToOpportunityAction"
       push_status:
          label: "NXP Push Status"
          description: "Use when the user asks whether a notice was pushed, whether a push failed, or why."
          inputs:
-            noticeId: object
-               label: "Gov Notice record Id"
+            noticeId: string
                description: "Salesforce record Id of the Gov Notice (15 or 18 characters) from the notice page the user has open. Not the SAM.gov notice ID or solicitation number. If no notice page is open, ask the user to open it. Never guess an Id."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
          outputs:
             status: string
                description: "Up to the five most recent pushes of the notice, newest first: time, how it was pushed, result, record and any error. Or a note that it was never pushed."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_PushStatusAction"
       set_auto_push_rule:
          label: "NXP Set Auto-Push Rule"
          description: "Use when the user asks to turn auto-push on, off or change its threshold on one of their saved searches. Power Users only. Confirm the search and the setting with the user first."
          require_user_confirmation: True
          inputs:
-            searchId: object
-               label: "Saved search Id"
+            searchId: string
                description: "Id of a saved search the user owns. Take it from the Saved search Id output of NXP Save Search in this conversation, or from the saved search record page the user has open. Never guess."
                is_required: True
-               is_user_input: False
-               complex_data_type_name: "lightning__recordInfoType"
             mode: string
-               label: "Mode"
                description: "Exactly one of: Off, Fit Threshold, All Matches."
                is_required: True
-               is_user_input: True
             minFit: number
-               label: "Minimum fit score"
                description: "Lowest fit score, 0 to 100, that is pushed automatically. Required when Mode is Fit Threshold; leave empty otherwise."
                is_required: False
-               is_user_input: True
          outputs:
             message: string
                description: "The result, or why it was refused (for example, the user is not a Power User or does not own the search)."
-               filter_from_agent: False
-               is_displayable: True
          target: "apex://NXP_SetAutoPushRuleAction"
 
    reasoning:

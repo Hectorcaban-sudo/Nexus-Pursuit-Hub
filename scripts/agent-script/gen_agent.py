@@ -2,6 +2,8 @@
 
 Run it after changing an agent action's labels, descriptions, inputs or outputs, or the subagent text:
     python scripts/agent-script/gen_agent.py
+Add --core to write scripts/agent-script/out/NXP_Pursuit_Assistant.core.agent, the same agent without
+Opportunity Analysis and Market Leaders, for orgs where those Apex classes are not deployed yet.
 Then check the result with sf agent validate authoring-bundle (see docs/guides/agent-script-build.md).
 """
 import os, sys
@@ -9,14 +11,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import apexparse
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-ANALYSIS = os.path.exists(os.path.join(REPO, "packages/nxp-agents/main/default/classes/NXP_AnalyzeNoticeAction.cls"))
+CORE = "--core" in sys.argv  # without Opportunity Analysis and Market Leaders
+ANALYSIS = not CORE and os.path.exists(os.path.join(REPO, "packages/nxp-agents/main/default/classes/NXP_AnalyzeNoticeAction.cls"))
 CLASSES = os.path.join(REPO, "packages/nxp-agents/main/default/classes")
 I = "   "
 
-# Outputs only the agent needs (passed to the next action); the user never sees them.
-# Inputs the agent fills from context or earlier outputs, never by asking the user.
-NOT_FROM_USER = {"noticeId", "previewToken", "criteriaJson", "searchId", "analysisType"}
-HIDDEN = {"previewToken", "criteriaJson", "existingRecordId", "searchId", "recordId"}
 
 
 def q(s):
@@ -24,48 +23,39 @@ def q(s):
     return '"' + " ".join(s.split()).replace('"', "'") + '"'
 
 
-def in_type(t):
-    return {"Id": "id", "String": "string", "Integer": "integer", "Decimal": "number", "Boolean": "boolean"}[t]
+def typed(name, apex_type, indent):
+    """Parameter declaration lines for an Apex type, in the shapes the Agent Script recipes use with Apex.
+
+    Integer needs object + lightning__integerType; record Ids travel as text.
+    """
+    if apex_type == "Integer":
+        return [f"{I*indent}{name}: object"], [f"{I*(indent+1)}complex_data_type_name: \"lightning__integerType\""]
+    simple = {"Id": "string", "String": "string", "Decimal": "number", "Boolean": "boolean"}[apex_type]
+    return [f"{I*indent}{name}: {simple}"], []
 
 
 def action(alias, cls, confirm=False, progress=None):
+    # Kept to the properties the published recipes use with Apex targets: the org's validator rejects
+    # actions whose parameter settings it does not expect.
     a = apexparse.parse(os.path.join(CLASSES, cls + ".cls"))
     L = [f"{I*2}{alias}:", f"{I*3}label: {q(a['label'])}", f"{I*3}description: {q(a['description'])}"]
     if confirm:
         L.append(f"{I*3}require_user_confirmation: True")
-    if progress:
-        L.append(f"{I*3}include_in_progress_indicator: True")
-        L.append(f"{I*3}progress_indicator_message: {q(progress)}")
     if a["inputs"]:
         L.append(f"{I*3}inputs:")
         for p in a["inputs"]:
-            if p["apexType"] == "Id":
-                L.append(f"{I*4}{p['name']}: object")
-            else:
-                L.append(f"{I*4}{p['name']}: {in_type(p['apexType'])}")
-            L.append(f"{I*5}label: {q(p['label'])}")
+            head, extra = typed(p["name"], p["apexType"], 4)
+            L += head
             L.append(f"{I*5}description: {q(p['description'] or p['label'])}")
+            L += extra
             L.append(f"{I*5}is_required: {'True' if p['required'] else 'False'}")
-            L.append(f"{I*5}is_user_input: {'False' if p['name'] in NOT_FROM_USER else 'True'}")
-            if p["apexType"] == "Id":
-                L.append(f"{I*5}complex_data_type_name: \"lightning__recordInfoType\"")
     if a["outputs"]:
         L.append(f"{I*3}outputs:")
         for p in a["outputs"]:
-            t = p["apexType"]
-            if t == "Integer":
-                L.append(f"{I*4}{p['name']}: object")
-                L.append(f"{I*5}description: {q(p['description'] or p['label'])}")
-                L.append(f"{I*5}complex_data_type_name: \"lightning__integerType\"")
-            elif t == "Id":
-                L.append(f"{I*4}{p['name']}: object")
-                L.append(f"{I*5}description: {q(p['description'] or p['label'])}")
-                L.append(f"{I*5}complex_data_type_name: \"lightning__recordInfoType\"")
-            else:
-                L.append(f"{I*4}{p['name']}: {in_type(t)}")
-                L.append(f"{I*5}description: {q(p['description'] or p['label'])}")
-            L.append(f"{I*5}filter_from_agent: False")
-            L.append(f"{I*5}is_displayable: {'False' if p['name'] in HIDDEN else 'True'}")
+            head, extra = typed(p["name"], p["apexType"], 4)
+            L += head
+            L.append(f"{I*5}description: {q(p['description'] or p['label'])}")
+            L += extra
     L.append(f"{I*3}target: \"apex://{cls}\"")
     return "\n".join(L)
 
@@ -299,7 +289,12 @@ Capture, pipeline and proposals are managed in Opportunity. Search criteria belo
 ))
 
 out = "\n".join(parts)
-path = os.path.join(REPO, "packages/nxp-agent-script/main/default/aiAuthoringBundles/NXP_Pursuit_Assistant/NXP_Pursuit_Assistant.agent")
+path = os.path.join(
+    REPO,
+    "scripts/agent-script/out/NXP_Pursuit_Assistant.core.agent"
+    if CORE
+    else "packages/nxp-agent-script/main/default/aiAuthoringBundles/NXP_Pursuit_Assistant/NXP_Pursuit_Assistant.agent",
+)
 os.makedirs(os.path.dirname(path), exist_ok=True)
 open(path, "w").write(out)
 print("Wrote", os.path.relpath(path, REPO), "(" + str(len(out.splitlines())) + " lines)")
