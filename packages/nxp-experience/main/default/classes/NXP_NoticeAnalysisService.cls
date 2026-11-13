@@ -367,12 +367,13 @@ public with sharing class NXP_NoticeAnalysisService {
         for (NXP_Document_Analysis__c d : [
             SELECT File_Name__c, Result_Json__c
             FROM NXP_Document_Analysis__c
-            WHERE Gov_Notice__c = :n.Id AND Status__c = 'Complete' AND Result_Json__c != NULL
+            WHERE Gov_Notice__c = :n.Id AND Status__c = 'Complete'
             WITH SYSTEM_MODE
             ORDER BY Analyzed__c DESC
             LIMIT 3
         ]) {
-            String text = documentText(d.Result_Json__c);
+            // Long text can't be filtered in SOQL, so empty results are skipped here.
+            String text = String.isBlank(d.Result_Json__c) ? null : documentText(d.Result_Json__c);
             if (String.isNotBlank(text)) {
                 out.add(new Fact('Document: ' + d.File_Name__c, text.left(3000)));
             }
