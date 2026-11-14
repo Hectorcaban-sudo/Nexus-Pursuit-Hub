@@ -101,6 +101,8 @@ The notice page brings together:
 - **Facts**: days to respond, fit with reasons, value, set-aside, NAICS/PSC, sources, contacts, versions.
 - **AI summary**: written for notices that match a saved search (when AI is on), within about 30 minutes, after the description is fetched. It's a draft: check it against the solicitation.
 - **Documents**: every file on the notice. The **Document Reader** (AI, when on) reads each PDF and lists requirements, evaluation factors, submission rules, key dates, clearance and risks.
+- **Analyze this notice**: one AI call writes a bid / no-bid brief, SWOT, competitors, gaps, win themes or teaming ideas from Nexus data, with the source of every point. When AI is off or the day's limit is used, it shows the facts it would have used.
+- **Price-to-Win**: what this kind of work has sold for. Nexus takes past awards for the same NAICS at the same agency (or department, or all agencies), divides what each spent by the years it ran, and shows low, median, high and the typical range (the middle half). It adds the predecessor contract, how often incumbents kept their work (estimated from follow-on awards), an estimate from the 20 most similar awards, and **Compare a price**. It's arithmetic, not AI, and it never shows a chance of winning: public award data only has the winners.
 - **Document checks**: when a file disagrees with the notice (a different due date, NAICS or set-aside), a red box shows both values. Someone checks the file and clicks **Mark as checked**. Inbox cards show a _document checks_ chip, and the push dialog warns.
 
 ## 7. Push to Opportunity
@@ -137,5 +139,6 @@ Admins change Nexus settings on the **Settings** tab rather than in Setup: alert
 ## 11. Limits to know
 
 - **SAM.gov key**: each call counts against the key's daily limit. Personal keys expire every 90 days; production should use a System Account key. When the limit is reached, feeds and downloads wait until the key resets.
-- **AI**: at most `AI_Max_Calls_Per_Day` (500) AI calls a day. After that, summaries and document reading wait for the next day.
+- **AI**: at most `AI_Max_Calls_Per_Day` (500 by default) AI calls a day. Every summary, document read and analysis uses Einstein / Agentforce credits, so the limit caps the daily spend and stops a broad search or a backfill from using thousands of calls overnight. After it is reached, summaries and document reading wait for the next day, and Analyze this notice shows facts only. Admins raise it (or set 0 for no limit) on the Settings tab, based on the org's credits (Setup → Digital Wallet).
+- **Price-to-Win** needs award history: it compares only awards loaded from USAspending (or REST), started within `Price_Check_Lookback_Years` (5).
 - **Who sees what**: everyone sees notices, forecasts, awards, agencies and vendors. Saved searches and matches are private to their owner unless shared. Inbound eBuy e-mail, logs and feed controls are for admins.
