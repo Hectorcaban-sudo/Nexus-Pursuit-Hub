@@ -189,6 +189,15 @@ AI is optional; everything works without it. With it: AI summaries of matched no
 5. **Analyze this notice** (notice page) and the assistant's **NXP Analyze Notice** use `NXP_Notice_Analysis` (setting `Notice_Analysis_Template`): one AI call per click, with facts gathered by Apex. Without the template or with AI off, users still see the facts.
 6. **Find similar** (notice page) drafts its keywords with `NXP_Similar_Keywords` (setting `Similar_Keywords_Template`). Without it, or with AI off, Find similar uses words from the notice title instead.
 
+## Price-to-Win
+
+The **Price-to-Win** card on the Gov Notice page (`nxpPriceToWin`, `NXP_PriceToWinService` in `nxp-search`) compares the notice with past Award Summaries: low, median, high and typical range per year of performance, the predecessor contract, an estimated incumbent hold and a similar-awards estimate. Plain statistics in Apex: no AI calls, no extra license, and users see figures over the awards they can see.
+
+- **Award data:** it needs the USAspending feed. From this release the feed also stores each award's **NAICS** and **PSC** (before, USAspending awards had no NAICS, so NAICS comparisons were empty). To fill them for awards loaded earlier, run `sf apex run --file scripts/apex/reload-usaspending.apex --target-org <alias>` once: it reloads the last 5 years (change `YEARS` in the script) as a batch you can watch on the Feed Console. Awards are updated by PIID, so nothing is duplicated; a run stops after `Batch_Max_Pages` pages of 100, so run it again if the Feed Console shows it stopped with more to read.
+- **Settings → Price-to-Win:** `Price_Check_Enabled` (on), `Price_Check_Min_Awards` (5: fewer awards show a list and the similar-awards estimate instead of a range), `Price_Check_Lookback_Years` (5) and `Price_Check_Default_Scope` (agency).
+- **Why no win probability:** USAspending records only the winning award, never the losing bids, so the card shows where a price sits among past awards and says so. A win model needs your own bid prices and outcomes (see [ADR 0009](../adr/0009-price-to-win-statistics.md)).
+- The card is on the shipped Gov Notice record page under the summary; in Lightning App Builder it is **NXP Price-to-Win**.
+
 ## Settings (`NXP_Setting__mdt`)
 
 Change settings on the **Settings** tab ([The Settings tab](#the-settings-tab)), or in Setup → Custom Metadata Types → **NXP Setting** → Manage Records → Edit. Every package deployment puts the shipped values back; values saved on the Settings tab are reapplied by the release scripts, but edits made in Setup are not, so prefer the Settings tab. `AI_Enabled` and `Org_Environment` come from `env-config/<env>`: record lasting changes to those there.
@@ -219,6 +228,8 @@ Change settings on the **Settings** tab ([The Settings tab](#the-settings-tab)),
 | `Files_Max_Per_Notice` / `Files_Max_MB`                    | 10 / 6                        | Most files per notice; largest file in MB (keep at 8 or less)                                                                                                                                                      |
 | `Similar_Keywords_Template`                                | NXP_Similar_Keywords          | Prompt template Find similar uses to suggest keywords (needs `AI_Enabled`; counts toward the daily limit)                                                                                                          |
 | `Ebuy_Silence_Days`                                        | 3                             | The problems e-mail warns when no eBuy e-mail has arrived for this many days (0 = off)                                                                                                                             |
+| `Price_Check_Enabled` / `Price_Check_Min_Awards`           | true / 5                      | Price-to-Win card on the notice page; fewest comparable awards for a range (no AI calls)                                                                                                                           |
+| `Price_Check_Lookback_Years` / `Price_Check_Default_Scope` | 5 / agency                    | Years of awards compared; first comparison: agency, department, naics or agencyAll                                                                                                                                 |
 | `Bypass_NXP_GovNoticeTriggerHandler`                       | (none)                        | Emergency trigger switch (set Value to true)                                                                                                                                                                       |
 
 ## Monitoring
