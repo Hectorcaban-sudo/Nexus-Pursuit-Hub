@@ -15,6 +15,8 @@ public inherited sharing class NXP_UsaSpendingConnector implements NXP_FeedConne
         'Awarding Agency',
         'Awarding Sub Agency',
         'Description',
+        'NAICS',
+        'PSC',
         'generated_internal_id'
     };
 
@@ -76,6 +78,8 @@ public inherited sharing class NXP_UsaSpendingConnector implements NXP_FeedConne
             rec.put('Obligated_Amount__c', NXP_Json.toDecimal(NXP_Json.getString(item, 'Award Amount')));
             rec.put('Period_Start__c', NXP_Json.toDate(NXP_Json.getString(item, 'Start Date')));
             rec.put('Period_End__c', NXP_Json.toDate(NXP_Json.getString(item, 'End Date')));
+            rec.put('NAICS_Code__c', codeOf(item, 'NAICS'));
+            rec.put('PSC_Code__c', codeOf(item, 'PSC'));
             rec.put('Source_Feed__c', config.DeveloperName);
             String agency = NXP_Json.getString(item, 'Awarding Agency');
             String subAgency = NXP_Json.getString(item, 'Awarding Sub Agency');
@@ -91,6 +95,23 @@ public inherited sharing class NXP_UsaSpendingConnector implements NXP_FeedConne
         page.nextCheckpoint = new Map<String, Object>(checkpoint);
         page.nextCheckpoint.put('page', pageNumber + 1);
         return page;
+    }
+
+    /**
+     * NAICS and PSC come back as {"code": "541512", "description": "..."}; older responses
+     * sent the code as text. Returns the code only, or null.
+     */
+    @TestVisible
+    private static String codeOf(Object item, String field) {
+        Object v = NXP_Json.toMap(item).get(field);
+        String code = v instanceof Map<String, Object>
+            ? NXP_Json.getString(v, 'code')
+            : (v == null ? null : String.valueOf(v));
+        if (String.isBlank(code)) {
+            return null;
+        }
+        code = code.trim().split('[\\s:-]')[0];
+        return String.isBlank(code) ? null : NXP_Text.truncate(code, 10);
     }
 
     private static List<String> profileNaics() {

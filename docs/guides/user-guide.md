@@ -74,6 +74,7 @@ Click a notice title. The page shows:
 - **Summary**: the AI summary (a draft: check it against the solicitation). It's written for notices that match a saved search, within about 30 minutes. For any other notice, or when the summary failed, click **Generate AI summary** (or **Try the AI summary again**) to write it now; it takes a few seconds and counts toward the daily AI limit. The button shows only when AI is on.
 - **Full description**: click to expand. If it only shows a **Load description** button, SAM.gov sent a link; click it to fetch the text (descriptions of matched and high-fit notices are fetched automatically).
 - **Fit breakdown**, **Version history** (every amendment and what changed), **Contacts** and **Push history**.
+- **Price-to-Win**: what past awards for this kind of work were worth a year ([Price-to-Win](#price-to-win)).
 - **Documents**: the notice's files.
 
 ### Analyze this notice
@@ -94,6 +95,21 @@ It uses only Nexus data: the notice and its documents (Document Reader), the awa
 - **Save to the notice** keeps it as a file under Documents; it goes with the notice when you push it. **Copy** puts it on the clipboard for an e-mail; **Regenerate** writes it again.
 - Each click is one AI call (daily AI limit). With AI off you still get the facts.
 - You can ask the same questions in the assistant: "Bid / no-bid brief for this notice", "Who wins most in NAICS 541512 at Homeland Security?".
+
+### Price-to-Win
+
+Below the summary, **Price-to-Win** shows what this kind of work has sold for, from the award history in Nexus (USAspending). It is arithmetic over past awards; it uses no AI calls.
+
+- **Compare with**: the notice's NAICS at its agency (for example _NAICS + CBP_), across its department (_NAICS + DHS_), across all agencies, or the agency across all our NAICS. Each button shows how many awards it has; Nexus starts with the first one that has enough (an admin sets how many, default 5).
+- **Low, Median, High** and the green **typical range** (the middle half of the awards) are **per year of performance**: what was spent on an award divided by the years it has run (at least one), so a 2-year and a 5-year contract compare fairly. The chart also marks the **predecessor** contract (brown) and the **similar-awards estimate** (purple).
+- **Typical award range for this notice** multiplies the typical range by the **Years of performance** you choose. It starts at the predecessor contract's length; set it to the notice's base plus options.
+- **Predecessor contract**: the incumbent's current award, what it has spent a year and when it ends.
+- **Similar-awards estimate**: the weighted median of the 20 past awards most like this notice (same NAICS, same agency or department, same PSC, shared title words, recent). It still answers when a comparison has too few awards. **Show the closest matches** lists them.
+- **Compare a price**: type a total price to see where it sits: how many past awards it is higher than, and how it compares with the predecessor and the median. It is **not** a chance of winning: public award data only records the winners, never the losing bids or their prices.
+- **Does the incumbent keep the work?** (_Estimated_): of the contracts here that ended, how many went to the same vendor again. Nexus finds the follow-on as the award at the same agency and NAICS that started closest to the old end date (90 days before to 180 days after). Check the linked records before quoting it.
+- **Recent comparable awards**: the newest ten; shaded rows are inside the typical range. **Copy summary** puts the figures on the clipboard for the capture plan or the Opportunity.
+
+Pricing decisions and pWin stay in the Opportunity.
 
 ### Documents
 

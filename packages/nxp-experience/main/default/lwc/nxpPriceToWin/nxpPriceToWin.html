@@ -1,0 +1,271 @@
+<template>
+    <lightning-card title="Price-to-Win" icon-name="standard:pricebook">
+        <lightning-button-icon
+            slot="actions"
+            icon-name="utility:refresh"
+            alternative-text="Refresh"
+            onclick={handleRefresh}
+        ></lightning-button-icon>
+        <div class="body">
+            <template lwc:if={loading}>
+                <lightning-spinner alternative-text="Loading award history" size="small"></lightning-spinner>
+            </template>
+            <p class="lead">What this kind of work has sold for, from award history in Nexus.</p>
+
+            <template lwc:if={offNote}>
+                <p class="off" role="status">{offNote}</p>
+            </template>
+
+            <template lwc:if={enabled}>
+                <div class="scopes" role="group" aria-label="Compare with">
+                    <template for:each={scopes} for:item="s">
+                        <lightning-button
+                            key={s.key}
+                            class="scope"
+                            data-key={s.key}
+                            label={s.buttonLabel}
+                            variant={s.variant}
+                            disabled={s.disabled}
+                            onclick={handleScope}
+                        ></lightning-button>
+                    </template>
+                </div>
+                <p class="meta scope-summary">{scopeSummary}</p>
+
+                <template lwc:if={note}>
+                    <p class="note" role="status">{note}</p>
+                </template>
+
+                <template lwc:if={enough}>
+                    <div class="tiles">
+                        <div class="tile">
+                            <span class="k">Low</span>
+                            <span class="v">{lowLabel}<span class="per"> /yr</span></span>
+                        </div>
+                        <div class="tile tile_median">
+                            <span class="k">Median</span>
+                            <span class="v">{medianLabel}<span class="per"> /yr</span></span>
+                            <span class="meta">Half the awards were below this</span>
+                        </div>
+                        <div class="tile">
+                            <span class="k">High</span>
+                            <span class="v">{highLabel}<span class="per"> /yr</span></span>
+                        </div>
+                    </div>
+
+                    <div class="chart" aria-hidden="true">
+                        <div class="track"></div>
+                        <div class="span" style={spanStyle}></div>
+                        <div class="band" style={bandStyle}></div>
+                        <span class="pt pt_end" style={lowStyle}></span>
+                        <span class="pt pt_end" style={highStyle}></span>
+                        <span class="pt pt_median" style={medianStyle}></span>
+                        <template lwc:if={hasPredecessor}>
+                            <span class="mark mark_pred" style={predecessorStyle}></span>
+                        </template>
+                        <template lwc:if={hasEstimate}>
+                            <span class="mark mark_est" style={estimateStyle}></span>
+                        </template>
+                        <template lwc:if={hasPrice}>
+                            <span class="pt pt_price" style={priceStyle}></span>
+                        </template>
+                    </div>
+                    <div class="axis meta"><span>$0</span><span>Value per year</span><span>{axisMaxLabel}</span></div>
+                    <ul class="legend meta">
+                        <li><i class="sw sw_band"></i>Typical range (middle half)</li>
+                        <li><i class="sw sw_span"></i>Low to high</li>
+                        <li><i class="sw sw_median"></i>Median</li>
+                        <template lwc:if={hasPredecessor}
+                            ><li><i class="sw sw_pred"></i>Predecessor</li></template
+                        >
+                        <template lwc:if={hasEstimate}
+                            ><li><i class="sw sw_est"></i>Similar-awards estimate</li></template
+                        >
+                        <template lwc:if={hasPrice}
+                            ><li><i class="sw sw_price"></i>Your price</li></template
+                        >
+                    </ul>
+                </template>
+
+                <div class="range">
+                    <div class="range-text">
+                        <template lwc:if={enough}>
+                            <span class="k k_ok">Typical award range for this notice</span>
+                            <span class="big">{rangeTotalLabel}</span>
+                            <span class="small">Middle half of {data.count} awards × {years} years.</span>
+                            <template lwc:if={hasPredecessor}>
+                                <span class="small"
+                                    >At the predecessor’s rate: <strong>{predecessorTotalLabel}</strong>.</span
+                                >
+                            </template>
+                        </template>
+                        <template lwc:else>
+                            <span class="k">Total for this notice</span>
+                            <span class="small"
+                                >Choose the years of performance to turn yearly values into totals.</span
+                            >
+                        </template>
+                    </div>
+                    <lightning-combobox
+                        class="years"
+                        label="Years of performance"
+                        options={yearOptions}
+                        value={yearsValue}
+                        onchange={handleYears}
+                        field-level-help={yearsNote}
+                    ></lightning-combobox>
+                </div>
+
+                <div class="cols">
+                    <template lwc:if={hasPredecessor}>
+                        <section class="box">
+                            <h3 class="k">Predecessor contract</h3>
+                            <span class="big">{predecessorPerYearLabel}<span class="per"> /yr</span></span>
+                            <a class="small" href={predecessorUrl}>{predecessor.name}</a>
+                            <span class="meta">{predecessorDetail}</span>
+                        </section>
+                    </template>
+
+                    <template lwc:if={hasEstimate}>
+                        <section class="box">
+                            <h3 class="k">Similar-awards estimate</h3>
+                            <span class="big">{estimateLabel}<span class="per"> /yr</span></span>
+                            <span class="small"
+                                >Weighted median of the {estimate.count} most similar awards (NAICS, agency, PSC and
+                                title words). Middle half {estimateRange}; about {estimateTotal} over {years}
+                                years.</span
+                            >
+                            <button class="link" type="button" onclick={handleToggleBasis}>{basisToggleLabel}</button>
+                            <template lwc:if={showBasis}>
+                                <ul class="basis">
+                                    <template for:each={basis} for:item="b">
+                                        <li key={b.id}>
+                                            <a href={b.url}>{b.name}</a>
+                                            <span class="meta"
+                                                >{b.meta} · {b.perYearLabel}/yr · match {b.similarity}</span
+                                            >
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                        </section>
+                    </template>
+
+                    <section class="box">
+                        <h3 class="k">Compare a price</h3>
+                        <lightning-input
+                            class="price"
+                            type="number"
+                            formatter="currency"
+                            step="1000"
+                            label={priceInputLabel}
+                            value={price}
+                            onchange={handlePrice}
+                        ></lightning-input>
+                        <template lwc:if={hasPrice}>
+                            <div class="price-head">
+                                <span class="small">{pricePerYearLabel} a year</span>
+                                <span class={priceTag.cls}>{priceTag.label}</span>
+                            </div>
+                            <ul class="facts">
+                                <template for:each={priceFacts} for:item="f">
+                                    <li key={f.key}>{f.text}</li>
+                                </template>
+                            </ul>
+                        </template>
+                        <span class="meta"
+                            >Where a price sits in past awards, not a chance of winning: public data has no losing
+                            bids.</span
+                        >
+                    </section>
+
+                    <template lwc:if={hasHold}>
+                        <section class="box">
+                            <div class="box-head">
+                                <h3 class="k">Does the incumbent keep the work?</h3>
+                                <span class="tag tag_muted">Estimated</span>
+                            </div>
+                            <div class="hold">
+                                <span class="big">{holdPercent}</span>
+                                <span class="pips" aria-hidden="true">
+                                    <template for:each={pips} for:item="p">
+                                        <i key={p.key} class={p.cls}></i>
+                                    </template>
+                                </span>
+                            </div>
+                            <span class="small">{holdLabel}.</span>
+                            <template lwc:if={incumbentLine}
+                                ><span class="small strong">{incumbentLine}</span></template
+                            >
+                            <ul class="examples">
+                                <template for:each={holdExamples} for:item="e">
+                                    <li key={e.key}>
+                                        <i class={e.cls}></i>
+                                        <span>{e.text}<span class="meta"> · {e.ended}</span></span>
+                                    </li>
+                                </template>
+                            </ul>
+                            <span class="meta"
+                                >Follow-on: an award at the same agency and NAICS starting within 90 days before to 180
+                                days after the old one ended. Check the records before quoting it.</span
+                            >
+                        </section>
+                    </template>
+                </div>
+
+                <template lwc:if={hasAwards}>
+                    <h3 class="k table-title">Recent comparable awards</h3>
+                    <div class="table-wrap">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Award</th>
+                                    <th scope="col">Vendor</th>
+                                    <th scope="col">Started</th>
+                                    <th scope="col" class="num">Years</th>
+                                    <th scope="col" class="num">Spent</th>
+                                    <th scope="col" class="num">Per year</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={awards} for:item="a">
+                                    <tr key={a.id} class={a.rowClass}>
+                                        <td>
+                                            <a href={a.url}>{a.piid}</a>
+                                            <template lwc:if={a.isPredecessor}>
+                                                <span class="tag tag_warn">Predecessor</span>
+                                            </template>
+                                            <div class="meta">{a.agencyName}</div>
+                                        </td>
+                                        <td>
+                                            <template lwc:if={a.vendorUrl}
+                                                ><a href={a.vendorUrl}>{a.vendorName}</a></template
+                                            >
+                                        </td>
+                                        <td>{a.started}</td>
+                                        <td class="num">{a.years}</td>
+                                        <td class="num">{a.spentLabel}</td>
+                                        <td class="num strong">{a.perYearLabel}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="meta">Shaded rows are inside the typical range.</p>
+                </template>
+
+                <div class="foot">
+                    <span class="meta"
+                        >Source: Award Summaries (USAspending). Per year = amount spent ÷ years run so far (at least 1).
+                        {footer}</span
+                    >
+                    <lightning-button
+                        label="Copy summary"
+                        icon-name="utility:copy"
+                        onclick={handleCopy}
+                    ></lightning-button>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

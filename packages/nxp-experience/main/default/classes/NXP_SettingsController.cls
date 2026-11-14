@@ -352,6 +352,42 @@ public with sharing class NXP_SettingsController {
         },
         new List<String>{ 'push', 'Push_Max_Attempts', 'Auto-push tries', '', 'Integer', '', '3' },
         new List<String>{ 'feeds', 'Http_Max_Attempts', 'Tries per call', 'On HTTP 429 and 5xx.', 'Integer', '', '3' },
+        new List<String>{
+            'pricing',
+            'Price_Check_Enabled',
+            'Price-to-Win panel on',
+            'Shows past award values on the Gov Notice page. Statistics only; no AI calls.',
+            'Boolean',
+            '',
+            'true'
+        },
+        new List<String>{
+            'pricing',
+            'Price_Check_Min_Awards',
+            'Fewest awards for a range',
+            'With fewer comparable awards the panel lists them and shows the similar-awards estimate instead.',
+            'Integer',
+            '',
+            '5'
+        },
+        new List<String>{
+            'pricing',
+            'Price_Check_Lookback_Years',
+            'Years of awards to compare',
+            'Awards that started within this many years.',
+            'Integer',
+            '',
+            '5'
+        },
+        new List<String>{
+            'pricing',
+            'Price_Check_Default_Scope',
+            'Compare with first',
+            'agency: NAICS at the notice\'s agency. department: NAICS across its department. naics: all agencies. agencyAll: the agency, all our NAICS.',
+            'Picklist',
+            'agency;department;naics;agencyAll',
+            'agency'
+        },
         new List<String>{ 'feeds', 'Http_Timeout_Ms', 'Call timeout (ms)', '', 'Integer', '', '60000' },
         new List<String>{ 'feeds', 'Queue_Max_Pages', 'Pages per pipeline run', '', 'Integer', '', '50' },
         new List<String>{ 'feeds', 'Batch_Max_Pages', 'Pages per batch run', '', 'Integer', '', '200' }
@@ -370,6 +406,7 @@ public with sharing class NXP_SettingsController {
         new List<String>{ 'ebuy', 'GSA eBuy', 'The eBuy e-mail inbox' },
         new List<String>{ 'fit', 'Fit score rules', 'Rule weights; active weights must add up to 100' },
         new List<String>{ 'push', 'Push to Opportunity', 'Push mapping rows and the Opportunity fields stay in Setup' },
+        new List<String>{ 'pricing', 'Price-to-Win', 'Past award values on the notice page' },
         new List<String>{ 'other', 'Other settings', 'Settings this screen has no description for. Change with care.' }
     };
 

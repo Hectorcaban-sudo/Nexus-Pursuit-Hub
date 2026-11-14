@@ -27,7 +27,8 @@ private class NXP_IngestionTest {
                 body =
                     '{"results":[{"Award ID":"HSBP1019C00001","Recipient Name":"Acme Federal LLC","Recipient UEI":"ABCDEFGHJK12",' +
                     '"Award Amount":12500000.5,"Start Date":"2022-01-01","End Date":"2027-03-31","Awarding Agency":"Department of Homeland Security",' +
-                    '"Awarding Sub Agency":"U.S. Customs and Border Protection","Description":"CYBER OPERATIONS SUPPORT"}],"page_metadata":{"hasNext":false}}';
+                    '"Awarding Sub Agency":"U.S. Customs and Border Protection","Description":"CYBER OPERATIONS SUPPORT",' +
+                    '"NAICS":{"code":"541512","description":"COMPUTER SYSTEMS DESIGN SERVICES"},"PSC":"DJ01"}],"page_metadata":{"hasNext":false}}';
             } else if (url.contains('entity-information')) {
                 body =
                     '{"entityData":[{"entityRegistration":{"legalBusinessName":"Acme Federal LLC","cageCode":"1ABC2"},' +
@@ -456,9 +457,11 @@ private class NXP_IngestionTest {
         Test.stopTest();
         System.assertEquals('1ABC2', one.values.get('CAGE_Code__c'));
         NXP_Award_Summary__c a = [
-            SELECT Vendor__c, Obligated_Amount__c, Period_End__c, Agency__c
+            SELECT Vendor__c, Obligated_Amount__c, Period_End__c, Agency__c, NAICS_Code__c, PSC_Code__c
             FROM NXP_Award_Summary__c
         ];
+        System.assertEquals('541512', a.NAICS_Code__c, 'NAICS code comes from the NAICS object');
+        System.assertEquals('DJ01', a.PSC_Code__c);
         System.assertNotEquals(null, a.Vendor__c);
         System.assertNotEquals(null, a.Agency__c);
         System.assertEquals(Date.newInstance(2027, 3, 31), a.Period_End__c);

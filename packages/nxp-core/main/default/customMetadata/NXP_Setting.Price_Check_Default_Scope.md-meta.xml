@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMetadata
+    xmlns="http://soap.sforce.com/2006/04/metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>Price Check Default Scope</label>
+    <protected>false</protected>
+    <values>
+        <field>Description__c</field>
+        <value
+            xsi:type="xsd:string"
+        >What the Price-to-Win panel compares with first: agency (NAICS at the notice's agency), department, naics (all agencies) or agencyAll (the agency, all our NAICS). Falls back to a scope with enough awards.</value>
+    </values>
+    <values>
+        <field>Value__c</field>
+        <value xsi:type="xsd:string">agency</value>
+    </values>
+</CustomMetadata>
