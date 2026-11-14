@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sources__c</fullName>
+    <description>The Nexus facts the playbook may use. The AI may only cite these.</description>
+    <label>Facts It Can Use</label>
+    <required>false</required>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Notice</fullName><default>true</default><label>Notice</label></value>
+            <value><fullName>Documents</fullName><default>true</default><label>Documents</label></value>
+            <value><fullName>Fit reasons</fullName><default>false</default><label>Fit reasons</label></value>
+            <value><fullName>Incumbent</fullName><default>true</default><label>Incumbent</label></value>
+            <value><fullName>Award history</fullName><default>true</default><label>Award history</label></value>
+            <value><fullName>Price-to-Win</fullName><default>false</default><label>Price-to-Win</label></value>
+            <value><fullName>Vendor profiles</fullName><default>false</default><label>Vendor profiles</label></value>
+            <value><fullName>Company Profile</fullName><default>true</default><label>Company Profile</label></value>
+            <value><fullName>Contract vehicles</fullName><default>false</default><label
+                >Contract vehicles</label></value>
+            <value><fullName>Version history</fullName><default>false</default><label>Version history</label></value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>6</visibleLines>
+</CustomField>

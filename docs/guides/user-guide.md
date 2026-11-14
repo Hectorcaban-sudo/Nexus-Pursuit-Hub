@@ -111,6 +111,18 @@ Below the summary, **Price-to-Win** shows what this kind of work has sold for, f
 
 Pricing decisions and pWin stay in the Opportunity.
 
+### Analysis playbooks (Analyses tab)
+
+Besides the six Nexus analyses, **Analyze this notice** shows the **analysis playbooks** your organization published (dashed chips; hover for the description). Each is one AI call, uses only the Nexus facts its author chose, and tags every point with its source like the built-in analyses. Save, Copy and Regenerate work the same way; saved files carry the playbook's version.
+
+The **Analyses** tab lists them all: _Our organization_ and _Nexus defaults_, with search and BD / Capture / Proposal filters. BD users can open a playbook to read its steps and facts. **Power Users and admins** can also:
+
+- **New playbook**, or **Copy to customize** a Nexus analysis (or **Copy** one of yours).
+- Write the **steps** (title and instructions, in order; up to 12), the **output sections** (one per line) and whether to ask for a **verdict** and **ranked strategies**.
+- Choose the **facts it can use**: notice, documents, fit reasons, incumbent, award history, **Price-to-Win** figures, **vendor profiles** (where the incumbent and top vendors win elsewhere), Company Profile, vehicles, version history.
+- **Test on a notice**: runs what is on screen once (one AI call) without saving, and shows the facts it was given.
+- **Publish vN** (with a note on what changed) so it shows on every notice; **Unpublish** to edit it as a draft; **Retire** to hide it.
+
 ### Documents
 
 - **SAM.gov files** are downloaded automatically for notices that match a search or score 70+. For any other notice, click **Get SAM.gov files**; they arrive one by one over a few minutes (click refresh). Files over 6 MB stay on SAM.gov.

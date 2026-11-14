@@ -189,6 +189,15 @@ AI is optional; everything works without it. With it: AI summaries of matched no
 5. **Analyze this notice** (notice page) and the assistant's **NXP Analyze Notice** use `NXP_Notice_Analysis` (setting `Notice_Analysis_Template`): one AI call per click, with facts gathered by Apex. Without the template or with AI off, users still see the facts.
 6. **Find similar** (notice page) drafts its keywords with `NXP_Similar_Keywords` (setting `Similar_Keywords_Template`). Without it, or with AI off, Find similar uses words from the notice title instead.
 
+## Analysis playbooks
+
+Analysis playbooks (`NXP_Analysis_Playbook__c`, **Analyses** tab, `nxpAnalysisLibrary`) let your organization add its own analyses next to the six Nexus ones: ordered steps, output sections, verdict and strategy switches, and the Nexus facts the model may cite. A published playbook appears on every notice under **Analyze this notice** and to the assistant (`kind` = `pb:<Key>`).
+
+- **Who edits:** users with the `NXP_Power_User` or `NXP_Admin_Access` custom permission. Everyone with `NXP_User` sees published playbooks. Definitions are read and written by the controller in system mode after that check, so BD users need no object permissions; notice and award data are still read in user mode. `NXP_Admin` has full object access for reports.
+- **Cost:** each run is one AI call against `AI_Max_Calls_Per_Day`, the same as a built-in analysis; **Test** also uses one. Choosing _Price-to-Win_ or _Vendor profiles_ adds facts computed in Apex, not AI calls.
+- **Versions:** publishing raises `Version__c` and records the change note; field history keeps the trail (shown under Versions). `Times_Used__c` counts AI runs of published versions.
+- **Prompt template:** the same `NXP_Notice_Analysis` template as Analyze this notice; nothing new to create.
+
 ## Price-to-Win
 
 The **Price-to-Win** card on the Gov Notice page (`nxpPriceToWin`, `NXP_PriceToWinService` in `nxp-search`) compares the notice with past Award Summaries: low, median, high and typical range per year of performance, the predecessor contract, an estimated incumbent hold and a similar-awards estimate. Plain statistics in Apex: no AI calls, no extra license, and users see figures over the awards they can see.

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+    >Analysis playbooks: the analyses you run on a notice, Nexus defaults and your organization's own</description>
+    <label>Analyses</label>
+    <lwcComponent>nxpAnalysisLibrary</lwcComponent>
+    <motif>Custom55: Books</motif>
+</CustomTab>

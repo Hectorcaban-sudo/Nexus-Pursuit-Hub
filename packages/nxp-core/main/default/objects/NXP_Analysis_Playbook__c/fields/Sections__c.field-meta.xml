@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sections__c</fullName>
+    <description>Output section titles, one per line. Empty: the AI picks section titles from the steps.</description>
+    <label>Output Sections</label>
+    <length>2000</length>
+    <type>LongTextArea</type>
+    <visibleLines>4</visibleLines>
+</CustomField>

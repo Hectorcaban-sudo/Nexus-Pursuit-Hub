@@ -13,6 +13,10 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NXP_AnalysisPlaybookController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_VehicleController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1035,6 +1039,10 @@
     </tabSettings>
     <tabSettings>
         <tab>NXP_Vehicle_Portfolio</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>NXP_Analyses</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
