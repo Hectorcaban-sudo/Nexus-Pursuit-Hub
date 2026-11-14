@@ -143,6 +143,10 @@
                     "versionNumber": "1.0.0.LATEST"
                 }
             ]
+        },
+        {
+            "path": "packages/nxp-agent-script",
+            "default": false
         }
     ],
     "name": "nexus-pursuit-hub",

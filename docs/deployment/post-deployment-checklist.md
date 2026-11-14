@@ -18,6 +18,8 @@ Copy into the release ticket and tick each item.
 - [ ] Smoke test (UAT/prod): push one sample notice to Opportunity → record created, Push Log Success; delete the test record afterwards
 - [ ] Smoke test: on a notice, **Find similar** opens with buyer, NAICS and notice type choices and a match count; **Save search** creates the search
 - [ ] Smoke test: Forecasts, Recompetes, Vehicle Portfolio and a vendor and agency page load with data
+- [ ] Smoke test: on a notice with an agency and NAICS, the **Price-to-Win** card shows award counts on its comparison buttons, and either a range or the similar-awards estimate
+- [ ] Smoke test: **Analyze this notice** → _Bid / no-bid brief_ returns a brief with source tags (AI on), or the facts with the _AI is off_ note
 - [ ] Smoke test (if eBuy is set up): send a test eBuy e-mail → **Inbound Emails** shows it _Ingested_ and the notice exists
 - [ ] Smoke test (if the Document Reader is on): attach a PDF to a notice → Documents card shows _Read_ within a few minutes
 - [ ] Dashboards _Nexus: Market and activity_, _Nexus: Operations_ and _Nexus: Adoption and GovWin cut-over_ open without errors
@@ -43,11 +45,12 @@ Copy into the release ticket and tick each item.
 - [ ] Remote Site Setting `NXP_SAM_File_Storage` active; one **Get SAM.gov files** succeeded (add a Remote Site Setting for any other host the Documents card names)
 - [ ] Search templates created (`seed-search-templates.apex`) and visible under _Start from a template_ to a BD user
 - [ ] Scheduled jobs include **NXP Admin Digest**; `Admin_Digest_Recipients` set if admins shouldn't get it
-- [ ] `AI_Max_Calls_Per_Day` set to fit your Einstein credits
+- [ ] `AI_Max_Calls_Per_Day` set to fit your Einstein credits (it caps credit use; Setup → Digital Wallet shows what you have)
+- [ ] Award history loaded: USAspending feed ran, and `reload-usaspending.apex` run once on orgs upgraded from before November 2026 (fills award NAICS and PSC for Price-to-Win)
 - [ ] Org-wide e-mail address set in `Alert_OrgWide_Email_Id` (optional)
 - [ ] REST integration user, External Client App and NXP_Integration set up (if used)
 - [ ] Data Cloud `NXP_Awards` connector and data stream created (if used)
-- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used); `NXP_Similar_Keywords` (for Find similar, optional); `NXP_Document_Analysis` with a File input and `Document_Analysis_Enabled` (if the Document Reader is used); ATO covers sending solicitation documents and eBuy RFQs to the model
+- [ ] Prompt templates created and active; `AI_Enabled` true in env-config (if AI used); `NXP_Similar_Keywords` (for Find similar, optional); `NXP_Notice_Analysis` (for Analyze this notice, optional); `NXP_Document_Analysis` with a File input and `Document_Analysis_Enabled` (if the Document Reader is used); ATO covers sending solicitation documents and eBuy RFQs to the model
 - [ ] Nexus Pursuit Assistant built or deployed, tested with `tests/agents/assistant.yaml` (≥ 90%), activated, access assigned
 
 ## GovWin cut-over

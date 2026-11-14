@@ -107,7 +107,7 @@ private class NXP_PlaybookServiceTest {
         System.assertEquals(1, [SELECT COUNT() FROM NXP_Playbook_Step__c], 'One row per step');
 
         String text = NXP_PlaybookService.pushText(n);
-        System.assert(text.startsWith('Nexus playbook: Sources Sought RFI'), text);
+        System.assert(text.startsWith('Nexus next steps: Sources Sought RFI'), text);
         System.assert(text.contains('[x] Read the questions'), text);
         System.assert(text.contains('[ ] Send a statement (due '), text);
 

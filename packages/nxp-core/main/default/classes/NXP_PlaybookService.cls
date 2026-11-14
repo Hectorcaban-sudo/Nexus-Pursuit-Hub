@@ -309,7 +309,7 @@ public with sharing class NXP_PlaybookService {
         }
         Plan p = planFor(n);
         if (p == null || stepNumber == null || stepNumber < 1 || stepNumber > p.steps.size()) {
-            throw new PlaybookException('That step is no longer in the playbook. Refresh the page.');
+            throw new PlaybookException('That step is no longer in the next steps for this notice. Refresh the page.');
         }
         NXP_Playbook_Step__c row = new NXP_Playbook_Step__c(
             Key__c = noticeId + ':' + p.playbook + ':' + stepNumber,
@@ -331,7 +331,7 @@ public with sharing class NXP_PlaybookService {
         if (p == null) {
             return null;
         }
-        List<String> lines = new List<String>{ 'Nexus playbook: ' + p.label };
+        List<String> lines = new List<String>{ 'Nexus next steps: ' + p.label };
         for (Step s : p.steps) {
             String mark = s.done ? '[x] ' : '[ ] ';
             String who = s.done

@@ -99,7 +99,7 @@ private class NXP_PushTest {
         NXP_PushService.PushResult r = NXP_PushController.pushNoticeFrom(n.Id, true, 'Match Inbox');
         System.assertEquals('Success', r.status, r.message);
         String description = [SELECT Description FROM Opportunity WHERE Id = :r.targetId].Description;
-        System.assert(description.contains('Nexus playbook: High-fit solicitation'), description);
+        System.assert(description.contains('Nexus next steps: High-fit solicitation'), description);
         System.assert(description.contains('[x] Read the evaluation factors'), description);
         System.assert(description.contains('[ ] Push for capture review'), description);
     }

@@ -52,9 +52,9 @@ Nexus sends two kinds of message; who gets what is in [How Nexus works](how-it-w
 
 **Admin problems e-mail**: every active `NXP_Admin` user gets it at 07:00 when something failed. Change who with `Admin_Digest_Recipients` and when with `Admin_Digest_Mode` ([Monitoring](#monitoring)).
 
-## Playbooks
+## Next steps rules
 
-Playbook rules (`NXP_Playbook__mdt`) give notices their **Next steps**. Rules are checked by **Order**; the first active rule whose conditions all fit wins:
+Next-steps rules (`NXP_Playbook__mdt`, shown in Setup as _NXP Next Steps Rule_) give notices their **Next steps**. In code and API names they are still called playbooks; in the app they are _Next steps_, so the word playbook is free for analysis playbooks. Rules are checked by **Order**; the first active rule whose conditions all fit wins:
 
 | Condition    | Values                                                              |
 | ------------ | ------------------------------------------------------------------- |
@@ -66,7 +66,7 @@ Playbook rules (`NXP_Playbook__mdt`) give notices their **Next steps**. Rules ar
 
 **Steps** are one per line. Add `| 10` for a due date 10 days before the response date, or `| +2` for 2 days after the notice was posted. A date before the notice was posted becomes the posted date.
 
-Five starter rules ship (the recompete one is off). They are placeholders: replace them with your BD team's qualification steps on **Settings → Playbooks**. New rules are added in Setup → Custom Metadata Types → NXP Playbook → New, then edited on the Settings tab. Ticks are kept in **Playbook Steps** (`NXP_Playbook_Step__c`), one row per notice and step, shared with everyone.
+Five starter rules ship (the recompete one is off). They are placeholders: replace them with your BD team's qualification steps on **Settings → Next steps**. New rules are added in Setup → Custom Metadata Types → NXP Next Steps Rule → New, then edited on the Settings tab. Ticks are kept in **Playbook Steps** (`NXP_Playbook_Step__c`), one row per notice and step, shared with everyone.
 
 ## The Settings tab
 
@@ -200,9 +200,19 @@ AI is optional; everything works without it. With it: AI summaries of matched no
 
 1. Create the prompt templates in Prompt Builder from `packages/nxp-agents/reference/genAiPromptTemplates/` ([agent manual build](agent-manual-build.md) lists them) and activate them.
 2. Set `AI_Enabled = true`. For the Document Reader also set `Document_Analysis_Enabled = true`.
-3. Set `AI_Max_Calls_Per_Day` to fit your Einstein credits (default 500); the **Settings → AI** section shows today's count. When it's used up, summaries and document reading wait for the next day and the problems e-mail says so. Today's count: Setup → Custom Settings → **NXP AI Usage** → Manage.
+3. Set `AI_Max_Calls_Per_Day` to fit your Einstein credits (default 500). The limit exists to control cost: every summary, document read, notice analysis, eBuy fill-in and search draft is a prompt call that uses Einstein / Agentforce credits (see Setup → Digital Wallet), and it stops a broad saved search or a backfill from using thousands of calls in one night. Price-to-Win uses no AI calls; the **Settings → AI** section shows today's count. When it's used up, summaries and document reading wait for the next day and the problems e-mail says so. Today's count: Setup → Custom Settings → **NXP AI Usage** → Manage.
 4. The assistant is built by hand in Agentforce Builder: [agent manual build](agent-manual-build.md).
-5. **Find similar** (notice page) drafts its keywords with `NXP_Similar_Keywords` (setting `Similar_Keywords_Template`). Without it, or with AI off, Find similar uses words from the notice title instead.
+5. **Analyze this notice** (notice page) and the assistant's **NXP Analyze Notice** use `NXP_Notice_Analysis` (setting `Notice_Analysis_Template`): one AI call per click, with facts gathered by Apex. Without the template or with AI off, users still see the facts.
+6. **Find similar** (notice page) drafts its keywords with `NXP_Similar_Keywords` (setting `Similar_Keywords_Template`). Without it, or with AI off, Find similar uses words from the notice title instead.
+
+## Price-to-Win
+
+The **Price-to-Win** card on the Gov Notice page (`nxpPriceToWin`, `NXP_PriceToWinService` in `nxp-search`) compares the notice with past Award Summaries: low, median, high and typical range per year of performance, the predecessor contract, an estimated incumbent hold and a similar-awards estimate. Plain statistics in Apex: no AI calls, no extra license, and users see figures over the awards they can see.
+
+- **Award data:** it needs the USAspending feed. From this release the feed also stores each award's **NAICS** and **PSC** (before, USAspending awards had no NAICS, so NAICS comparisons were empty). To fill them for awards loaded earlier, run `sf apex run --file scripts/apex/reload-usaspending.apex --target-org <alias>` once: it reloads the last 5 years (change `YEARS` in the script) as a batch you can watch on the Feed Console. Awards are updated by PIID, so nothing is duplicated; a run stops after `Batch_Max_Pages` pages of 100, so run it again if the Feed Console shows it stopped with more to read.
+- **Settings → Price-to-Win:** `Price_Check_Enabled` (on), `Price_Check_Min_Awards` (5: fewer awards show a list and the similar-awards estimate instead of a range), `Price_Check_Lookback_Years` (5) and `Price_Check_Default_Scope` (agency).
+- **Why no win probability:** USAspending records only the winning award, never the losing bids, so the card shows where a price sits among past awards and says so. A win model needs your own bid prices and outcomes (see [ADR 0009](../adr/0009-price-to-win-statistics.md)).
+- The card is on the shipped Gov Notice record page under the summary; in Lightning App Builder it is **NXP Price-to-Win**.
 
 ## Settings (`NXP_Setting__mdt`)
 
@@ -234,6 +244,8 @@ Change settings on the **Settings** tab ([The Settings tab](#the-settings-tab)),
 | `Files_Max_Per_Notice` / `Files_Max_MB`                    | 10 / 6                        | Most files per notice; largest file in MB (keep at 8 or less)                                                                                                                                                      |
 | `Similar_Keywords_Template`                                | NXP_Similar_Keywords          | Prompt template Find similar uses to suggest keywords (needs `AI_Enabled`; counts toward the daily limit)                                                                                                          |
 | `Ebuy_Silence_Days`                                        | 3                             | The problems e-mail warns when no eBuy e-mail has arrived for this many days (0 = off)                                                                                                                             |
+| `Price_Check_Enabled` / `Price_Check_Min_Awards`           | true / 5                      | Price-to-Win card on the notice page; fewest comparable awards for a range (no AI calls)                                                                                                                           |
+| `Price_Check_Lookback_Years` / `Price_Check_Default_Scope` | 5 / agency                    | Years of awards compared; first comparison: agency, department, naics or agencyAll                                                                                                                                 |
 | `Bypass_NXP_GovNoticeTriggerHandler`                       | (none)                        | Emergency trigger switch (set Value to true)                                                                                                                                                                       |
 
 ## Monitoring

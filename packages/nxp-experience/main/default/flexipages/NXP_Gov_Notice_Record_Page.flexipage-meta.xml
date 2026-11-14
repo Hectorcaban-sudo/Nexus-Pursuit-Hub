@@ -19,6 +19,12 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentName>nxpPriceToWin</componentName>
+                <identifier>c_nxpPriceToWin</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentName>nxpNoticeDocuments</componentName>
                 <identifier>c_nxpNoticeDocuments</identifier>
             </componentInstance>

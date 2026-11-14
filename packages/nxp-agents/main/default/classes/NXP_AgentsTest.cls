@@ -376,4 +376,54 @@ private class NXP_AgentsTest {
         System.assertEquals('A short summary.', ai.summarize(n.Id));
         System.assertEquals(1, NXP_AiService.callsToday());
     }
+
+    @IsTest
+    static void analyzeNoticeAndMarketLeaders() {
+        NXP_Gov_Notice__c n = notice();
+        NXP_AiService.responsesForTest = new Map<String, String>{
+            'NXP_Notice_Analysis' => '{"verdict": "Lean bid", "summary": "Worth a look.", "sections": [{"title": "Reasons to bid", "items": [{"text": "NAICS fits", "sources": ["Fit reasons"]}]}]}'
+        };
+        NXP_AnalyzeNoticeAction.Request r = new NXP_AnalyzeNoticeAction.Request();
+        r.noticeId = n.Id;
+        r.analysisType = 'Brief';
+        NXP_AnalyzeNoticeAction.Response res = NXP_AnalyzeNoticeAction.run(
+            new List<NXP_AnalyzeNoticeAction.Request>{ r }
+        )[0];
+        System.assert(res.analysis.contains('**Lean bid**'), res.analysis);
+        System.assert(res.analysis.contains('NAICS fits [Fit reasons]'), res.analysis);
+        System.assertEquals(1, NXP_AiService.callsToday());
+
+        NXP_NoticeAnalysisAi ai = new NXP_NoticeAnalysisAi();
+        System.assert(ai.isEnabled());
+
+        NXP_Gov_Agency__c agency = new NXP_Gov_Agency__c(
+            Name = 'Customs',
+            Full_Path__c = 'Homeland Security > Customs',
+            Agency_Code__c = 'AG-TEST'
+        );
+        insert agency;
+        NXP_Gov_Vendor__c v = new NXP_Gov_Vendor__c(Name = 'Vendor A', UEI__c = 'UEIAGTEST001');
+        insert v;
+        insert new NXP_Award_Summary__c(
+            Name = 'ZTA',
+            PIID__c = 'AG-PIID-1',
+            Agency__c = agency.Id,
+            Vendor__c = v.Id,
+            NAICS_Code__c = '541512',
+            Obligated_Amount__c = 5000000,
+            Period_Start__c = Date.today().addYears(-1),
+            Period_End__c = Date.today().addYears(1)
+        );
+        NXP_MarketLeadersAction.Request m = new NXP_MarketLeadersAction.Request();
+        m.naics = '5415*';
+        m.agency = 'Homeland';
+        String leaders = NXP_MarketLeadersAction.run(new List<NXP_MarketLeadersAction.Request>{ m })[0].leaders;
+        System.assert(leaders.contains('Vendor A: 1 awards'), leaders);
+        System.assert(leaders.contains('Data window'), leaders);
+        m.naics = '1111';
+        System.assert(
+            NXP_MarketLeadersAction.run(new List<NXP_MarketLeadersAction.Request>{ m })[0]
+                .leaders.startsWith('No awards found')
+        );
+    }
 }

@@ -127,8 +127,8 @@ scripts/dev-setup.sh --org my-sandbox        # existing sandbox
     - REST integration user and External Client App ([REST API](../integration/rest-ingestion-api.md));
     - GSA eBuy e-mail: create the `NXP_Ebuy_Inbox` e-mail address, route eBuy mail to it and set `Ebuy_Allowed_Senders` ([admin guide](../guides/admin-guide.md#gsa-ebuy-e-mail));
     - Data Cloud connector ([Data Cloud ingestion](../integration/data-cloud-ingestion.md));
-    - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Similar_Keywords` (Find similar), `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
-    - the assistant ([agent manual build](../guides/agent-manual-build.md)).
+    - AI: prompt templates (`NXP_Solicitation_Summary`, `NXP_Amendment_Impact`, `NXP_Search_Criteria_Draft`, and optionally `NXP_Similar_Keywords` (Find similar), `NXP_Notice_Analysis` (Analyze this notice), `NXP_Document_Analysis` with a File input and `NXP_Ebuy_RFQ_Extract`), then `AI_Enabled` and, for the Document Reader, `Document_Analysis_Enabled` ([admin guide](../guides/admin-guide.md#document-reader));
+    - the assistant: [Agent Script build](../guides/agent-script-build.md) where the org has the new Agentforce Builder, otherwise the [agent manual build](../guides/agent-manual-build.md).
 10. **Reports and dashboards:** share the _Nexus Pursuit Hub_ report and dashboard folders with your BD users and the _Nexus Admin_ folders with admins and the project lead ([reports and dashboards](../design/reports-and-dashboards.md#after-deployment)).
 11. **Search templates:** as an `NXP_Admin` user, run `sf apex run --file scripts/apex/seed-search-templates.apex --target-org <alias>` to create the four starter templates under _Start from a template_ on My Searches (safe to run again; edit or delete them like any search).
 12. **E-mail:** Setup → Deliverability → _All email_ (a new sandbox is _System email only_, so no alert, digest or admin e-mail is sent). Optionally set an org-wide From address in `Alert_OrgWide_Email_Id`, and turn on Desktop and Mobile delivery for the _NXP Match Alert_ custom notification ([admin guide](../guides/admin-guide.md#e-mail-and-notifications)).
@@ -235,6 +235,17 @@ An org that already runs Nexus needs these once, after the release (new installs
 7. Review the new settings: `AI_Max_Calls_Per_Day`, `Admin_Digest_Mode`, `Admin_Digest_Recipients`, `Description_Min_Fit`, `Files_Auto_Download`, `Files_Min_Fit`, `Similar_Keywords_Template`. They are all on the new **Settings** tab.
 8. **Settings tab:** admins who save settings there need **Customize Application** (most System Administrators have it). Open **Settings** and check the _Health checks_ panel is all green.
 9. **Find similar with AI (optional):** create the `NXP_Similar_Keywords` prompt template from `packages/nxp-agents/reference/genAiPromptTemplates/` ([agent manual build](../guides/agent-manual-build.md)). Without it Find similar still works, with keywords from the notice title.
+
+### One-time steps when upgrading to the November 2026 release
+
+This release adds **Analyze this notice**, **Price-to-Win** and the Agent Script bundle. After the release:
+
+1. **Fill NAICS and PSC on older awards** (Price-to-Win compares by NAICS, and the USAspending feed only started storing it in this release): `sf apex run --file scripts/apex/reload-usaspending.apex --target-org <alias>`. It reloads 5 years of awards as a batch (watch it on the Feed Console); awards are updated by PIID, nothing is duplicated.
+2. **Review the new settings** on **Settings → Price-to-Win**: `Price_Check_Enabled`, `Price_Check_Min_Awards`, `Price_Check_Lookback_Years`, `Price_Check_Default_Scope`.
+3. **Analyze this notice with AI (optional):** create and activate the `NXP_Notice_Analysis` prompt template (inputs Notice, Question, Facts) from `packages/nxp-agents/reference/genAiPromptTemplates/`. Without it the card shows the facts Nexus has.
+4. **Check the daily AI limit:** `AI_Max_Calls_Per_Day` (default 500) caps Einstein / Agentforce credit use. Analyze this notice adds calls; raise the limit on **Settings → AI** to fit your credits (Setup → Digital Wallet).
+5. **Agent Script orgs:** rebuild the assistant from `packages/nxp-agent-script` ([Agent Script build](../guides/agent-script-build.md)); it adds Opportunity Analysis and Market Leaders.
+6. Users with `NXP_User` get the new controller automatically (the permission set includes `NXP_PriceToWinController`); open one notice as a BD user to confirm the Price-to-Win card loads.
 
 <details>
 <summary>Manual equivalent (no scripts)</summary>
@@ -345,7 +356,7 @@ sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org nxp-prod
 
 ## Agent release
 
-Government Cloud can't deploy Agent Script, so the Nexus Pursuit Assistant is built by hand in each org ([agent manual build](../guides/agent-manual-build.md#step-by-step)), or built once and retrieved into `packages/nxp-agents/main/default/` so it ships with the release. Either way, after deployment:
+Where the org has Agent Script, deploy and publish the assistant from `packages/nxp-agent-script` ([Agent Script build](../guides/agent-script-build.md#deploy-check-and-publish)); the release scripts don't deploy it. Otherwise build it by hand ([agent manual build](../guides/agent-manual-build.md#step-by-step)). Either way, after deployment:
 
 1. Activate the agent in the target org. Activation is never automatic.
 2. Give users access (the `NXP_User` permission set covers the Apex actions).
