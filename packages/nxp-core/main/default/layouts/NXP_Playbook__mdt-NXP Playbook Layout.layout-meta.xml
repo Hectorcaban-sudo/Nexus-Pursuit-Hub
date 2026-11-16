@@ -19,6 +19,18 @@
                 <field>IsProtected</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>NamespacePrefix</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>CreatedById</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>LastModifiedById</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Order__c</field>
             </layoutItems>
