@@ -17,6 +17,7 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     loadingDescription = false;
     summarizing = false;
     savingStep = false;
+    descriptionExpanded = false;
 
     connectedCallback() {
         logUsage('Notice');
@@ -91,6 +92,43 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     get descriptionText() {
         const d = this.notice.Description__c;
         return d && !d.startsWith('http') ? d : null;
+    }
+
+    /** Long descriptions start collapsed with a Show full description button. */
+    get descriptionIsLong() {
+        const d = this.descriptionText;
+        return !!d && (d.length > 700 || d.split('\n').length > 8);
+    }
+
+    get descriptionClass() {
+        return this.descriptionIsLong && !this.descriptionExpanded
+            ? 'description-text description-text_collapsed'
+            : 'description-text';
+    }
+
+    get descriptionToggleLabel() {
+        return this.descriptionExpanded ? 'Show less' : 'Show full description';
+    }
+
+    get descriptionToggleIcon() {
+        return this.descriptionExpanded ? 'utility:chevronup' : 'utility:chevrondown';
+    }
+
+    get descriptionExpandedText() {
+        return this.descriptionExpanded ? 'true' : 'false';
+    }
+
+    get descriptionMeta() {
+        const d = this.descriptionText;
+        if (!d) {
+            return '';
+        }
+        const words = d.trim().split(/\s+/).length;
+        return `About ${words} words`;
+    }
+
+    handleToggleDescription() {
+        this.descriptionExpanded = !this.descriptionExpanded;
     }
 
     /** SAM.gov sent only a link; the text is fetched for matched or high-fit notices, or on request. */

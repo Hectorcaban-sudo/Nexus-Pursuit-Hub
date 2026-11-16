@@ -3,139 +3,141 @@
         <lightning-spinner alternative-text="Loading notice" size="small"></lightning-spinner>
     </template>
     <template lwc:if={detail}>
-        <div class="wrap">
-            <section class="card header" aria-label="Notice summary">
-                <div class="tiles">
-                    <div class={dueClass}>
-                        <span class="tile-value">{daysLabel}</span>
-                        <span class="tile-caption">{daysCaption}</span>
-                        <template lwc:if={dueDisputed}><span class="tile-flag">Check the date below</span></template>
-                    </div>
-                    <c-nxp-fit-badge score={notice.Fit_Score__c}></c-nxp-fit-badge>
-                </div>
-                <dl class="facts">
-                    <div>
-                        <dt>Response due</dt>
-                        <dd>{dueText}</dd>
-                    </div>
-                    <div>
-                        <dt>Estimated value</dt>
-                        <dd>{valueText}</dd>
-                    </div>
-                    <div>
-                        <dt>Set-aside</dt>
-                        <dd>{notice.Set_Aside__c}</dd>
-                    </div>
-                    <div>
-                        <dt>NAICS / PSC</dt>
-                        <dd>{notice.NAICS_Code__c} / {notice.PSC_Code__c}</dd>
-                    </div>
-                    <div>
-                        <dt>Sources</dt>
-                        <dd>{sourcesText}</dd>
-                    </div>
-                </dl>
-                <c-nxp-fit-reasons
-                    class="header-reasons"
-                    breakdown={notice.Fit_Breakdown__c}
-                    score={notice.Fit_Score__c}
-                    show-all={hasBreakdown}
-                    onshowall={handleShowBreakdown}
-                ></c-nxp-fit-reasons>
-                <div class="actions">
-                    <lightning-button variant="brand" label={pushLabel} onclick={handlePush}></lightning-button>
-                    <lightning-button label={followLabel} onclick={handleFollow}></lightning-button>
-                    <lightning-button
-                        class="find-similar"
-                        label="Find similar"
-                        icon-name="utility:sparkles"
-                        onclick={handleFindSimilar}
-                    ></lightning-button>
-                    <lightning-button
-                        label="Open on SAM.gov"
-                        icon-name="utility:new_window"
-                        onclick={handleOpenSam}
-                    ></lightning-button>
-                </div>
-            </section>
-
-            <template lwc:if={hasChecks}>
-                <section class="checks" role="alert" aria-label="Document checks">
-                    <div class="checks-head">
-                        <lightning-icon icon-name="utility:warning" size="small" variant="error"></lightning-icon>
-                        <strong class="checks-title">{checksTitle}</strong>
-                        <span class="checks-note"
-                            >Check before you plan the response. The notice's fields are not changed.</span
-                        >
-                    </div>
-                    <template for:each={checks} for:item="c">
-                        <div key={c.key} class="check">
-                            <span class="check-field">{c.field}</span>
-                            <span class="check-value">
-                                <span class="check-label">Notice says</span>
-                                <strong>{c.noticeValue}</strong>
-                            </span>
-                            <span class="check-value">
-                                <span class="check-label">{c.fileName} says</span>
-                                <strong class="check-doc">{c.documentValue}</strong>
-                            </span>
-                            <span class="check-actions">
-                                <lightning-button
-                                    label="Open document"
-                                    data-id={c.documentId}
-                                    onclick={handleOpenDocument}
-                                ></lightning-button>
-                                <lightning-button
-                                    class="mark-checked"
-                                    label="Mark as checked"
-                                    data-id={c.analysisId}
-                                    onclick={handleMarkChecked}
-                                ></lightning-button>
-                            </span>
+        <div class="page">
+            <div class="left">
+                <section class="card header" aria-label="Notice summary">
+                    <div class="tiles">
+                        <div class={dueClass}>
+                            <span class="tile-value">{daysLabel}</span>
+                            <span class="tile-caption">{daysCaption}</span>
+                            <template lwc:if={dueDisputed}
+                                ><span class="tile-flag">Check the date below</span></template
+                            >
                         </div>
-                    </template>
-                </section>
-            </template>
-
-            <template lwc:if={playbook}>
-                <section class="card playbook" aria-label="Next steps">
-                    <div class="card-head">
-                        <h2 class="slds-text-heading_small">Next steps</h2>
-                        <span class="playbook-progress">{playbookProgress}</span>
+                        <c-nxp-fit-badge score={notice.Fit_Score__c}></c-nxp-fit-badge>
                     </div>
-                    <p class="playbook-why">
-                        <span class="slds-text-color_weak">Rule:</span>
-                        <strong>{playbook.label}</strong>
-                        <template for:each={playbook.reasons} for:item="r">
-                            <span key={r} class="reason">{r}</span>
-                        </template>
-                    </p>
-                    <ul class="steps">
-                        <template for:each={playbookSteps} for:item="s">
-                            <li key={s.stepNumber} class={s.rowClass}>
-                                <lightning-input
-                                    type="checkbox"
-                                    class="step-check"
-                                    label={s.text}
-                                    checked={s.done}
-                                    data-step={s.stepNumber}
-                                    disabled={savingStep}
-                                    onchange={handleStep}
-                                ></lightning-input>
-                                <span class={s.dueClass}>{s.dueText}</span>
-                            </li>
-                        </template>
-                    </ul>
-                    <p class="slds-text-color_weak slds-text-body_small">
-                        Ticks are shared with your team. Pushing to Opportunity copies the steps into its description.
-                        Capture happens in Opportunity.
-                    </p>
+                    <dl class="facts">
+                        <div>
+                            <dt>Response due</dt>
+                            <dd>{dueText}</dd>
+                        </div>
+                        <div>
+                            <dt>Estimated value</dt>
+                            <dd>{valueText}</dd>
+                        </div>
+                        <div>
+                            <dt>Set-aside</dt>
+                            <dd>{notice.Set_Aside__c}</dd>
+                        </div>
+                        <div>
+                            <dt>NAICS / PSC</dt>
+                            <dd>{notice.NAICS_Code__c} / {notice.PSC_Code__c}</dd>
+                        </div>
+                        <div>
+                            <dt>Sources</dt>
+                            <dd>{sourcesText}</dd>
+                        </div>
+                    </dl>
+                    <c-nxp-fit-reasons
+                        class="header-reasons"
+                        breakdown={notice.Fit_Breakdown__c}
+                        score={notice.Fit_Score__c}
+                        show-all={hasBreakdown}
+                        onshowall={handleShowBreakdown}
+                    ></c-nxp-fit-reasons>
+                    <div class="actions">
+                        <lightning-button variant="brand" label={pushLabel} onclick={handlePush}></lightning-button>
+                        <lightning-button label={followLabel} onclick={handleFollow}></lightning-button>
+                        <lightning-button
+                            class="find-similar"
+                            label="Find similar"
+                            icon-name="utility:sparkles"
+                            onclick={handleFindSimilar}
+                        ></lightning-button>
+                        <lightning-button
+                            label="Open on SAM.gov"
+                            icon-name="utility:new_window"
+                            onclick={handleOpenSam}
+                        ></lightning-button>
+                    </div>
                 </section>
-            </template>
 
-            <c-nxp-notice-analysis notice-id={recordId}></c-nxp-notice-analysis>
+                <template lwc:if={hasChecks}>
+                    <section class="checks" role="alert" aria-label="Document checks">
+                        <div class="checks-head">
+                            <lightning-icon icon-name="utility:warning" size="small" variant="error"></lightning-icon>
+                            <strong class="checks-title">{checksTitle}</strong>
+                            <span class="checks-note"
+                                >Check before you plan the response. The notice's fields are not changed.</span
+                            >
+                        </div>
+                        <template for:each={checks} for:item="c">
+                            <div key={c.key} class="check">
+                                <span class="check-field">{c.field}</span>
+                                <span class="check-value">
+                                    <span class="check-label">Notice says</span>
+                                    <strong>{c.noticeValue}</strong>
+                                </span>
+                                <span class="check-value">
+                                    <span class="check-label">{c.fileName} says</span>
+                                    <strong class="check-doc">{c.documentValue}</strong>
+                                </span>
+                                <span class="check-actions">
+                                    <lightning-button
+                                        label="Open document"
+                                        data-id={c.documentId}
+                                        onclick={handleOpenDocument}
+                                    ></lightning-button>
+                                    <lightning-button
+                                        class="mark-checked"
+                                        label="Mark as checked"
+                                        data-id={c.analysisId}
+                                        onclick={handleMarkChecked}
+                                    ></lightning-button>
+                                </span>
+                            </div>
+                        </template>
+                    </section>
+                </template>
 
-            <div class="columns">
+                <template lwc:if={playbook}>
+                    <section class="card playbook" aria-label="Next steps">
+                        <div class="card-head">
+                            <h2 class="slds-text-heading_small">Next steps</h2>
+                            <span class="playbook-progress">{playbookProgress}</span>
+                        </div>
+                        <p class="playbook-why">
+                            <span class="slds-text-color_weak">Rule:</span>
+                            <strong>{playbook.label}</strong>
+                            <template for:each={playbook.reasons} for:item="r">
+                                <span key={r} class="reason">{r}</span>
+                            </template>
+                        </p>
+                        <ul class="steps">
+                            <template for:each={playbookSteps} for:item="s">
+                                <li key={s.stepNumber} class={s.rowClass}>
+                                    <lightning-input
+                                        type="checkbox"
+                                        class="step-check"
+                                        label={s.text}
+                                        checked={s.done}
+                                        data-step={s.stepNumber}
+                                        disabled={savingStep}
+                                        onchange={handleStep}
+                                    ></lightning-input>
+                                    <span class={s.dueClass}>{s.dueText}</span>
+                                </li>
+                            </template>
+                        </ul>
+                        <p class="slds-text-color_weak slds-text-body_small">
+                            Ticks are shared with your team. Pushing to Opportunity copies the steps into its
+                            description. Capture happens in Opportunity.
+                        </p>
+                    </section>
+                </template>
+
+                <c-nxp-notice-analysis notice-id={recordId}></c-nxp-notice-analysis>
+
                 <section class="card summary" aria-label="AI summary">
                     <div class="card-head">
                         <h2 class="slds-text-heading_small">Summary</h2>
@@ -152,7 +154,7 @@
                     <template lwc:if={canSummarize}>
                         <lightning-button
                             class="generate-summary slds-m-top_x-small"
-                            variant="base"
+                            variant="neutral"
                             label={summarizeLabel}
                             icon-name="utility:sparkles"
                             disabled={summarizing}
@@ -175,81 +177,109 @@
                         </div>
                     </template>
                     <template lwc:if={descriptionText}>
-                        <details class="slds-m-top_medium">
-                            <summary>Full description</summary>
-                            <lightning-formatted-text
-                                class="text"
-                                value={descriptionText}
-                                linkify
-                            ></lightning-formatted-text>
-                        </details>
+                        <div class="description">
+                            <h3 class="description-title">Description</h3>
+                            <div class={descriptionClass}>
+                                <lightning-formatted-text
+                                    class="text"
+                                    value={descriptionText}
+                                    linkify
+                                ></lightning-formatted-text>
+                            </div>
+                            <div class="description-actions">
+                                <template lwc:if={descriptionIsLong}>
+                                    <lightning-button
+                                        class="toggle-description"
+                                        label={descriptionToggleLabel}
+                                        icon-name={descriptionToggleIcon}
+                                        aria-expanded={descriptionExpandedText}
+                                        onclick={handleToggleDescription}
+                                    ></lightning-button>
+                                </template>
+                                <template lwc:if={notice.Notice_URL__c}>
+                                    <lightning-button
+                                        label="Open on SAM.gov"
+                                        icon-name="utility:new_window"
+                                        onclick={handleOpenSam}
+                                    ></lightning-button>
+                                </template>
+                                <span class="description-meta">{descriptionMeta}</span>
+                            </div>
+                        </div>
                     </template>
                 </section>
 
-                <div class="side">
-                    <template lwc:if={hasBreakdown}>
-                        <section class="card" aria-label="Fit breakdown">
-                            <h2 class="slds-text-heading_small">Why it scores {notice.Fit_Score__c}</h2>
-                            <template for:each={breakdown} for:item="r">
-                                <div key={r.key} class="rule" title={r.reason}>
-                                    <div class="rule-head">
-                                        <span>{r.rule}</span><span class="rule-score">{r.score}</span>
-                                    </div>
-                                    <div class="rule-track"><div class="rule-fill" style={r.style}></div></div>
-                                    <div class="rule-reason">{r.reason}</div>
-                                </div>
-                            </template>
-                        </section>
-                    </template>
+                <c-nxp-notice-documents record-id={recordId}></c-nxp-notice-documents>
+            </div>
 
-                    <section class="card" aria-label="Version history">
-                        <h2 class="slds-text-heading_small">Version history</h2>
-                        <ol class="versions">
-                            <template for:each={versions} for:item="v">
-                                <li key={v.id}>
-                                    <span class="dot" aria-hidden="true"></span>
+            <div class="right">
+                <template lwc:if={hasBreakdown}>
+                    <section class="card" aria-label="Fit breakdown">
+                        <h2 class="slds-text-heading_small">Why it scores {notice.Fit_Score__c}</h2>
+                        <template for:each={breakdown} for:item="r">
+                            <div key={r.key} class="rule" title={r.reason}>
+                                <div class="rule-head">
+                                    <span>{r.rule}</span><span class="rule-score">{r.score}</span>
+                                </div>
+                                <div class="rule-track"><div class="rule-fill" style={r.style}></div></div>
+                                <div class="rule-reason">{r.reason}</div>
+                            </div>
+                        </template>
+                    </section>
+                </template>
+
+                <div class="price">
+                    <c-nxp-price-to-win
+                        record-id={recordId}
+                        object-api-name="NXP_Gov_Notice__c"
+                        compact
+                    ></c-nxp-price-to-win>
+                </div>
+
+                <section class="card" aria-label="Version history">
+                    <h2 class="slds-text-heading_small">Version history</h2>
+                    <ol class="versions">
+                        <template for:each={versions} for:item="v">
+                            <li key={v.id}>
+                                <span class="dot" aria-hidden="true"></span>
+                                <div>
+                                    <div class="v-name">{v.name} <span class="v-when">· {v.when}</span></div>
+                                    <lightning-formatted-text class="v-what" value={v.what}></lightning-formatted-text>
+                                </div>
+                            </li>
+                        </template>
+                    </ol>
+                </section>
+
+                <template lwc:if={hasContacts}>
+                    <section class="card" aria-label="Contacts">
+                        <h2 class="slds-text-heading_small">Points of contact</h2>
+                        <ul>
+                            <template for:each={contacts} for:item="c">
+                                <li key={c.Id} class="contact">
+                                    <strong>{c.Name}</strong> · {c.Role__c}
                                     <div>
-                                        <div class="v-name">{v.name} <span class="v-when">· {v.when}</span></div>
-                                        <lightning-formatted-text
-                                            class="v-what"
-                                            value={v.what}
-                                        ></lightning-formatted-text>
+                                        <lightning-formatted-email value={c.Email__c}></lightning-formatted-email>
+                                        <lightning-formatted-phone value={c.Phone__c}></lightning-formatted-phone>
                                     </div>
                                 </li>
                             </template>
-                        </ol>
+                        </ul>
                     </section>
+                </template>
 
-                    <template lwc:if={hasContacts}>
-                        <section class="card" aria-label="Contacts">
-                            <h2 class="slds-text-heading_small">Points of contact</h2>
-                            <ul>
-                                <template for:each={contacts} for:item="c">
-                                    <li key={c.Id} class="contact">
-                                        <strong>{c.Name}</strong> · {c.Role__c}
-                                        <div>
-                                            <lightning-formatted-email value={c.Email__c}></lightning-formatted-email>
-                                            <lightning-formatted-phone value={c.Phone__c}></lightning-formatted-phone>
-                                        </div>
-                                    </li>
-                                </template>
-                            </ul>
-                        </section>
-                    </template>
-
-                    <template lwc:if={hasPushLogs}>
-                        <section class="card" aria-label="Push history">
-                            <h2 class="slds-text-heading_small">Push history</h2>
-                            <ul>
-                                <template for:each={pushLogs} for:item="l">
-                                    <li key={l.Id} class="contact">
-                                        {l.when} · {l.Mode__c} · <strong>{l.Status__c}</strong>
-                                    </li>
-                                </template>
-                            </ul>
-                        </section>
-                    </template>
-                </div>
+                <template lwc:if={hasPushLogs}>
+                    <section class="card" aria-label="Push history">
+                        <h2 class="slds-text-heading_small">Push history</h2>
+                        <ul>
+                            <template for:each={pushLogs} for:item="l">
+                                <li key={l.Id} class="contact">
+                                    {l.when} · {l.Mode__c} · <strong>{l.Status__c}</strong>
+                                </li>
+                            </template>
+                        </ul>
+                    </section>
+                </template>
             </div>
         </div>
     </template>

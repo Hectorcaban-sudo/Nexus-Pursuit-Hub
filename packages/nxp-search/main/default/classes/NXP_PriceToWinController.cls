@@ -13,4 +13,16 @@ public with sharing class NXP_PriceToWinController {
             throw a;
         }
     }
+
+    /** The same panel for a forecast (Forecast page). */
+    @AuraEnabled(cacheable=true)
+    public static NXP_PriceToWinService.Result getForecastPriceCheck(Id forecastId, String scopeKey) {
+        try {
+            return NXP_PriceToWinService.analyzeForecast(forecastId, scopeKey);
+        } catch (Exception e) {
+            AuraHandledException a = new AuraHandledException(e.getMessage());
+            a.setMessage(e.getMessage());
+            throw a;
+        }
+    }
 }

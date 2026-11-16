@@ -1,0 +1,76 @@
+<template>
+    <section class="box" aria-label="Import forecasts">
+        <div class="head">
+            <h2 class="slds-text-heading_small">Import forecasts</h2>
+            <span class="meta"
+                >From a CSV export: GSA Acquisition Gateway forecast tool, the DHS forecast download, HHS and other
+                agency lists. Excel files: save as CSV first.</span
+            >
+        </div>
+        <lightning-input
+            class="file"
+            type="file"
+            label="Forecast spreadsheet (CSV)"
+            accept=".csv"
+            onchange={handleFile}
+        ></lightning-input>
+        <template lwc:if={error}>
+            <p class="error" role="alert">{error}</p>
+        </template>
+
+        <template lwc:if={hasFile}>
+            <p class="meta">{rowCountText}. Check the columns Nexus picked; the sample is the first row.</p>
+            <lightning-input
+                class="source"
+                label="Source name (shown as the forecast's Source Feed)"
+                value={sourceName}
+                onchange={handleSource}
+            ></lightning-input>
+            <div class="grid">
+                <template for:each={fieldRows} for:item="f">
+                    <div key={f.key} class="map-row">
+                        <lightning-combobox
+                            class="map"
+                            data-key={f.key}
+                            label={f.label}
+                            options={columnOptions}
+                            value={f.value}
+                            onchange={handleMap}
+                        ></lightning-combobox>
+                        <span class="sample">{f.sample}</span>
+                    </div>
+                </template>
+            </div>
+            <p class="meta">
+                Without a Forecast ID column, Nexus makes a stable ID from the source, agency and title, so importing
+                the same file again updates instead of duplicating. Value ranges use the upper end. Quarters such as "Q2
+                FY2027" become the first day of that fiscal quarter.
+            </p>
+            <div class="actions">
+                <lightning-button
+                    class="import"
+                    variant="brand"
+                    label="Import"
+                    icon-name="utility:upload"
+                    disabled={importDisabled}
+                    onclick={handleImport}
+                ></lightning-button>
+                <template lwc:if={importing}><span class="meta">{progressText}</span></template>
+            </div>
+        </template>
+
+        <template lwc:if={result}>
+            <div class="result" role="status">
+                <strong>{result.summary}</strong>
+                <span class="meta">New forecasts link to their notices automatically when those post.</span>
+                <template lwc:if={hasProblems}>
+                    <ul class="problems">
+                        <template for:each={result.problemRows} for:item="p">
+                            <li key={p.key}>{p.text}</li>
+                        </template>
+                    </ul>
+                </template>
+            </div>
+        </template>
+    </section>
+</template>
