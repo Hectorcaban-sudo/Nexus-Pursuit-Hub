@@ -10,7 +10,7 @@
     <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
-    <enableStreamingApi>false</enableStreamingApi>
+    <enableStreamingApi>true</enableStreamingApi>
     <label>Analysis Playbook</label>
     <nameField>
         <label>Playbook Name</label>
