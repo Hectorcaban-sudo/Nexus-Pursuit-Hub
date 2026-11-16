@@ -236,6 +236,17 @@ An org that already runs Nexus needs these once, after the release (new installs
 8. **Settings tab:** admins who save settings there need **Customize Application** (most System Administrators have it). Open **Settings** and check the _Health checks_ panel is all green.
 9. **Find similar with AI (optional):** create the `NXP_Similar_Keywords` prompt template from `packages/nxp-agents/reference/genAiPromptTemplates/` ([agent manual build](../guides/agent-manual-build.md)). Without it Find similar still works, with keywords from the notice title.
 
+### One-time steps when upgrading to the November 2026 release
+
+This release adds **Analyze this notice**, **Price-to-Win** and the Agent Script bundle. After the release:
+
+1. **Fill NAICS and PSC on older awards** (Price-to-Win compares by NAICS, and the USAspending feed only started storing it in this release): `sf apex run --file scripts/apex/reload-usaspending.apex --target-org <alias>`. It reloads 5 years of awards as a batch (watch it on the Feed Console); awards are updated by PIID, nothing is duplicated.
+2. **Review the new settings** on **Settings → Price-to-Win**: `Price_Check_Enabled`, `Price_Check_Min_Awards`, `Price_Check_Lookback_Years`, `Price_Check_Default_Scope`.
+3. **Analyze this notice with AI (optional):** create and activate the `NXP_Notice_Analysis` prompt template (inputs Notice, Question, Facts) from `packages/nxp-agents/reference/genAiPromptTemplates/`. Without it the card shows the facts Nexus has.
+4. **Check the daily AI limit:** `AI_Max_Calls_Per_Day` (default 500) caps Einstein / Agentforce credit use. Analyze this notice adds calls; raise the limit on **Settings → AI** to fit your credits (Setup → Digital Wallet).
+5. **Agent Script orgs:** rebuild the assistant from `packages/nxp-agent-script` ([Agent Script build](../guides/agent-script-build.md)); it adds Opportunity Analysis and Market Leaders.
+6. Users with `NXP_User` get the new controller automatically (the permission set includes `NXP_PriceToWinController`); open one notice as a BD user to confirm the Price-to-Win card loads.
+
 <details>
 <summary>Manual equivalent (no scripts)</summary>
 

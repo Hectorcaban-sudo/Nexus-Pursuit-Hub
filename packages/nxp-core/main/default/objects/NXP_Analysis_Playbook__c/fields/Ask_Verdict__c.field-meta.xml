@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ask_Verdict__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Ask for a verdict (Bid, Lean bid, Lean no-bid, No-bid) and a confidence.</description>
+    <label>Ask for a Verdict</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -309,6 +309,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>NXP_Gov_Forecast__c.Predecessor_Award__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Gov_Notice__c.Notice_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>

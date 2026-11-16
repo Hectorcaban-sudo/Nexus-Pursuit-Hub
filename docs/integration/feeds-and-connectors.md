@@ -4,13 +4,13 @@
 
 ## Standard feeds
 
-| Feed (`NXP_Feed_Config__mdt`) | Connector                     | Endpoint                                              | Channel           | Default interval                          | Lands in                             |
-| ----------------------------- | ----------------------------- | ----------------------------------------------------- | ----------------- | ----------------------------------------- | ------------------------------------ |
-| `SAM_Opportunities`           | `NXP_SamOpportunityConnector` | `NXP_SAM_Gov` `/opportunities/v2/search`              | Standard pipeline | 60 min, 2-day lookback                    | Gov Notice, Version, Contact, Agency |
-| `SAM_Backfill`                | same                          | same                                                  | Scheduled batch   | daily, 30-day lookback                    | same                                 |
-| `SAM_Entity`                  | `NXP_SamEntityConnector`      | `NXP_SAM_Gov` `/entity-information/v3/entities`       | Scheduled batch   | weekly, refreshes up to 500 stale vendors | Gov Vendor                           |
-| `USAspending_Awards`          | `NXP_UsaSpendingConnector`    | `NXP_USAspending` `/api/v2/search/spending_by_award/` | Scheduled batch   | weekly, company-profile NAICS             | Award Summary, Vendor, Agency        |
-| `Agency_Forecasts`            | `NXP_ForecastConnector`       | `NXP_Forecasts` (set URL per org)                     | Standard pipeline | weekly                                    | Gov Forecast                         |
+| Feed (`NXP_Feed_Config__mdt`) | Connector                     | Endpoint                                              | Channel           | Default interval                          | Lands in                                           |
+| ----------------------------- | ----------------------------- | ----------------------------------------------------- | ----------------- | ----------------------------------------- | -------------------------------------------------- |
+| `SAM_Opportunities`           | `NXP_SamOpportunityConnector` | `NXP_SAM_Gov` `/opportunities/v2/search`              | Standard pipeline | 60 min, 2-day lookback                    | Gov Notice, Version, Contact, Agency               |
+| `SAM_Backfill`                | same                          | same                                                  | Scheduled batch   | daily, 30-day lookback                    | same                                               |
+| `SAM_Entity`                  | `NXP_SamEntityConnector`      | `NXP_SAM_Gov` `/entity-information/v3/entities`       | Scheduled batch   | weekly, refreshes up to 500 stale vendors | Gov Vendor                                         |
+| `USAspending_Awards`          | `NXP_UsaSpendingConnector`    | `NXP_USAspending` `/api/v2/search/spending_by_award/` | Scheduled batch   | weekly, company-profile NAICS             | Award Summary (with NAICS and PSC), Vendor, Agency |
+| `Agency_Forecasts`            | `NXP_ForecastConnector`       | `NXP_Forecasts` (set URL per org)                     | Standard pipeline | weekly                                    | Gov Forecast                                       |
 
 All shipped configs are **inactive**; `env-config/<env>` switches them on per environment.
 
@@ -45,3 +45,13 @@ Every channel hands records to `NXP_IngestionService`, so dedupe, versioning, fi
 3. Add an `NXP_Feed_Config__mdt` record and its `NXP_Feed_Mapping__mdt` rows.
 4. Add a test with an `HttpCalloutMock` (see `NXP_IngestionTest.Router`).
 5. Switch it on in `env-config/<env>` and deploy.
+
+## USAspending awards and Price-to-Win
+
+`NXP_UsaSpendingConnector` asks `spending_by_award` for contract awards (types A–D) in the company-profile NAICS codes, with the fields Award ID, Recipient Name, Recipient UEI, Award Amount (stored as `Obligated_Amount__c`), Start Date, End Date, Awarding Agency, Awarding Sub Agency, Description, **NAICS** and **PSC** (the codes are stored in `NAICS_Code__c` and `PSC_Code__c`; the API returns them as `{code, description}`). Indefinite-delivery vehicles (IDVs) are not requested, so parent IDIQ ceilings don't distort the Price-to-Win ranges. `Ceiling__c` stays empty for USAspending awards (the search API doesn't return the base-and-all-options value); REST-loaded awards may set it.
+
+To reload a longer history, for example after this connector started storing NAICS, run `scripts/apex/reload-usaspending.apex` (5 years by default).
+
+## Forecast spreadsheets
+
+Agency forecasts mostly come as downloads (GSA Acquisition Gateway forecast tool, DHS forecast list, HHS). **Feed Console → Import forecasts** (`nxpForecastImport`, `NXP_ForecastImportController`) reads a CSV in the browser, lets an admin map its columns, and sends rows in batches of 200 as `Forecast` ingest records through `NXP_IngestionService.ingest`: upsert by `Forecast_Id__c` (or a stable generated ID), agency resolution from `agency › sub-agency`, and the usual forecast-to-notice link. See the admin guide for the date and value formats it understands.

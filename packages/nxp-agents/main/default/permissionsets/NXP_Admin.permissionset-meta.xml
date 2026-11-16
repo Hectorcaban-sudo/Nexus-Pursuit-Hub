@@ -13,6 +13,19 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NXP_PriceToWinController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NXP_AnalysisPlaybookController</apexClass>
+        <apexClass>NXP_ForecastController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NXP_ForecastImportController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_VehicleController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -379,12 +392,85 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Category__c</field>
+        <field>NXP_Playbook_Step__c.Gov_Notice__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Status__c</field>
+        <field>NXP_Playbook_Step__c.Playbook__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Description__c</field>
+        <field>NXP_Playbook_Step__c.Step_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Steps__c</field>
+        <field>NXP_Playbook_Step__c.Step__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Sections__c</field>
+        <field>NXP_Playbook_Step__c.Done__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Sources__c</field>
+        <field>NXP_Playbook_Step__c.Done_By__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Ask_Verdict__c</field>
+        <field>NXP_Playbook_Step__c.Done_On__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Ask_Strategies__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Version__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Times_Used__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Change_Note__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Analysis_Playbook__c.Published_On__c</field>
+        <field>NXP_Playbook_Step__c.Key__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Setting_Change__c.Deploy_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Setting_Change__c.Detail__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Setting_Change__c.Full_Value__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -755,6 +841,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Gov_Forecast__c.Matched_Notice__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Gov_Forecast__c.Predecessor_Award__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1479,6 +1570,15 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
+        <object>NXP_Playbook_Step__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
         <object>NXP_Award_Summary__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
@@ -1498,6 +1598,15 @@
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
         <object>NXP_Contract_Vehicle__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>NXP_Analysis_Playbook__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
@@ -1671,6 +1780,10 @@
     </tabSettings>
     <tabSettings>
         <tab>NXP_Vehicle_Portfolio</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>NXP_Analyses</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>

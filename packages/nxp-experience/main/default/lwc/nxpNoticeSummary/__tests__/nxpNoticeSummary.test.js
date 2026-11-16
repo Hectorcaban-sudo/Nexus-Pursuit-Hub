@@ -4,9 +4,13 @@ import getDetail from '@salesforce/apex/NXP_NoticeController.getDetail';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
 import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
 import generateSummary from '@salesforce/apex/NXP_NoticeController.generateSummary';
+import setPlaybookStep from '@salesforce/apex/NXP_NoticeController.setPlaybookStep';
 
 jest.mock('@salesforce/apex/NXP_NoticeController.getDetail', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.loadDescription', () => ({ default: jest.fn() }), {
+    virtual: true
+});
+jest.mock('@salesforce/apex/NXP_NoticeController.setPlaybookStep', () => ({ default: jest.fn() }), {
     virtual: true
 });
 jest.mock('@salesforce/apex/NXP_NoticeController.generateSummary', () => ({ default: jest.fn() }), {
@@ -27,6 +31,23 @@ jest.mock(
 jest.mock('@salesforce/apex/NXP_NoticeController.analyzeNotice', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.saveAnalysis', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.analysisText', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock(
+    '@salesforce/apex/NXP_DocumentController.getDocuments',
+    () => ({ default: jest.fn(() => Promise.resolve({ rows: [], canAnalyze: false })) }),
+    {
+        virtual: true
+    }
+);
+jest.mock('@salesforce/apex/NXP_DocumentController.analyze', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_DocumentController.requestSamFiles', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock(
+    '@salesforce/apex/NXP_PriceToWinController.getPriceCheck',
+    () => ({ default: jest.fn(() => Promise.resolve({ enabled: false, note: 'off', scopes: [] })) }),
+    { virtual: true }
+);
+jest.mock('@salesforce/apex/NXP_PriceToWinController.getForecastPriceCheck', () => ({ default: jest.fn() }), {
+    virtual: true
+});
 jest.mock('c/nxpPushDialog', () => ({ __esModule: true, default: { open: jest.fn() } }));
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -66,6 +87,65 @@ describe('c-nxp-notice-summary', () => {
         expect(el.shadowRoot.querySelector('.rule-score').textContent).toBe('30 / 30');
         expect(el.shadowRoot.querySelector('.v-name').textContent).toContain('Amendment 1');
     });
+    it('shows the playbook next steps and ticks a step', async () => {
+        const plan = (done) => ({
+            playbook: 'Sources_Sought_RFI',
+            label: 'Sources Sought / RFI',
+            reasons: ['Notice type: Sources Sought', '25 days left'],
+            doneCount: done ? 1 : 0,
+            decideBy: '2026-11-25',
+            steps: [
+                { stepNumber: 1, text: 'Read the questions', done, doneBy: done ? 'Ana' : null },
+                { stepNumber: 2, text: 'Send a capability statement', due: '2026-11-01', overdue: true, done: false }
+            ]
+        });
+        getDetail.mockResolvedValue({
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            following: false,
+            sources: [],
+            notice: { Id: 'n5', Notice_Type__c: 'Sources Sought' },
+            playbook: plan(false)
+        });
+        setPlaybookStep.mockResolvedValue(plan(true));
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n5';
+        document.body.appendChild(el);
+        await flush();
+        const card = el.shadowRoot.querySelector('.playbook');
+        expect(card.textContent).toContain('Sources Sought / RFI');
+        expect(card.querySelector('.playbook-progress').textContent).toContain('0 of 2 done');
+        expect(card.querySelectorAll('.reason')).toHaveLength(2);
+        expect(card.querySelector('.due_overdue').textContent).toContain('Overdue');
+        const box = card.querySelector('.step-check');
+        box.checked = true;
+        box.dispatchEvent(new CustomEvent('change'));
+        await flush();
+        await flush();
+        expect(setPlaybookStep).toHaveBeenCalledWith({ noticeId: 'n5', stepNumber: 1, done: true });
+        expect(el.shadowRoot.querySelector('.playbook-progress').textContent).toContain('1 of 2 done');
+        expect(el.shadowRoot.querySelector('.step_done').textContent).toContain('Ana');
+    });
+
+    it('shows no next steps when no playbook fits', async () => {
+        getDetail.mockResolvedValue({
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            following: false,
+            sources: [],
+            notice: { Id: 'n6' }
+        });
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n6';
+        document.body.appendChild(el);
+        await flush();
+        expect(el.shadowRoot.querySelector('.playbook')).toBeNull();
+    });
+
     it('offers the AI summary again when it failed', async () => {
         const base = { breakdown: [], versions: [], contacts: [], pushLogs: [], following: false, sources: [] };
         getDetail.mockResolvedValueOnce({
@@ -132,13 +212,13 @@ describe('c-nxp-notice-summary', () => {
         el.recordId = 'n2';
         document.body.appendChild(el);
         await flush();
-        expect(el.shadowRoot.querySelector('details')).toBeNull();
+        expect(el.shadowRoot.querySelector('.description')).toBeNull();
         el.shadowRoot.querySelector('.load-description-button').click();
         await flush();
         await flush();
         expect(loadDescription).toHaveBeenCalledWith({ noticeId: 'n2' });
         expect(el.shadowRoot.querySelector('.load-description-button')).toBeNull();
-        expect(el.shadowRoot.querySelector('details')).not.toBeNull();
+        expect(el.shadowRoot.querySelector('.description')).not.toBeNull();
     });
     it('warns where documents disagree and marks them checked', async () => {
         const base = {
@@ -178,5 +258,30 @@ describe('c-nxp-notice-summary', () => {
         await flush();
         expect(markChecked).toHaveBeenCalledWith({ analysisId: 'a1' });
         expect(el.shadowRoot.querySelector('.checks')).toBeNull();
+    });
+    it('long descriptions start collapsed behind a Show full description button', async () => {
+        const long = Array.from({ length: 12 }, (_, i) => `Paragraph ${i + 1} of the statement of work.`).join('\n');
+        getDetail.mockResolvedValueOnce({
+            notice: { Id: 'n9', Description__c: long, Notice_URL__c: 'https://sam.gov/opp/1/view' },
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            sources: [],
+            checks: []
+        });
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n9';
+        document.body.appendChild(el);
+        await flush();
+        const box = el.shadowRoot.querySelector('.description-text');
+        expect(box.className).toContain('description-text_collapsed');
+        const toggle = el.shadowRoot.querySelector('lightning-button.toggle-description');
+        expect(toggle.label).toBe('Show full description');
+        toggle.click();
+        await flush();
+        expect(el.shadowRoot.querySelector('.description-text').className).not.toContain('collapsed');
+        expect(el.shadowRoot.querySelector('lightning-button.toggle-description').label).toBe('Show less');
+        expect(el.shadowRoot.querySelector('.right c-nxp-price-to-win')).not.toBeNull();
     });
 });

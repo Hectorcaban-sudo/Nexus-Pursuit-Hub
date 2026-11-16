@@ -7,7 +7,7 @@ import setMatchAction from '@salesforce/apex/NXP_SearchController.setMatchAction
 import setMatchActions from '@salesforce/apex/NXP_SearchController.setMatchActions';
 import bulkPush from '@salesforce/apex/NXP_PushController.bulkPush';
 import NxpPushDialog from 'c/nxpPushDialog';
-import { formatMoney, dueLabel, daysUntil, toast, toastError, logUsage } from 'c/nxpUtils';
+import { formatMoney, formatDate, dueLabel, daysUntil, toast, toastError, logUsage } from 'c/nxpUtils';
 
 const SORTS = [
     { label: 'Fit score, then due date', value: 'fit' },
@@ -21,6 +21,7 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
     @track items = [];
     selectedSearchId = null;
     includeWatching = false;
+    overdueOnly = false;
     sortBy = 'fit';
     loading = true;
     selected = new Set();
@@ -66,7 +67,8 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
     }
 
     get cards() {
-        const list = this.items.map((i) => {
+        const source = this.overdueOnly ? this.items.filter((i) => i.stepsOverdue) : this.items;
+        const list = source.map((i) => {
             const n = i.notice;
             const summary =
                 n.AI_Summary__c || (n.Description__c && !n.Description__c.startsWith('http') ? n.Description__c : '');
@@ -93,6 +95,11 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
                 watching: i.userAction === 'Watching',
                 hasChecks: i.openChecks > 0,
                 checksLabel: i.openChecks === 1 ? '1 document check' : `${i.openChecks} document checks`,
+                hasNextStep: !!i.nextStep,
+                nextStep: i.nextStep,
+                nextStepDue: i.nextStepDue ? `${i.stepsOverdue ? 'overdue' : 'due'} ${formatDate(i.nextStepDue)}` : '',
+                nextStepClass: i.stepsOverdue ? 'next-due next-due_overdue' : 'next-due',
+                stepsLabel: i.stepCount ? `${i.stepsDone} of ${i.stepCount} done` : '',
                 searchName: i.searchName,
                 matchedTerms: i.matchedTerms,
                 checked: this.selected.has(n.Id),
@@ -148,6 +155,18 @@ export default class NxpMatchInbox extends NavigationMixin(LightningElement) {
 
     handleSort(event) {
         this.sortBy = event.detail.value;
+    }
+
+    get overdueCount() {
+        return this.items.filter((i) => i.stepsOverdue).length;
+    }
+
+    get overdueLabel() {
+        return `Steps overdue (${this.overdueCount})`;
+    }
+
+    handleOverdueToggle(event) {
+        this.overdueOnly = event.target.checked;
     }
 
     handleWatchingToggle(event) {

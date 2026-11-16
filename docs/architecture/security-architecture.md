@@ -27,6 +27,8 @@ Government notice data is public, so intel records are readable by every Nexus P
 
 ## Code-level controls
 
+- Analysis playbooks (`NXP_AnalysisPlaybookController`): anyone with `NXP_User` reads published playbooks; creating, editing, publishing and testing need the `NXP_Power_User` or `NXP_Admin_Access` custom permission, checked in Apex before the definitions are written in system mode. Running a playbook reads the notice and award data in user mode, like Analyze this notice.
+- Price-to-Win (`NXP_PriceToWinController`, in `NXP_User` and `NXP_Admin`) reads notices and Award Summaries in user mode: its statistics cover only the awards the user can see.
 - Controllers, selectors used by UI, and agent actions run in **user mode** (`WITH USER_MODE`, `AccessLevel.USER_MODE`, `as user` DML).
 - Ingestion, matching, alerts, auto-push, retry and sync run in **system mode** as background work, and each such class is marked `without sharing` with a comment.
 - The REST API rejects callers without the `NXP_Integration_Access` custom permission (HTTP 403).

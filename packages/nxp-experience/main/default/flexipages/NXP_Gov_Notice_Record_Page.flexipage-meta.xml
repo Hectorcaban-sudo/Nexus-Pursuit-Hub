@@ -19,12 +19,6 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>nxpNoticeDocuments</componentName>
-                <identifier>c_nxpNoticeDocuments</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentName>force:detailPanel</componentName>
                 <identifier>force_detailPanel</identifier>
             </componentInstance>
