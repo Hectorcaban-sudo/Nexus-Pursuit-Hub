@@ -180,3 +180,27 @@
     border: 1px solid #dddbda;
     border-radius: 0.5rem;
 }
+.next-step {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    align-items: baseline;
+    margin: 0.375rem 0;
+    padding: 0.375rem 0.5rem;
+    background: #f5f9ff;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+}
+.next-step strong {
+    color: #0b3f7a;
+}
+.next-due {
+    color: #5c6b80;
+}
+.next-due_overdue {
+    color: #8a4b00;
+    font-weight: 700;
+}
+.next-count {
+    color: #5c6b80;
+}

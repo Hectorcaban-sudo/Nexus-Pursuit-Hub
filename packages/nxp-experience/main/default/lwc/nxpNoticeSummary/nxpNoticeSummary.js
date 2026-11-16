@@ -5,6 +5,7 @@ import followNotice from '@salesforce/apex/NXP_SearchController.followNotice';
 import loadDescription from '@salesforce/apex/NXP_NoticeController.loadDescription';
 import generateSummary from '@salesforce/apex/NXP_NoticeController.generateSummary';
 import markChecked from '@salesforce/apex/NXP_DocumentController.markChecked';
+import setPlaybookStep from '@salesforce/apex/NXP_NoticeController.setPlaybookStep';
 import NxpPushDialog from 'c/nxpPushDialog';
 import NxpFindSimilar from 'c/nxpFindSimilar';
 import { daysUntil, formatDate, formatMoney, toast, toastError, logUsage } from 'c/nxpUtils';
@@ -15,6 +16,8 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
     loading = true;
     loadingDescription = false;
     summarizing = false;
+    savingStep = false;
+    descriptionExpanded = false;
 
     connectedCallback() {
         logUsage('Notice');
@@ -91,6 +94,43 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
         return d && !d.startsWith('http') ? d : null;
     }
 
+    /** Long descriptions start collapsed with a Show full description button. */
+    get descriptionIsLong() {
+        const d = this.descriptionText;
+        return !!d && (d.length > 700 || d.split('\n').length > 8);
+    }
+
+    get descriptionClass() {
+        return this.descriptionIsLong && !this.descriptionExpanded
+            ? 'description-text description-text_collapsed'
+            : 'description-text';
+    }
+
+    get descriptionToggleLabel() {
+        return this.descriptionExpanded ? 'Show less' : 'Show full description';
+    }
+
+    get descriptionToggleIcon() {
+        return this.descriptionExpanded ? 'utility:chevronup' : 'utility:chevrondown';
+    }
+
+    get descriptionExpandedText() {
+        return this.descriptionExpanded ? 'true' : 'false';
+    }
+
+    get descriptionMeta() {
+        const d = this.descriptionText;
+        if (!d) {
+            return '';
+        }
+        const words = d.trim().split(/\s+/).length;
+        return `About ${words} words`;
+    }
+
+    handleToggleDescription() {
+        this.descriptionExpanded = !this.descriptionExpanded;
+    }
+
     /** SAM.gov sent only a link; the text is fetched for matched or high-fit notices, or on request. */
     get canLoadDescription() {
         const d = this.notice.Description__c;
@@ -112,6 +152,55 @@ export default class NxpNoticeSummary extends NavigationMixin(LightningElement) 
             return 'Writing the summary…';
         }
         return this.notice.AI_Summary_Status__c === 'Failed' ? 'Try the AI summary again' : 'Generate AI summary';
+    }
+
+    // ------------------------------------------------------------- playbook
+
+    get playbook() {
+        return this.detail && this.detail.playbook ? this.detail.playbook : null;
+    }
+
+    get playbookProgress() {
+        const p = this.playbook;
+        const parts = [`${p.doneCount} of ${p.steps.length} done`];
+        if (p.decideBy) {
+            parts.push(`decide by ${formatDate(p.decideBy)}`);
+        }
+        return parts.join(' · ');
+    }
+
+    get playbookSteps() {
+        return this.playbook.steps.map((s) => {
+            let dueText = '';
+            if (s.done) {
+                dueText = ['Done', s.doneBy ? `by ${s.doneBy}` : '', s.doneOn ? formatDate(s.doneOn) : '']
+                    .filter((x) => x)
+                    .join(' ');
+            } else if (s.due) {
+                dueText = `${s.overdue ? 'Overdue' : 'Due'} ${formatDate(s.due)}`;
+            }
+            return {
+                ...s,
+                dueText,
+                rowClass: s.done ? 'step step_done' : 'step',
+                dueClass: s.overdue ? 'due due_overdue' : 'due'
+            };
+        });
+    }
+
+    async handleStep(event) {
+        const stepNumber = Number(event.target.dataset.step);
+        const done = event.target.checked;
+        this.savingStep = true;
+        try {
+            const plan = await setPlaybookStep({ noticeId: this.recordId, stepNumber, done });
+            this.detail = { ...this.detail, playbook: plan };
+        } catch (e) {
+            event.target.checked = !done;
+            toastError(this, e, 'Step not saved');
+        } finally {
+            this.savingStep = false;
+        }
     }
 
     async handleGenerateSummary() {

@@ -10,8 +10,16 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
+            <property
+                name="compact"
+                type="Boolean"
+                default="false"
+                label="Narrow layout"
+                description="For a page's right column: awards as a list."
+            />
             <objects>
                 <object>NXP_Gov_Notice__c</object>
+                <object>NXP_Gov_Forecast__c</object>
             </objects>
         </targetConfig>
     </targetConfigs>

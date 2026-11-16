@@ -249,7 +249,51 @@ public with sharing class NXP_PriceToWinService {
         if (notices.isEmpty()) {
             throw new IllegalArgumentException('Notice not found or not visible to you.');
         }
-        NXP_Gov_Notice__c n = notices[0];
+        return compute(r, notices[0], scopeKey);
+    }
+
+    /**
+     * Price-to-Win for a forecast (Forecast page): the same statistics from the forecast's agency,
+     * NAICS and title. No predecessor or incumbent is known yet.
+     */
+    public static Result analyzeForecast(Id forecastId, String scopeKey) {
+        Result r = new Result();
+        r.enabled = NXP_Settings.getBoolean('Price_Check_Enabled', true);
+        r.lookbackYears = Math.max(1, NXP_Settings.getInteger('Price_Check_Lookback_Years', 5));
+        r.minAwards = Math.max(2, NXP_Settings.getInteger('Price_Check_Min_Awards', 5));
+        if (!r.enabled) {
+            r.note = 'Price-to-Win is off. An admin turns it on in Settings (Price_Check_Enabled).';
+            return r;
+        }
+        List<NXP_Gov_Forecast__c> forecasts = [
+            SELECT
+                Id,
+                Name,
+                NAICS_Code__c,
+                Agency__c,
+                Agency__r.Name,
+                Agency__r.Parent_Agency__c,
+                Agency__r.Parent_Agency__r.Name
+            FROM NXP_Gov_Forecast__c
+            WHERE Id = :forecastId
+            WITH USER_MODE
+        ];
+        if (forecasts.isEmpty()) {
+            throw new IllegalArgumentException('Forecast not found or not visible to you.');
+        }
+        NXP_Gov_Forecast__c f = forecasts[0];
+        NXP_Gov_Notice__c n = new NXP_Gov_Notice__c(
+            Title__c = f.Name,
+            NAICS_Code__c = f.NAICS_Code__c,
+            Agency__c = f.Agency__c
+        );
+        if (f.Agency__r != null) {
+            n.putSObject('Agency__r', f.Agency__r);
+        }
+        return compute(r, n, scopeKey);
+    }
+
+    private static Result compute(Result r, NXP_Gov_Notice__c n, String scopeKey) {
         Date since = Date.today().addYears(-r.lookbackYears);
         String naics = String.isBlank(n.NAICS_Code__c) ? null : n.NAICS_Code__c.trim();
         Id agencyId = n.Agency__c;
@@ -347,6 +391,7 @@ public with sharing class NXP_PriceToWinService {
             return r;
         }
         r.scopeKey = chosen;
+        String noNaics = naics == null ? 'This record has no NAICS code, so only the agency comparison works. ' : '';
         r.scopeLabel = labels.get(chosen);
         for (Scope s : r.scopes) {
             s.selected = s.key == chosen;
@@ -378,6 +423,7 @@ public with sharing class NXP_PriceToWinService {
             }
         } else {
             r.note =
+                noNaics +
                 'Only ' +
                 r.count +
                 (r.count == 1 ? ' comparable award' : ' comparable awards') +
@@ -402,6 +448,9 @@ public with sharing class NXP_PriceToWinService {
         }
 
         r.estimate = estimate(n, naics, agencyId, departmentId, since);
+        if (r.enough && naics == null) {
+            r.note = noNaics.trim();
+        }
         return r;
     }
 

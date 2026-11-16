@@ -52,6 +52,22 @@ Nexus sends two kinds of message; who gets what is in [How Nexus works](how-it-w
 
 **Admin problems e-mail**: every active `NXP_Admin` user gets it at 07:00 when something failed. Change who with `Admin_Digest_Recipients` and when with `Admin_Digest_Mode` ([Monitoring](#monitoring)).
 
+## Next steps rules
+
+Next-steps rules (`NXP_Playbook__mdt`, shown in Setup as _NXP Next Steps Rule_) give notices their **Next steps**. In code and API names they are still called playbooks; in the app they are _Next steps_, so the word playbook is free for analysis playbooks. Rules are checked by **Order**; the first active rule whose conditions all fit wins:
+
+| Condition    | Values                                                              |
+| ------------ | ------------------------------------------------------------------- |
+| Notice Types | Comma-separated notice types; blank = any                           |
+| Sources      | Comma-separated: SAM.gov, GSA eBuy, Partner API, Other; blank = any |
+| Set-Aside    | Any, Set-aside only, Full and open only                             |
+| Vehicle Held | Any, Yes (on a vehicle we hold), No                                 |
+| Min Fit      | Lowest fit score; 0 = any                                           |
+
+**Steps** are one per line. Add `| 10` for a due date 10 days before the response date, or `| +2` for 2 days after the notice was posted. A date before the notice was posted becomes the posted date.
+
+Five starter rules ship (the recompete one is off). They are placeholders: replace them with your BD team's qualification steps on **Settings → Next steps**. New rules are added in Setup → Custom Metadata Types → NXP Next Steps Rule → New, then edited on the Settings tab. Ticks are kept in **Playbook Steps** (`NXP_Playbook_Step__c`), one row per notice and step, shared with everyone.
+
 ## The Settings tab
 
 **Settings** (in the Nexus Pursuit Hub app, admins only) puts the Nexus settings in one screen, so you rarely need Setup → Custom Metadata Types.
@@ -198,6 +214,18 @@ Analysis playbooks (`NXP_Analysis_Playbook__c`, **Analyses** tab, `nxpAnalysisLi
 - **Versions:** publishing raises `Version__c` and records the change note; field history keeps the trail (shown under Versions). `Times_Used__c` counts AI runs of published versions.
 - **Prompt template:** the same `NXP_Notice_Analysis` template as Analyze this notice; nothing new to create.
 
+## Forecasts from spreadsheets
+
+Most agencies publish forecasts as downloads, not APIs: the GSA Acquisition Gateway forecast tool, the DHS forecast list (Excel, since APFS moved to 4SITE in November 2026), HHS and others. **Feed Console → Import forecasts** (NXP Admin Access) loads them:
+
+1. Export or download the list and save it as **CSV** (Excel: File → Save As → CSV).
+2. Choose the file. Nexus guesses which column is the forecast ID, title, agency, sub-agency, expected solicitation date, value, fiscal year, NAICS, set-aside and description, and shows the first row so you can check. Change any column it got wrong. Title and agency are required.
+3. Name the source (stored as the forecast's Source Feed, e.g. _Acquisition Gateway_) and click **Import**. Rows go in batches of 200 through the normal ingestion: upsert by forecast ID, agency matching (agency › sub-agency), and the link to the notice when it posts.
+
+Rules: without an ID column, Nexus makes a stable ID from the source, agency and title, so importing the same file again updates rather than duplicates. Dates may be `2027-03-29`, `3/29/2027`, `March 2027` or `Q2 FY2027` (start of that fiscal quarter); others are left blank. Value ranges such as `$10M - $25M` use the upper end. Rows without a title or agency are skipped and listed.
+
+The `Agency_Forecasts` API feed is still available for a provider with a JSON API (map its fields with `FC_*` mapping rows).
+
 ## Price-to-Win
 
 The **Price-to-Win** card on the Gov Notice page (`nxpPriceToWin`, `NXP_PriceToWinService` in `nxp-search`) compares the notice with past Award Summaries: low, median, high and typical range per year of performance, the predecessor contract, an estimated incumbent hold and a similar-awards estimate. Plain statistics in Apex: no AI calls, no extra license, and users see figures over the awards they can see.
@@ -205,7 +233,7 @@ The **Price-to-Win** card on the Gov Notice page (`nxpPriceToWin`, `NXP_PriceToW
 - **Award data:** it needs the USAspending feed. From this release the feed also stores each award's **NAICS** and **PSC** (before, USAspending awards had no NAICS, so NAICS comparisons were empty). To fill them for awards loaded earlier, run `sf apex run --file scripts/apex/reload-usaspending.apex --target-org <alias>` once: it reloads the last 5 years (change `YEARS` in the script) as a batch you can watch on the Feed Console. Awards are updated by PIID, so nothing is duplicated; a run stops after `Batch_Max_Pages` pages of 100, so run it again if the Feed Console shows it stopped with more to read.
 - **Settings → Price-to-Win:** `Price_Check_Enabled` (on), `Price_Check_Min_Awards` (5: fewer awards show a list and the similar-awards estimate instead of a range), `Price_Check_Lookback_Years` (5) and `Price_Check_Default_Scope` (agency).
 - **Why no win probability:** USAspending records only the winning award, never the losing bids, so the card shows where a price sits among past awards and says so. A win model needs your own bid prices and outcomes (see [ADR 0009](../adr/0009-price-to-win-statistics.md)).
-- The card is on the shipped Gov Notice record page under the summary; in Lightning App Builder it is **NXP Price-to-Win**.
+- The card is in the right column of the notice page (inside `nxpNoticeSummary`, narrow layout) and on the Forecast page. It is also available in Lightning App Builder as **NXP Price-to-Win** (set **Narrow layout** for a side column).
 
 ## Settings (`NXP_Setting__mdt`)
 
@@ -271,3 +299,7 @@ Change settings on the **Settings** tab ([The Settings tab](#the-settings-tab)),
 | Settings tab: a value went back after a release            | **Reapply my settings** (health checks). If it's marked _Reset by each release_, change it in `env-config/<env>` too                                           |
 | Find similar has keywords from the title only              | AI is off, the daily AI limit is used up, or the `NXP_Similar_Keywords` prompt template isn't active                                                           |
 | Settings edit page shows only Label and Name               | The NXP custom metadata page layouts aren't deployed: deploy `packages/nxp-core`                                                                               |
+
+## Forecast page
+
+Forecasts open on **Gov Forecast Record Page** (`nxpForecastOverview` above the standard fields), assigned in the Nexus Pursuit Hub app. Confirming a predecessor and linking a notice by hand need `NXP_Power_User` or `NXP_Admin_Access` (forecasts and notices are read-only for BD users); the change is written in system mode after that check. A confirmed predecessor (`NXP_Gov_Forecast__c.Predecessor_Award__c`) is copied to the notice when ingestion links it.

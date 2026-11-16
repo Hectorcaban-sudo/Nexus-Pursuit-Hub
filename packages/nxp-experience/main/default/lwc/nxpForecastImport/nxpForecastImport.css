@@ -1,0 +1,57 @@
+.box {
+    background: #fff;
+    border: 1px solid #dddbda;
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem;
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+.head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.meta,
+.sample {
+    font-size: 0.75rem;
+    color: #5c6b80;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 0.5rem 1rem;
+}
+.map-row {
+    display: flex;
+    flex-direction: column;
+}
+.sample {
+    min-height: 1rem;
+    overflow-wrap: anywhere;
+}
+.actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+.error {
+    background: #fdecec;
+    color: #8e1b1b;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+}
+.result {
+    background: #e6f4ea;
+    border-radius: 0.375rem;
+    padding: 0.625rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.problems {
+    list-style: disc;
+    padding-left: 1.125rem;
+    font-size: 0.8125rem;
+}

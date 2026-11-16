@@ -49,6 +49,10 @@ private class NXP_SettingsControllerTest {
         System.assertEquals('Boolean', feed.type);
         System.assert(feed.releaseManaged, 'Feed switches come from env-config');
         System.assertNotEquals(null, find(m, 'NXP_Fit_Rule.NAICS.Weight__c'));
+        NXP_SettingsController.Item steps = find(m, 'NXP_Playbook.Sources_Sought_RFI.Steps__c');
+        System.assertEquals('LongText', steps.type);
+        System.assertEquals('Sources Sought / RFI', steps.subgroup);
+        System.assertEquals(3, find(m, 'NXP_Playbook.Sources_Sought_RFI.Set_Aside__c').options.size());
     }
 
     @IsTest
@@ -175,6 +179,32 @@ private class NXP_SettingsControllerTest {
         Map<String, String> status = NXP_SettingsController.getSaveStatus(saveKey);
         System.assertEquals('Failed', status.get('status'));
         System.assert(status.get('detail').contains('could not start'), status.get('detail'));
+    }
+
+    @IsTest
+    static void savesLongPlaybookStepsAndReappliesThemWhole() {
+        makeAdmin();
+        String steps = 'Read the questions\n'.repeat(20) + 'Decide | 5';
+        System.assert(steps.length() > 255);
+        System.assertEquals(
+            'test',
+            NXP_SettingsController.saveSettings(
+                new List<NXP_SettingsController.Change>{ change('NXP_Playbook.Sources_Sought_RFI.Steps__c', steps) }
+            )
+        );
+        NXP_Setting_Change__c row = [SELECT New_Value__c, Full_Value__c FROM NXP_Setting_Change__c];
+        System.assertEquals(255, row.New_Value__c.length());
+        System.assertEquals(steps, row.Full_Value__c);
+        try {
+            NXP_SettingsController.saveSettings(
+                new List<NXP_SettingsController.Change>{
+                    change('NXP_Playbook.Sources_Sought_RFI.Steps__c', 'x'.repeat(5001))
+                }
+            );
+            System.assert(false, 'expected a refusal');
+        } catch (AuraHandledException e) {
+            System.assert(true);
+        }
     }
 
     @IsTest

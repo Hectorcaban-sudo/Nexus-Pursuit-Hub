@@ -6,7 +6,7 @@
             alternative-text="Refresh"
             onclick={handleRefresh}
         ></lightning-button-icon>
-        <div class="body">
+        <div class={rootClass}>
             <template lwc:if={loading}>
                 <lightning-spinner alternative-text="Loading award history" size="small"></lightning-spinner>
             </template>
@@ -215,42 +215,60 @@
 
                 <template lwc:if={hasAwards}>
                     <h3 class="k table-title">Recent comparable awards</h3>
-                    <div class="table-wrap">
-                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Award</th>
-                                    <th scope="col">Vendor</th>
-                                    <th scope="col">Started</th>
-                                    <th scope="col" class="num">Years</th>
-                                    <th scope="col" class="num">Spent</th>
-                                    <th scope="col" class="num">Per year</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template for:each={awards} for:item="a">
-                                    <tr key={a.id} class={a.rowClass}>
-                                        <td>
-                                            <a href={a.url}>{a.piid}</a>
-                                            <template lwc:if={a.isPredecessor}>
-                                                <span class="tag tag_warn">Predecessor</span>
-                                            </template>
-                                            <div class="meta">{a.agencyName}</div>
-                                        </td>
-                                        <td>
-                                            <template lwc:if={a.vendorUrl}
-                                                ><a href={a.vendorUrl}>{a.vendorName}</a></template
-                                            >
-                                        </td>
-                                        <td>{a.started}</td>
-                                        <td class="num">{a.years}</td>
-                                        <td class="num">{a.spentLabel}</td>
-                                        <td class="num strong">{a.perYearLabel}</td>
+                    <template lwc:if={isCompact}>
+                        <ul class="award-list">
+                            <template for:each={awards} for:item="a">
+                                <li key={a.id} class={a.rowClass}>
+                                    <span>
+                                        <a href={a.url}>{a.piid}</a>
+                                        <template lwc:if={a.isPredecessor}>
+                                            <span class="tag tag_warn">Predecessor</span>
+                                        </template>
+                                        <span class="meta"> {a.vendorName} · {a.started}</span>
+                                    </span>
+                                    <strong class="num">{a.perYearLabel}<span class="per">/yr</span></strong>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template lwc:else>
+                        <div class="table-wrap">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Award</th>
+                                        <th scope="col">Vendor</th>
+                                        <th scope="col">Started</th>
+                                        <th scope="col" class="num">Years</th>
+                                        <th scope="col" class="num">Spent</th>
+                                        <th scope="col" class="num">Per year</th>
                                     </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    <template for:each={awards} for:item="a">
+                                        <tr key={a.id} class={a.rowClass}>
+                                            <td>
+                                                <a href={a.url}>{a.piid}</a>
+                                                <template lwc:if={a.isPredecessor}>
+                                                    <span class="tag tag_warn">Predecessor</span>
+                                                </template>
+                                                <div class="meta">{a.agencyName}</div>
+                                            </td>
+                                            <td>
+                                                <template lwc:if={a.vendorUrl}
+                                                    ><a href={a.vendorUrl}>{a.vendorName}</a></template
+                                                >
+                                            </td>
+                                            <td>{a.started}</td>
+                                            <td class="num">{a.years}</td>
+                                            <td class="num">{a.spentLabel}</td>
+                                            <td class="num strong">{a.perYearLabel}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </template>
                     <p class="meta">Shaded rows are inside the typical range.</p>
                 </template>
 

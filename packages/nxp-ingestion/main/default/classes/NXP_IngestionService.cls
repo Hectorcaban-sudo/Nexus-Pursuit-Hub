@@ -497,7 +497,7 @@ public without sharing class NXP_IngestionService {
         }
         Set<Id> agencyIds = byAgency.keySet();
         List<NXP_Gov_Forecast__c> forecasts = [
-            SELECT Id, Name, Agency__c, NAICS_Code__c
+            SELECT Id, Name, Agency__c, NAICS_Code__c, Predecessor_Award__c
             FROM NXP_Gov_Forecast__c
             WHERE Matched_Notice__c = NULL AND Agency__c IN :agencyIds
             LIMIT 2000
@@ -511,7 +511,12 @@ public without sharing class NXP_IngestionService {
                     continue;
                 }
                 if (similarity(f.Name, n.Title__c) >= 0.5) {
-                    noticeUpdates.add(new NXP_Gov_Notice__c(Id = n.Id, Forecast__c = f.Id));
+                    NXP_Gov_Notice__c linked = new NXP_Gov_Notice__c(Id = n.Id, Forecast__c = f.Id);
+                    // A predecessor confirmed on the Forecast page carries over to the notice.
+                    if (f.Predecessor_Award__c != null && n.Predecessor_Award__c == null) {
+                        linked.Predecessor_Award__c = f.Predecessor_Award__c;
+                    }
+                    noticeUpdates.add(linked);
                     forecastUpdates.add(new NXP_Gov_Forecast__c(Id = f.Id, Matched_Notice__c = n.Id));
                     used.add(n.Id);
                     break;

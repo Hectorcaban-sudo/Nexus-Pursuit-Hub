@@ -107,7 +107,8 @@
     justify-content: flex-end;
 }
 .row-control lightning-input,
-.row-control lightning-combobox {
+.row-control lightning-combobox,
+.row-control lightning-textarea {
     width: 100%;
 }
 .tag {
@@ -195,4 +196,8 @@
 .save-buttons {
     display: flex;
     gap: 0.5rem;
+}
+/* Playbook steps need room. */
+.row-control lightning-textarea {
+    min-width: min(28rem, 100%);
 }

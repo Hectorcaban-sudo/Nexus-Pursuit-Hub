@@ -49,6 +49,10 @@
                 <behavior>Edit</behavior>
                 <field>Detail__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Full_Value__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
