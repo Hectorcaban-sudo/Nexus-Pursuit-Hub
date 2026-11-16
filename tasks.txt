@@ -83,3 +83,8 @@ sf project deploy start --source-dir packages/nxp-analytics  --target-org stagin
 sf apex run --file scripts/post-deploy/schedule-jobs.apex    --target-org staging
 sf apex run --file scripts/post-deploy/reapply-settings.apex --target-org staging
 sf apex run --file scripts/post-deploy/schedule-jobs.apex --target-org staging
+
+
+git pull
+sf project deploy start --source-dir packages/nxp-core packages/nxp-ingestion packages/nxp-search packages/nxp-push packages/nxp-experience packages/nxp-agents --target-org staging --api-version 68.0 --test-level RunSpecifiedTests --tests NXP_AnalysisPlaybookTest NXP_NoticeAnalysisServiceTest NXP_PlaybookServiceTest NXP_ForecastControllerTest NXP_ForecastImportTest NXP_PriceToWinTest NXP_SettingsControllerTest --wait 60
+sf apex run --file scripts/post-deploy/reapply-settings.apex --target-org staging
