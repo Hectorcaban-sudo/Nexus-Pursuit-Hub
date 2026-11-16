@@ -17,6 +17,14 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>NXP_ForecastController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NXP_ForecastImportController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_VehicleController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -724,6 +732,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Gov_Forecast__c.Matched_Notice__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>NXP_Gov_Forecast__c.Predecessor_Award__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

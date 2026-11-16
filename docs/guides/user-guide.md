@@ -68,14 +68,13 @@ Cards stay in the inbox for 30 days, or until you dismiss or push them.
 
 ## 3. Read a notice
 
-Click a notice title. The page shows:
+Click a notice title. The page has two columns: the notice on the left, and on the right **Why it scores**, **Price-to-Win**, **Version history**, **Contacts** and **Push history**. On a narrow screen the right column moves below.
 
 - **Header**: days to respond, fit score with its top reasons (**All rules** jumps to the full breakdown), due date, value, set-aside, NAICS/PSC and sources. Buttons: **Push to Opportunity** (or **Open Opportunity record** once pushed), **Follow**, **Find similar** ([Start from a notice](#start-from-a-notice-find-similar)), **Open on SAM.gov**.
 - **Summary**: the AI summary (a draft: check it against the solicitation). It's written for notices that match a saved search, within about 30 minutes. For any other notice, or when the summary failed, click **Generate AI summary** (or **Try the AI summary again**) to write it now; it takes a few seconds and counts toward the daily AI limit. The button shows only when AI is on.
-- **Full description**: click to expand. If it only shows a **Load description** button, SAM.gov sent a link; click it to fetch the text (descriptions of matched and high-fit notices are fetched automatically).
-- **Fit breakdown**, **Version history** (every amendment and what changed), **Contacts** and **Push history**.
-- **Price-to-Win**: what past awards for this kind of work were worth a year ([Price-to-Win](#price-to-win)).
-- **Documents**: the notice's files.
+- **Description** (in the Summary card): long descriptions start collapsed; click **Show full description** to read it all and **Show less** to fold it again. **Open on SAM.gov** is next to it. If it only shows a **Load description** button, SAM.gov sent a link; click it to fetch the text (descriptions of matched and high-fit notices are fetched automatically).
+- **Documents**: the notice's files, below the summary.
+- Right column: **Why it scores** (every fit rule), **Price-to-Win** (what past awards for this kind of work were worth a year, see [Price-to-Win](#price-to-win)), **Version history** (every amendment and what changed), **Contacts** and **Push history**.
 
 ### Analyze this notice
 
@@ -98,7 +97,7 @@ It uses only Nexus data: the notice and its documents (Document Reader), the awa
 
 ### Price-to-Win
 
-Below the summary, **Price-to-Win** shows what this kind of work has sold for, from the award history in Nexus (USAspending). It is arithmetic over past awards; it uses no AI calls.
+In the right column, **Price-to-Win** shows what this kind of work has sold for, from the award history in Nexus (USAspending). It is arithmetic over past awards; it uses no AI calls.
 
 - **Compare with**: the notice's NAICS at its agency (for example _NAICS + CBP_), across its department (_NAICS + DHS_), across all agencies, or the agency across all our NAICS. Each button shows how many awards it has; Nexus starts with the first one that has enough (an admin sets how many, default 5).
 - **Low, Median, High** and the green **typical range** (the middle half of the awards) are **per year of performance**: what was spent on an award divided by the years it has run (at least one), so a 2-year and a 5-year contract compare fairly. The chart also marks the **predecessor** contract (brown) and the **similar-awards estimate** (purple).
@@ -162,6 +161,11 @@ To stop, click the button again: on a notice it reads **Unfollow**; on profiles,
 ## 6. Look ahead: forecasts, recompetes, agencies, vendors, vehicles
 
 - **Forecasts** tab: planned buys before a notice exists, grouped by when the agency expects to solicit (next 90 days, 3–6 months, 6–12 months, released). _Fits our company profile_ is on by default. Released forecasts link to their notice.
+- **Forecast page** (open a forecast):
+    - **Header:** days to the expected solicitation, an **Early fit** score (the notice fit rules applied to the forecast; no vehicle rule yet), the agency, value, NAICS and set-aside. A red flag shows when the set-aside is one we don't qualify for (for example 8(a)): team with a firm that does. **Watch: tell me when it posts** alerts you when its notice appears.
+    - **Where it stands:** Forecast → Sources Sought / RFI → Solicitation → Award, with the linked notices and how many people watch it. Nexus links a new notice from the same agency when its title matches; Power Users can **Link a notice by hand**.
+    - **Likely predecessor contracts** (_Estimated_): awards at the agency (and NAICS) ending within 12 months of the expected solicitation, ranked by title and timing. Power Users **Confirm** one; the notice gets it as its predecessor when it is linked.
+    - Right column: **Early fit**, **Price-to-Win** for the agency and NAICS, **Who wins here** (top vendors, last 5 years) and **Other forecasts like this**. The standard fields are below.
 - **Recompetes** tab: contract awards in your market on a timeline, with today marked. Orange bars end within 6 months. Click an award's title to see its details below the list (incumbent, value, dates, follow-on), with **Open the award**, **Incumbent profile** and **Watch this recompete**. The **Follow-on** column shows the notice that names the award as its predecessor, or a likely notice or forecast from the same agency with the same NAICS.
 - **Vendor profile**: click an incumbent's name or open a Gov Vendor: their awards, where they overlap with your company profile, and open notices where they're the likely incumbent. Admins can **Refresh from SAM.gov**.
 - **Agency profile**: open a Gov Agency: _What's coming_ (open notices, forecasts and awards ending, in date order), who holds its awards, spend by NAICS, contracting contacts and whether your searches cover it. **Alert me on new notices here** starts a search for it.

@@ -1,5 +1,6 @@
 import { LightningElement, api } from 'lwc';
 import getPriceCheck from '@salesforce/apex/NXP_PriceToWinController.getPriceCheck';
+import getForecastPriceCheck from '@salesforce/apex/NXP_PriceToWinController.getForecastPriceCheck';
 import { formatDate, toast, toastError } from 'c/nxpUtils';
 
 /** $4.73M, $950K, $12.5M: short money for tiles and the chart. */
@@ -43,6 +44,9 @@ const YEAR_OPTIONS = Array.from({ length: 10 }, (_, i) => ({
 
 export default class NxpPriceToWin extends LightningElement {
     @api recordId;
+    @api objectApiName;
+    /** Narrow layout for a page's right column: awards as a list, not a table. */
+    @api compact = false;
     data;
     loading = true;
     scopeKey;
@@ -57,7 +61,10 @@ export default class NxpPriceToWin extends LightningElement {
     async load() {
         this.loading = true;
         try {
-            this.data = await getPriceCheck({ noticeId: this.recordId, scopeKey: this.scopeKey || null });
+            this.data =
+                this.objectApiName === 'NXP_Gov_Forecast__c'
+                    ? await getForecastPriceCheck({ forecastId: this.recordId, scopeKey: this.scopeKey || null })
+                    : await getPriceCheck({ noticeId: this.recordId, scopeKey: this.scopeKey || null });
             this.scopeKey = this.data.scopeKey;
             if (!this.years) {
                 this.years = this.data.noticeYears || 5;
@@ -352,6 +359,14 @@ export default class NxpPriceToWin extends LightningElement {
     }
 
     // ------------------------------------------------------------------ awards table
+
+    get isCompact() {
+        return this.compact === true || this.compact === 'true';
+    }
+
+    get rootClass() {
+        return this.isCompact ? 'body body_compact' : 'body';
+    }
 
     get hasAwards() {
         return !!(this.data && this.data.awards && this.data.awards.length);

@@ -70,6 +70,10 @@ export default class NxpFeedConsole extends LightningElement {
         });
     }
 
+    get canImport() {
+        return !!(this.data && this.data.canRun);
+    }
+
     get rows() {
         if (!this.data) {
             return [];

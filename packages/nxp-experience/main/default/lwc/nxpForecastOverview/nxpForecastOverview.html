@@ -1,0 +1,242 @@
+<template>
+    <template lwc:if={loading}>
+        <lightning-spinner alternative-text="Loading forecast" size="small"></lightning-spinner>
+    </template>
+    <template lwc:if={data}>
+        <div class="page">
+            <div class="left">
+                <section class="card header" aria-label="Forecast summary">
+                    <div class="top">
+                        <div class="tiles">
+                            <div class="tile tile_blue">
+                                <span class="tile-value">{daysLabel}</span>
+                                <span class="tile-caption">{daysCaption}</span>
+                            </div>
+                            <template lwc:if={hasFit}>
+                                <div class="tile">
+                                    <span class="tile-value">{data.fitScore}</span>
+                                    <span class="tile-caption">Early fit</span>
+                                </div>
+                            </template>
+                        </div>
+                        <dl class="facts">
+                            <div>
+                                <dt>Agency</dt>
+                                <dd>
+                                    <template lwc:if={agencyUrl}><a href={agencyUrl}>{agencyName}</a></template>
+                                    <template lwc:else>{agencyName}</template>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Estimated value</dt>
+                                <dd>{valueText}</dd>
+                            </div>
+                            <div>
+                                <dt>Expected solicitation</dt>
+                                <dd>{solicitationText}</dd>
+                            </div>
+                            <div>
+                                <dt>NAICS</dt>
+                                <dd>{naicsText}</dd>
+                            </div>
+                            <div>
+                                <dt>Set-aside</dt>
+                                <dd>
+                                    {setAsideText}
+                                    <template lwc:if={hasSetAsideFlag}>
+                                        <span class={setAsideFlagClass}>{data.setAsideNote}</span>
+                                    </template>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>Source</dt>
+                                <dd>{f.Source_Feed__c}</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="actions">
+                        <lightning-button
+                            class="watch"
+                            variant={watchVariant}
+                            label={watchLabel}
+                            icon-name="utility:notification"
+                            disabled={busy}
+                            onclick={handleWatch}
+                        ></lightning-button>
+                    </div>
+                </section>
+
+                <section class="card" aria-label="Where it stands">
+                    <div class="card-head">
+                        <h2 class="slds-text-heading_small">Where it stands</h2>
+                        <span class="meta">{watchersText}</span>
+                    </div>
+                    <ol class="stages">
+                        <template for:each={stages} for:item="s">
+                            <li key={s.key} class={s.cls}>
+                                <span class="stage-label">{s.label}</span>
+                                <span class="meta">{s.detail}</span>
+                            </li>
+                        </template>
+                    </ol>
+                    <template lwc:if={hasNotices}>
+                        <ul class="notices">
+                            <template for:each={notices} for:item="n">
+                                <li key={n.id}>
+                                    <a href={n.url}>{n.title}</a>
+                                    <span class="meta"> · {n.meta}</span>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template lwc:else>
+                        <p class="small">
+                            No notice yet. Nexus checks new notices from this agency and links the one whose title
+                            matches; watchers get an alert.
+                        </p>
+                    </template>
+                    <template lwc:if={data.canCurate}>
+                        <div class="link-row">
+                            <lightning-record-picker
+                                class="link-notice"
+                                label="Link a notice by hand"
+                                object-api-name="NXP_Gov_Notice__c"
+                                placeholder="Search notices…"
+                                onchange={handleLinkPick}
+                            ></lightning-record-picker>
+                            <lightning-button
+                                class="link"
+                                label="Link"
+                                disabled={linkDisabled}
+                                onclick={handleLink}
+                            ></lightning-button>
+                        </div>
+                    </template>
+                </section>
+
+                <section class="card" aria-label="Likely predecessor contracts">
+                    <div class="card-head">
+                        <h2 class="slds-text-heading_small">Likely predecessor contracts</h2>
+                        <span class="tag">Estimated</span>
+                    </div>
+                    <p class="meta">
+                        Awards at this agency (and NAICS) ending within 12 months of the expected solicitation, ranked
+                        by how closely the title and timing match.
+                    </p>
+                    <template lwc:if={hasCandidates}>
+                        <div class="table-wrap">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Award</th>
+                                        <th scope="col">Vendor</th>
+                                        <th scope="col">Ends</th>
+                                        <th scope="col" class="num">Spent</th>
+                                        <th scope="col">Match</th>
+                                        <th scope="col"><span class="slds-assistive-text">Action</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={candidates} for:item="c">
+                                        <tr key={c.id}>
+                                            <td>
+                                                <a href={c.url}>{c.piid}</a>
+                                                <template lwc:if={c.confirmed}>
+                                                    <span class="tag tag_ok">Predecessor</span>
+                                                </template>
+                                                <div class="meta">{c.name}</div>
+                                            </td>
+                                            <td>
+                                                <template lwc:if={c.vendorUrl}
+                                                    ><a href={c.vendorUrl}>{c.vendorName}</a></template
+                                                >
+                                            </td>
+                                            <td>{c.ends}</td>
+                                            <td class="num">{c.spent}</td>
+                                            <td><span class={c.matchClass}>{c.match}</span></td>
+                                            <td>
+                                                <template lwc:if={data.canCurate}>
+                                                    <lightning-button
+                                                        class="predecessor"
+                                                        label={c.actionLabel}
+                                                        title={c.actionTitle}
+                                                        data-id={c.id}
+                                                        data-confirmed={c.confirmed}
+                                                        disabled={busy}
+                                                        onclick={handlePredecessor}
+                                                    ></lightning-button>
+                                                </template>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="meta">A confirmed predecessor is copied to the notice when it is linked.</p>
+                    </template>
+                    <template lwc:else>
+                        <p class="small">No award at this agency ends near the expected solicitation date.</p>
+                    </template>
+                </section>
+
+                <template lwc:if={description}>
+                    <section class="card" aria-label="Description">
+                        <h2 class="slds-text-heading_small">Description</h2>
+                        <lightning-formatted-text class="small" value={description} linkify></lightning-formatted-text>
+                    </section>
+                </template>
+            </div>
+
+            <div class="right">
+                <template lwc:if={hasFit}>
+                    <section class="card" aria-label="Early fit">
+                        <h2 class="slds-text-heading_small">Early fit {data.fitScore}</h2>
+                        <template for:each={fitRows} for:item="r">
+                            <div key={r.key} class="rule" title={r.reason}>
+                                <div class="rule-head">
+                                    <span>{r.rule}</span><span class="rule-score">{r.score}</span>
+                                </div>
+                                <div class="rule-track"><div class="rule-fill" style={r.style}></div></div>
+                                <div class="meta">{r.reason}</div>
+                            </div>
+                        </template>
+                        <p class="meta">The notice fit rules, from the forecast's fields (no vehicle yet).</p>
+                    </section>
+                </template>
+
+                <div class="price">
+                    <c-nxp-price-to-win
+                        record-id={recordId}
+                        object-api-name="NXP_Gov_Forecast__c"
+                        compact
+                    ></c-nxp-price-to-win>
+                </div>
+
+                <template lwc:if={hasLeaders}>
+                    <section class="card" aria-label="Who wins here">
+                        <h2 class="slds-text-heading_small">Who wins here</h2>
+                        <p class="meta">{leadersScope}</p>
+                        <ul class="list">
+                            <template for:each={leaders} for:item="l">
+                                <li key={l.vendorId}>
+                                    <a href={l.url}>{l.vendorName}</a><span class="meta">{l.meta}</span>
+                                </li>
+                            </template>
+                        </ul>
+                    </section>
+                </template>
+
+                <template lwc:if={hasRelated}>
+                    <section class="card" aria-label="Other forecasts">
+                        <h2 class="slds-text-heading_small">Other forecasts like this</h2>
+                        <ul class="list">
+                            <template for:each={related} for:item="r">
+                                <li key={r.id}><a href={r.url}>{r.text}</a></li>
+                            </template>
+                        </ul>
+                    </section>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>

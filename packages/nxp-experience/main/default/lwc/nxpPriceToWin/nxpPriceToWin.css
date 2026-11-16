@@ -340,3 +340,24 @@
 .foot .meta {
     flex: 1 1 20rem;
 }
+
+.award-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.375rem 0.25rem;
+    border-top: 1px solid #eef1f6;
+    font-size: 0.8125rem;
+}
+.award-list li.row_in {
+    background: #f1f8f3;
+}
+.body_compact {
+    padding: 0 0.75rem;
+}
+.body_compact .tile .v {
+    font-size: 1rem;
+}
+.body_compact .cols {
+    grid-template-columns: 1fr;
+}

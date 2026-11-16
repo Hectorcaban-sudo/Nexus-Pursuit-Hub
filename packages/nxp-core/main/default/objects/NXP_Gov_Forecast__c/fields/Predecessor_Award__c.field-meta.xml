@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Predecessor_Award__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description
+    >The award this forecast likely replaces, confirmed on the Forecast page. Copied to the notice when it is linked.</description>
+    <label>Predecessor Award</label>
+    <referenceTo>NXP_Award_Summary__c</referenceTo>
+    <relationshipLabel>Forecasts (predecessor)</relationshipLabel>
+    <relationshipName>Successor_Forecasts</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

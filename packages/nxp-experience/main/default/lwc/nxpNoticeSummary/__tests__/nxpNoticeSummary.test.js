@@ -27,6 +27,23 @@ jest.mock(
 jest.mock('@salesforce/apex/NXP_NoticeController.analyzeNotice', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.saveAnalysis', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/NXP_NoticeController.analysisText', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock(
+    '@salesforce/apex/NXP_DocumentController.getDocuments',
+    () => ({ default: jest.fn(() => Promise.resolve({ rows: [], canAnalyze: false })) }),
+    {
+        virtual: true
+    }
+);
+jest.mock('@salesforce/apex/NXP_DocumentController.analyze', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/NXP_DocumentController.requestSamFiles', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock(
+    '@salesforce/apex/NXP_PriceToWinController.getPriceCheck',
+    () => ({ default: jest.fn(() => Promise.resolve({ enabled: false, note: 'off', scopes: [] })) }),
+    { virtual: true }
+);
+jest.mock('@salesforce/apex/NXP_PriceToWinController.getForecastPriceCheck', () => ({ default: jest.fn() }), {
+    virtual: true
+});
 jest.mock('c/nxpPushDialog', () => ({ __esModule: true, default: { open: jest.fn() } }));
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -132,13 +149,13 @@ describe('c-nxp-notice-summary', () => {
         el.recordId = 'n2';
         document.body.appendChild(el);
         await flush();
-        expect(el.shadowRoot.querySelector('details')).toBeNull();
+        expect(el.shadowRoot.querySelector('.description')).toBeNull();
         el.shadowRoot.querySelector('.load-description-button').click();
         await flush();
         await flush();
         expect(loadDescription).toHaveBeenCalledWith({ noticeId: 'n2' });
         expect(el.shadowRoot.querySelector('.load-description-button')).toBeNull();
-        expect(el.shadowRoot.querySelector('details')).not.toBeNull();
+        expect(el.shadowRoot.querySelector('.description')).not.toBeNull();
     });
     it('warns where documents disagree and marks them checked', async () => {
         const base = {
@@ -178,5 +195,30 @@ describe('c-nxp-notice-summary', () => {
         await flush();
         expect(markChecked).toHaveBeenCalledWith({ analysisId: 'a1' });
         expect(el.shadowRoot.querySelector('.checks')).toBeNull();
+    });
+    it('long descriptions start collapsed behind a Show full description button', async () => {
+        const long = Array.from({ length: 12 }, (_, i) => `Paragraph ${i + 1} of the statement of work.`).join('\n');
+        getDetail.mockResolvedValueOnce({
+            notice: { Id: 'n9', Description__c: long, Notice_URL__c: 'https://sam.gov/opp/1/view' },
+            breakdown: [],
+            versions: [],
+            contacts: [],
+            pushLogs: [],
+            sources: [],
+            checks: []
+        });
+        const el = createElement('c-nxp-notice-summary', { is: NxpNoticeSummary });
+        el.recordId = 'n9';
+        document.body.appendChild(el);
+        await flush();
+        const box = el.shadowRoot.querySelector('.description-text');
+        expect(box.className).toContain('description-text_collapsed');
+        const toggle = el.shadowRoot.querySelector('lightning-button.toggle-description');
+        expect(toggle.label).toBe('Show full description');
+        toggle.click();
+        await flush();
+        expect(el.shadowRoot.querySelector('.description-text').className).not.toContain('collapsed');
+        expect(el.shadowRoot.querySelector('lightning-button.toggle-description').label).toBe('Show less');
+        expect(el.shadowRoot.querySelector('.right c-nxp-price-to-win')).not.toBeNull();
     });
 });
