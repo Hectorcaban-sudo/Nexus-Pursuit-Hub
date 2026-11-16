@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomMetadata
+    xmlns="http://soap.sforce.com/2006/04/metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+    <label>Set-aside solicitation</label>
+    <protected>false</protected>
+    <values>
+        <field>Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Order__c</field>
+        <value xsi:type="xsd:double">30</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">Check we can bid before spending effort.</value>
+    </values>
+    <values>
+        <field>Notice_Types__c</field>
+        <value xsi:type="xsd:string">Solicitation, Combined Synopsis/Solicitation</value>
+    </values>
+    <values>
+        <field>Set_Aside__c</field>
+        <value xsi:type="xsd:string">Set-aside only</value>
+    </values>
+    <values>
+        <field>Steps__c</field>
+        <value xsi:type="xsd:string">Check the size standard and our eligibility | +3
+Find a teaming partner if we are not eligible | 14
+Decide: prime, team or pass | 10</value>
+    </values>
+</CustomMetadata>

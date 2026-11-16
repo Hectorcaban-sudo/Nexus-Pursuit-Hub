@@ -107,6 +107,17 @@ public with sharing class NXP_SearchController {
         /** Points where a read document disagrees with the notice, not yet marked checked. */
         @AuraEnabled
         public Integer openChecks = 0;
+        /** Playbook progress for the card's hint: next step, its due date, steps done. */
+        @AuraEnabled
+        public String nextStep;
+        @AuraEnabled
+        public Date nextStepDue;
+        @AuraEnabled
+        public Boolean stepsOverdue = false;
+        @AuraEnabled
+        public Integer stepsDone = 0;
+        @AuraEnabled
+        public Integer stepCount = 0;
     }
 
     private static final Integer PREVIEW_ROWS = 2000;
@@ -417,6 +428,24 @@ public with sharing class NXP_SearchController {
             item.notice = n;
             item.openChecks = checks.containsKey(n.Id) ? checks.get(n.Id) : 0;
             byNotice.put(n.Id, item);
+        }
+        List<NXP_Gov_Notice__c> carded = new List<NXP_Gov_Notice__c>();
+        for (InboxItem item : byNotice.values()) {
+            carded.add(item.notice);
+        }
+        Map<Id, NXP_PlaybookService.Plan> plans = NXP_PlaybookService.plansFor(carded);
+        for (InboxItem item : byNotice.values()) {
+            NXP_PlaybookService.Plan p = plans.get(item.notice.Id);
+            if (p == null) {
+                continue;
+            }
+            item.stepCount = p.steps.size();
+            item.stepsDone = p.doneCount;
+            item.stepsOverdue = p.overdue;
+            if (p.nextStep != null) {
+                item.nextStep = p.nextStep.text;
+                item.nextStepDue = p.nextStep.due;
+            }
         }
         return byNotice.values();
     }

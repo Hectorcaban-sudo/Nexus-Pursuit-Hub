@@ -76,6 +76,15 @@ Click a notice title. The page has two columns: the notice on the left, and on t
 - **Documents**: the notice's files, below the summary.
 - Right column: **Why it scores** (every fit rule), **Price-to-Win** (what past awards for this kind of work were worth a year, see [Price-to-Win](#price-to-win)), **Version history** (every amendment and what changed), **Contacts** and **Push history**.
 
+### Next steps
+
+Many notices show a **Next steps** card: 3 to 5 steps for this kind of notice, with due dates, picked by your admins' next-steps rules (for example _Sources Sought / RFI_ or _eBuy RFQ on a vehicle we hold_). The **Rule** line and its chips say why these steps apply.
+
+- Tick a step when it's done. Ticks are shared: your team sees who did it and when.
+- Overdue steps are amber. The Match Inbox card shows the next step and its due date, and **Steps overdue** shows only cards with an overdue step.
+- Next steps stop at the decision. **Push to Opportunity** copies the steps, done and not done, into the Opportunity's description; capture continues there.
+- No card means no rule fits this notice.
+
 ### Analyze this notice
 
 Under the header, **Analyze this notice** answers six questions about the notice:

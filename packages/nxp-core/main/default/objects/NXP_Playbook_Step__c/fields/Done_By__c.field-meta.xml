@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Done_By__c</fullName>
+    <description>Who ticked it.</description>
+    <label>Done By</label>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Playbook_Steps_Done</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>
