@@ -238,7 +238,7 @@ An org that already runs Nexus needs these once, after the release (new installs
 
 ### One-time steps when upgrading to the November 2026 release
 
-This release adds **Analyze this notice**, **Price-to-Win** and the Agent Script bundle. After the release:
+This release adds **Analyze this notice**, **Price-to-Win**, **Next steps**, **analysis playbooks** (the **Analyses** tab), the two-column notice page, the **Forecast page**, **forecast CSV import** and the Agent Script bundle. After the release:
 
 1. **Fill NAICS and PSC on older awards** (Price-to-Win compares by NAICS, and the USAspending feed only started storing it in this release): `sf apex run --file scripts/apex/reload-usaspending.apex --target-org <alias>`. It reloads 5 years of awards as a batch (watch it on the Feed Console); awards are updated by PIID, nothing is duplicated.
 2. **Review the new settings** on **Settings → Price-to-Win**: `Price_Check_Enabled`, `Price_Check_Min_Awards`, `Price_Check_Lookback_Years`, `Price_Check_Default_Scope`.
@@ -246,6 +246,11 @@ This release adds **Analyze this notice**, **Price-to-Win** and the Agent Script
 4. **Check the daily AI limit:** `AI_Max_Calls_Per_Day` (default 500) caps Einstein / Agentforce credit use. Analyze this notice adds calls; raise the limit on **Settings → AI** to fit your credits (Setup → Digital Wallet).
 5. **Agent Script orgs:** rebuild the assistant from `packages/nxp-agent-script` ([Agent Script build](../guides/agent-script-build.md)); it adds Opportunity Analysis and Market Leaders.
 6. Users with `NXP_User` get the new controller automatically (the permission set includes `NXP_PriceToWinController`); open one notice as a BD user to confirm the Price-to-Win card loads.
+7. **Reapply Settings tab values:** `sf apex run --file scripts/post-deploy/reapply-settings.apex --target-org <alias>` (the release scripts do this for you).
+8. **Next steps rules:** five starter rules ship (the recompete one is off). Replace their steps with your BD team's qualification steps on **Settings → Next steps**; they are placeholders. Nothing to schedule: steps are worked out when a notice is opened.
+9. **Who curates:** assign `NXP_Power_User` to the people who write analysis playbooks (**Analyses** tab) and confirm forecast predecessors or link notices on the Forecast page. BD users with `NXP_User` see published playbooks and the Forecast page but can't change them.
+10. **Forecast page:** the app now opens forecasts on `NXP_Gov_Forecast_Record_Page`. If your org assigned its own forecast page to the Nexus app in Lightning App Builder, remove that assignment or the standard page keeps showing. The notice page (`NXP_Gov_Notice_Record_Page`) was rebuilt; if you added components to it in App Builder, add them again.
+11. **Forecast spreadsheets (optional):** load agency forecast downloads on **Feed Console → Import forecasts** ([admin guide](../guides/admin-guide.md#forecasts-from-spreadsheets)). Forecasts already loaded keep their IDs; import updates by forecast ID.
 
 <details>
 <summary>Manual equivalent (no scripts)</summary>

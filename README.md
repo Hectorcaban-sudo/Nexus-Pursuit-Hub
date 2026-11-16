@@ -114,8 +114,8 @@ Version 1.0.x, November 2026:
 - **Checked here:**
     - All Apex parses (prettier-plugin-apex) and passes a language-server check.
     - All XML is well-formed.
-    - 73 Jest tests pass and ESLint is clean.
+    - 93 Jest tests pass and ESLint is clean.
     - Every bash and PowerShell script parses.
-- **Deployed to a sandbox** (staging) and the SAM.gov feed run there. Price-to-Win (merged November 14) is deployed with the next release; run `scripts/apex/reload-usaspending.apex` after it. Apex tests run in the org with `scripts/validate.sh --org <org>`.
+- **Deployed to a sandbox** (staging) and the SAM.gov feed run there. Merged since then and deployed with the next release: Price-to-Win (November 14), the two-column notice page, the Forecast page, forecast CSV import, Next steps and analysis playbooks (November 15). See [upgrading to the November 2026 release](docs/deployment/deployment-guide.md#one-time-steps-when-upgrading-to-the-november-2026-release). Apex tests run in the org with `scripts/validate.sh --org <org>`.
 - **On a branch, not in `main` yet:** `feature/pursuit-prediction` (pursuit likelihood model; to be extended to learn from Opportunity history).
 - **Org-specific settings:** the push target and the Opportunity field mapping must be set per org ([admin guide](docs/guides/admin-guide.md#push-mapping)). The eBuy e-mail address, prompt templates, AI switches, e-mail deliverability and Remote Site Settings for SAM.gov files are also set up per org after deployment.

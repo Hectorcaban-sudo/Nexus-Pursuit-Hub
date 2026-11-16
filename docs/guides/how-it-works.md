@@ -22,6 +22,7 @@ Cloud         versions
 | **GSA eBuy RFQs**         | eBuy e-mails are redirected to the Nexus eBuy inbox address and read by code | As the e-mail arrives                         |
 | **Other systems**         | The Nexus REST API (`/nxp/v1/...`) or a Data Cloud connector                 | When those systems send                       |
 | **Forecasts and awards**  | Agency forecast and USAspending feeds; vendor details from SAM.gov           | Weekly or daily, when turned on               |
+| **Forecast spreadsheets** | An admin imports an agency's forecast CSV on the Feed Console                | When the agency publishes a new list          |
 
 Every opportunity becomes one **Gov Notice**. When SAM.gov publishes an amendment, Nexus doesn't create a second notice: it updates the notice and keeps a **version** that lists what changed (due date, set-aside, value, scope, status…). The same solicitation arriving from two sources is merged into one notice.
 
@@ -102,9 +103,13 @@ The notice page brings together:
 - **AI summary**: written for notices that match a saved search (when AI is on), within about 30 minutes, after the description is fetched. It's a draft: check it against the solicitation.
 - **Documents**: every file on the notice. The **Document Reader** (AI, when on) reads each PDF and lists requirements, evaluation factors, submission rules, key dates, clearance and risks.
 - **Analyze this notice**: one AI call writes a bid / no-bid brief, SWOT, competitors, gaps, win themes or teaming ideas from Nexus data, with the source of every point. When AI is off or the day's limit is used, it shows the facts it would have used.
+- **Next steps**: a short checklist for this kind of notice (from rules your admin sets), with due dates counted back from the response date. Ticks are shared, so the team sees who did what; the inbox shows the next step and can filter to overdue ones.
 - **Analysis playbooks**: your organization's own analyses, written on the **Analyses** tab (steps, output, the facts they may use) and shown next to the six above once published.
+- **Layout**: two columns. On the left are the header, document checks, Next steps, Analyze this notice, the summary with the description (long ones open with **Show full description**) and the documents. On the right are _Why it scores_, Price-to-Win, versions and contacts.
 - **Price-to-Win**: what this kind of work has sold for. Nexus takes past awards for the same NAICS at the same agency (or department, or all agencies), divides what each spent by the years it ran, and shows low, median, high and the typical range (the middle half). It adds the predecessor contract, how often incumbents kept their work (estimated from follow-on awards), an estimate from the 20 most similar awards, and **Compare a price**. It's arithmetic, not AI, and it never shows a chance of winning: public award data only has the winners.
 - **Document checks**: when a file disagrees with the notice (a different due date, NAICS or set-aside), a red box shows both values. Someone checks the file and clicks **Mark as checked**. Inbox cards show a _document checks_ chip, and the push dialog warns.
+
+A **forecast** has its own page too. It shows the days until the expected solicitation, an early fit (the notice rules, without the vehicle rule), whether you can bid the set-aside, and where it stands (forecast → Sources Sought → solicitation → award). It also lists likely predecessor contracts, Price-to-Win and who wins at that agency. A Power User can confirm the predecessor or link a notice by hand; the confirmed predecessor is copied to the notice when it posts.
 
 ## 7. Push to Opportunity
 

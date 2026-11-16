@@ -19,6 +19,12 @@ Copy into the release ticket and tick each item.
 - [ ] Smoke test: on a notice, **Find similar** opens with buyer, NAICS and notice type choices and a match count; **Save search** creates the search
 - [ ] Smoke test: Forecasts, Recompetes, Vehicle Portfolio and a vendor and agency page load with data
 - [ ] Smoke test: on a notice with an agency and NAICS, the **Price-to-Win** card shows award counts on its comparison buttons, and either a range or the similar-awards estimate
+- [ ] Smoke test: the notice page has two columns (Price-to-Win on the right), and **Show full description** opens a long description
+- [ ] Smoke test: a notice covered by a Next steps rule shows **Next steps**; a tick shows your name; the inbox card shows the next step
+- [ ] Smoke test: the **Analyses** tab opens; a Power User can create and publish a playbook; it appears under **Analyze this notice**
+- [ ] Smoke test: a forecast opens on the Nexus Forecast page (days to solicitation, stages, likely predecessors), not the standard record page
+- [ ] `NXP_Power_User` assigned to the people who curate playbooks and forecasts
+- [ ] Next steps starter rules replaced with your team's steps (**Settings → Next steps**)
 - [ ] Smoke test: **Analyze this notice** → _Bid / no-bid brief_ returns a brief with source tags (AI on), or the facts with the _AI is off_ note
 - [ ] Smoke test (if eBuy is set up): send a test eBuy e-mail → **Inbound Emails** shows it _Ingested_ and the notice exists
 - [ ] Smoke test (if the Document Reader is on): attach a PDF to a notice → Documents card shows _Read_ within a few minutes

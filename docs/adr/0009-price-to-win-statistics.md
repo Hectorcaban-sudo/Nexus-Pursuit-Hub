@@ -1,6 +1,6 @@
 # ADR 0009: Price-to-Win is statistics over award history, not AI or a win model
 
-- Status: Proposed (branch `feature/price-to-win`)
+- Status: Accepted (merged to `main` November 14, 2026, PR #3)
 - Date: 2026-11-13
 
 ## Context

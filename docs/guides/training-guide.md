@@ -80,7 +80,9 @@ Key message: _"Your job is to keep your searches good and work your inbox daily.
 3. **Documents**: **Get SAM.gov files**, then **Analyze** a PDF (if AI is on). Walk through requirements, evaluation factors, key dates and risks.
 4. A **document check** (needs the Document Reader on): attach a PDF whose due date differs from the notice's and click **Analyze**; the red box appears. Then **Open document** and **Mark as checked**. Without AI in the sandbox, show the screenshot from the mockups instead.
 5. **Version history**: what an amendment changed.
-6. **Price-to-Win** (under the summary): switch between _NAICS + agency_, department and all agencies; set **Years of performance**; type a total in **Compare a price** and read where it sits. Stress that it shows past award values, not a chance of winning, and that **Incumbent hold** is an estimate to check against the linked awards.
+6. **Next steps** (left column): tick a step and show that the tick, with your name, appears for everyone; point out the next step on the inbox card and the _Steps overdue_ filter.
+7. **Show full description** on a long notice, then **Show less**.
+8. **Price-to-Win** (right column, under _Why it scores_): switch between _NAICS + agency_, department and all agencies; set **Years of performance**; type a total in **Compare a price** and read where it sits. Stress that it shows past award values, not a chance of winning, and that **Incumbent hold** is an estimate to check against the linked awards.
 
 ### Part 5 — Alerts, follow and watch (15 min)
 
@@ -164,6 +166,9 @@ For Nexus admins (`NXP_Admin`). Follow the [admin guide](admin-guide.md); demo e
 | Hear when a contract comes up again   | **Recompetes** → **Watch this recompete**             |
 | Read the description or SAM.gov files | Notice → **Load description** / **Get SAM.gov files** |
 | See what this work has sold for       | Notice → **Price-to-Win**                             |
+| See what to do next on a notice       | Notice → **Next steps**                               |
+| Size up a forecast before it posts    | Open the forecast (from **Forecasts**)                |
+| Run my team's own analysis            | Notice → **Analyze this notice** → a playbook         |
 | Get a bid / no-bid brief or SWOT      | Notice → **Analyze this notice**                      |
 | Send to capture                       | **Push to Opportunity**                               |
 

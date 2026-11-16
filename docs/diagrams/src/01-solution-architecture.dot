@@ -7,7 +7,7 @@ digraph G {
   subgraph cluster_src { label="Government sources"; style="rounded"; fontsize=13;
     sam  [label="SAM.gov\nOpportunities + Entity API"];
     usa  [label="USAspending / FPDS\nawards"];
-    fc   [label="Agency forecasts"];
+    fc   [label="Agency forecasts\nfeeds + CSV downloads"];
     oth  [label="Other systems\nvehicle e-mail relay, SLED vendor"];
   }
   subgraph cluster_sf { label="Salesforce org (Government Cloud)"; style="rounded"; fontsize=13;
@@ -17,10 +17,10 @@ digraph G {
       rest [label="Apex REST ingestion API\n/nxp/v1/notices, /task-orders"];
       svc  [label="NXP_IngestionService\ndedupe · version · publish", fillcolor="#E3F0FF", color="#0B5CAB"];
     }
-    core [label="nxp-core\nGov Notice, Version, Agency, Vendor,\nForecast, Award Summary, Feed Run\nfit score · NXP_Gov_Notice_Changed__e"];
-    srch [label="nxp-search\nsaved searches · matcher\nreal-time alerts · digests"];
+    core [label="nxp-core\nGov Notice, Version, Agency, Vendor,\nForecast, Award Summary, Feed Run\nfit score · Next steps rules\nNXP_Gov_Notice_Changed__e"];
+    srch [label="nxp-search\nsaved searches · matcher\nreal-time alerts · digests\nPrice-to-Win · Forecast page"];
     push [label="nxp-push\npush mapping · push service\npost-push sync"];
-    ux   [label="nxp-experience\nMatch Inbox · My Searches\nNotice page · Feed Console"];
+    ux   [label="nxp-experience\nMatch Inbox · My Searches\nNotice page · Forecast page\nAnalyses · Feed Console · Settings"];
     ag   [label="nxp-agents\nNexus Pursuit Assistant\nprompt-template jobs"];
     tm   [label="Opportunity\n(pursuits & capture)", fillcolor="#EEF1F6"];
   }
