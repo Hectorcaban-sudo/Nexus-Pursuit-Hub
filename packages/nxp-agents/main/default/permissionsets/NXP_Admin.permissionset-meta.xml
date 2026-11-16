@@ -18,6 +18,9 @@
     </classAccesses>
     <classAccesses>
         <apexClass>NXP_AnalysisPlaybookController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>NXP_ForecastController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -358,42 +361,70 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Category__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Gov_Notice__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Playbook__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Description__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Step_Number__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Steps__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Step__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Sections__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Done__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Sources__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Done_By__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Ask_Verdict__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Done_On__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -420,6 +451,10 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>NXP_Analysis_Playbook__c.Published_On__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>NXP_Playbook_Step__c.Key__c</field>
         <readable>true</readable>
     </fieldPermissions>
