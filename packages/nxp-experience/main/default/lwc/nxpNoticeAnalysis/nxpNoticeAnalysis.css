@@ -184,3 +184,8 @@
     padding-top: 0.75rem;
     margin-top: 0.75rem;
 }
+
+/* Analysis playbooks your organization published (Analyses tab). */
+.chip_org {
+    border-style: dashed;
+}

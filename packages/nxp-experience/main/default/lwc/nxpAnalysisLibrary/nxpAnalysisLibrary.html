@@ -1,0 +1,448 @@
+<template>
+    <div class="page">
+        <template lwc:if={loading}>
+            <lightning-spinner alternative-text="Loading playbooks" size="small"></lightning-spinner>
+        </template>
+        <template lwc:if={error}>
+            <p class="error" role="alert">{error}</p>
+        </template>
+
+        <!-- ============================================================ library -->
+        <template lwc:if={isLibrary}>
+            <div class="top">
+                <div>
+                    <h1 class="title">Analysis playbooks</h1>
+                    <p class="sub">
+                        Analyses you run on a notice from <strong>Analyze this notice</strong>. Built from Nexus data;
+                        every point is tagged with its source. Results are drafts until you save them.
+                    </p>
+                </div>
+                <template lwc:if={canEdit}>
+                    <lightning-button
+                        class="new"
+                        variant="brand"
+                        label="New playbook"
+                        icon-name="utility:add"
+                        onclick={handleNew}
+                    ></lightning-button>
+                </template>
+            </div>
+
+            <div class="box filters">
+                <lightning-input
+                    class="search"
+                    type="search"
+                    label="Find a playbook"
+                    variant="label-hidden"
+                    placeholder="What do you want to find out? e.g. who will we compete against"
+                    onchange={handleSearch}
+                ></lightning-input>
+                <div class="chips">
+                    <template for:each={filters} for:item="f">
+                        <lightning-button
+                            key={f.key}
+                            class="filter"
+                            data-key={f.key}
+                            label={f.label}
+                            variant={f.variant}
+                            onclick={handleFilter}
+                        ></lightning-button>
+                    </template>
+                    <span class="divider"></span>
+                    <template for:each={categoryFilters} for:item="c">
+                        <lightning-button
+                            key={c.key}
+                            class="category"
+                            data-key={c.key}
+                            label={c.label}
+                            variant={c.variant}
+                            onclick={handleCategory}
+                        ></lightning-button>
+                    </template>
+                </div>
+            </div>
+
+            <template lwc:if={showOrg}>
+                <section class="collection" aria-label="Our organization">
+                    <p class="eyebrow">Collection</p>
+                    <h2 class="heading">Our organization</h2>
+                    <p class="sub">Playbooks your capture and BD leads wrote. Published ones show on every notice.</p>
+                    <template lwc:if={hasOrgCards}>
+                        <div class="cards">
+                            <template for:each={orgCards} for:item="p">
+                                <article key={p.id} class="card org">
+                                    <div class={p.headClass}><span>● {p.category}</span><span>1 AI call</span></div>
+                                    <div class="card-body">
+                                        <div class="card-title">
+                                            <strong>{p.name}</strong>
+                                            <span class={p.statusClass}>{p.status}</span>
+                                        </div>
+                                        <p class="desc">{p.description}</p>
+                                        <div class="sources">
+                                            <template for:each={p.sourceList} for:item="s">
+                                                <span key={s.key} class="src">{s.label}</span>
+                                            </template>
+                                        </div>
+                                        <p class="meta">{p.meta}</p>
+                                        <div class="card-actions">
+                                            <lightning-button
+                                                class="open"
+                                                data-id={p.id}
+                                                label="Open"
+                                                onclick={handleOpen}
+                                            ></lightning-button>
+                                            <template lwc:if={canEdit}>
+                                                <lightning-button
+                                                    class="copy"
+                                                    data-source={p.id}
+                                                    label="Copy"
+                                                    onclick={handleCopy}
+                                                ></lightning-button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </article>
+                            </template>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <p class="empty">{orgEmptyText}</p>
+                    </template>
+                </section>
+            </template>
+
+            <template lwc:if={hasDefaultCards}>
+                <section class="collection" aria-label="Nexus defaults">
+                    <p class="eyebrow">Collection</p>
+                    <h2 class="heading">Nexus defaults</h2>
+                    <p class="sub">The six analyses Nexus ships. Copy one to make your own version.</p>
+                    <div class="cards">
+                        <template for:each={defaultCards} for:item="k">
+                            <article key={k.key} class="card default">
+                                <div class={k.headClass}><span>● {k.category}</span><span>1 AI call</span></div>
+                                <div class="card-body">
+                                    <div class="card-title">
+                                        <strong>{k.label}</strong>
+                                        <span class="badge badge_nexus">Nexus default</span>
+                                    </div>
+                                    <p class="desc">{k.description}</p>
+                                    <div class="sources">
+                                        <template for:each={k.sourceList} for:item="s">
+                                            <span key={s.key} class="src">{s.label}</span>
+                                        </template>
+                                    </div>
+                                    <template lwc:if={canEdit}>
+                                        <div class="card-actions">
+                                            <lightning-button
+                                                class="copy-default"
+                                                data-source={k.key}
+                                                label="Copy to customize"
+                                                onclick={handleCopy}
+                                            ></lightning-button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+                </section>
+            </template>
+        </template>
+
+        <!-- ============================================================ editor -->
+        <template lwc:if={isEditor}>
+            <button class="back" type="button" onclick={handleBack}>← All playbooks</button>
+            <div class="editor">
+                <div class="main">
+                    <section class="box">
+                        <div class="badges">
+                            <span class={statusClass}>{statusText}</span>
+                            <span class="src">{draft.category}</span>
+                        </div>
+                        <h1 class="title">{editorTitle}</h1>
+                        <lightning-input
+                            class="f-name"
+                            label="Name"
+                            data-field="name"
+                            value={draft.name}
+                            max-length="80"
+                            required
+                            disabled={readOnly}
+                            onchange={handleField}
+                        ></lightning-input>
+                        <lightning-input
+                            class="f-desc"
+                            label="Description (shown on the card)"
+                            data-field="description"
+                            value={draft.description}
+                            max-length="255"
+                            disabled={readOnly}
+                            onchange={handleField}
+                        ></lightning-input>
+                        <lightning-combobox
+                            class="f-category"
+                            label="Category"
+                            data-field="category"
+                            value={draft.category}
+                            options={categoryOptions}
+                            disabled={readOnly}
+                            onchange={handleField}
+                        ></lightning-combobox>
+                    </section>
+
+                    <section class="box">
+                        <div class="section-head">
+                            <h2 class="heading">Steps</h2>
+                            <span class="sub">Instructions to the AI, in order, sent with the facts in one call.</span>
+                        </div>
+                        <ol class="steps">
+                            <template for:each={stepRows} for:item="s">
+                                <li key={s.key} class="step">
+                                    <span class="num">{s.number}</span>
+                                    <div class="step-fields">
+                                        <lightning-input
+                                            class="step-title"
+                                            label="Step title"
+                                            data-index={s.index}
+                                            data-field="title"
+                                            value={s.title}
+                                            max-length="120"
+                                            disabled={readOnly}
+                                            onchange={handleStepField}
+                                        ></lightning-input>
+                                        <lightning-textarea
+                                            class="step-text"
+                                            label="What to do"
+                                            data-index={s.index}
+                                            data-field="text"
+                                            value={s.text}
+                                            disabled={readOnly}
+                                            onchange={handleStepField}
+                                        ></lightning-textarea>
+                                    </div>
+                                    <template lwc:if={canEdit}>
+                                        <div class="step-actions">
+                                            <lightning-button-icon
+                                                icon-name="utility:arrowup"
+                                                alternative-text="Move up"
+                                                data-index={s.index}
+                                                data-dir="up"
+                                                disabled={s.first}
+                                                onclick={handleMoveStep}
+                                            ></lightning-button-icon>
+                                            <lightning-button-icon
+                                                icon-name="utility:arrowdown"
+                                                alternative-text="Move down"
+                                                data-index={s.index}
+                                                data-dir="down"
+                                                disabled={s.last}
+                                                onclick={handleMoveStep}
+                                            ></lightning-button-icon>
+                                            <lightning-button-icon
+                                                icon-name="utility:delete"
+                                                alternative-text="Remove step"
+                                                data-index={s.index}
+                                                disabled={s.only}
+                                                onclick={handleRemoveStep}
+                                            ></lightning-button-icon>
+                                        </div>
+                                    </template>
+                                </li>
+                            </template>
+                        </ol>
+                        <template lwc:if={canAddStep}>
+                            <lightning-button
+                                class="add-step"
+                                label="Add step"
+                                icon-name="utility:add"
+                                onclick={handleAddStep}
+                            ></lightning-button>
+                        </template>
+                    </section>
+
+                    <section class="box">
+                        <h2 class="heading">Output</h2>
+                        <lightning-textarea
+                            class="f-sections"
+                            label="Sections, one per line (empty: one section per step)"
+                            value={sectionsText}
+                            disabled={readOnly}
+                            onchange={handleSections}
+                        ></lightning-textarea>
+                        <lightning-input
+                            class="f-verdict"
+                            type="toggle"
+                            label="Ask for a verdict (Bid, Lean bid, Lean no-bid, No-bid) and a confidence"
+                            data-field="askVerdict"
+                            checked={draft.askVerdict}
+                            message-toggle-active=""
+                            message-toggle-inactive=""
+                            disabled={readOnly}
+                            onchange={handleField}
+                        ></lightning-input>
+                        <lightning-input
+                            class="f-strategies"
+                            type="toggle"
+                            label="Ask for ranked strategies with a first step"
+                            data-field="askStrategies"
+                            checked={draft.askStrategies}
+                            message-toggle-active=""
+                            message-toggle-inactive=""
+                            disabled={readOnly}
+                            onchange={handleField}
+                        ></lightning-input>
+                        <p class="sub">
+                            Every point must cite a fact it was given, or it is tagged as an assumption to check. Saved
+                            results are Markdown files on the notice.
+                        </p>
+                    </section>
+
+                    <template lwc:if={canEdit}>
+                        <section class="box test">
+                            <div class="section-head">
+                                <h2 class="heading">Test on a notice</h2>
+                                <span class="sub">One AI call. Uses what is on screen; nothing is saved.</span>
+                            </div>
+                            <div class="test-row">
+                                <lightning-record-picker
+                                    class="test-notice"
+                                    label="Notice"
+                                    object-api-name="NXP_Gov_Notice__c"
+                                    placeholder="Search notices…"
+                                    onchange={handleTestNotice}
+                                ></lightning-record-picker>
+                                <lightning-button
+                                    class="run-test"
+                                    label="Test"
+                                    icon-name="utility:sparkles"
+                                    disabled={testDisabled}
+                                    onclick={handleTest}
+                                ></lightning-button>
+                            </div>
+                            <template lwc:if={testing}>
+                                <lightning-spinner alternative-text="Testing" size="small"></lightning-spinner>
+                            </template>
+                            <template lwc:if={testResult}>
+                                <div class="result">
+                                    <template lwc:if={testResult.note}>
+                                        <p class="note">{testResult.note}</p>
+                                    </template>
+                                    <template lwc:if={testResult.verdict}>
+                                        <p class="verdict">
+                                            <strong>{testResult.verdict}</strong> (confidence {testResult.confidence})
+                                        </p>
+                                    </template>
+                                    <template lwc:if={testResult.summary}>
+                                        <p>{testResult.summary}</p>
+                                    </template>
+                                    <template for:each={testSections} for:item="sec">
+                                        <div key={sec.key} class="result-section">
+                                            <h3>{sec.title}</h3>
+                                            <ul>
+                                                <template for:each={sec.items} for:item="it">
+                                                    <li key={it.key}>
+                                                        {it.text} <span class={it.tagClass}>{it.tag}</span>
+                                                    </li>
+                                                </template>
+                                            </ul>
+                                        </div>
+                                    </template>
+                                    <template lwc:if={testResult.text}>
+                                        <p class="raw">{testResult.text}</p>
+                                    </template>
+                                    <details>
+                                        <summary>{testFactsLabel}</summary>
+                                        <ul class="facts">
+                                            <template for:each={testFacts} for:item="f">
+                                                <li key={f.key}><span class="src">{f.source}</span> {f.text}</li>
+                                            </template>
+                                        </ul>
+                                    </details>
+                                </div>
+                            </template>
+                        </section>
+                    </template>
+                </div>
+
+                <aside class="side">
+                    <template lwc:if={canEdit}>
+                        <section class="box actions">
+                            <lightning-input
+                                class="f-note"
+                                label="What changed (shown under Versions)"
+                                value={changeNote}
+                                max-length="255"
+                                onchange={handleChangeNote}
+                            ></lightning-input>
+                            <lightning-button
+                                class="publish"
+                                variant="brand"
+                                label={publishLabel}
+                                disabled={saving}
+                                onclick={handlePublish}
+                            ></lightning-button>
+                            <template lwc:if={canSaveDraft}>
+                                <lightning-button
+                                    class="save-draft"
+                                    label="Save draft"
+                                    disabled={saving}
+                                    onclick={handleSaveDraft}
+                                ></lightning-button>
+                            </template>
+                            <template lwc:if={canUnpublish}>
+                                <lightning-button
+                                    class="unpublish"
+                                    label="Unpublish to edit as a draft"
+                                    disabled={saving}
+                                    onclick={handleUnpublish}
+                                ></lightning-button>
+                            </template>
+                            <template lwc:if={canRetire}>
+                                <lightning-button
+                                    class="retire"
+                                    variant="destructive-text"
+                                    label="Retire"
+                                    disabled={saving}
+                                    onclick={handleRetire}
+                                ></lightning-button>
+                            </template>
+                            <p class="sub">
+                                Publishing makes it the next version on every notice. Each run uses one AI call from the
+                                daily limit.
+                            </p>
+                        </section>
+                    </template>
+                    <template lwc:else>
+                        <p class="sub box">Only Power Users and Nexus admins change playbooks.</p>
+                    </template>
+
+                    <section class="box">
+                        <h2 class="heading">Facts it can use</h2>
+                        <p class="sub">Gathered by Nexus before the AI call. The AI may only cite these.</p>
+                        <lightning-checkbox-group
+                            class="f-sources"
+                            label="Facts it can use"
+                            variant="label-hidden"
+                            options={sourceOptions}
+                            value={draft.sources}
+                            disabled={readOnly}
+                            onchange={handleSources}
+                        ></lightning-checkbox-group>
+                    </section>
+
+                    <template lwc:if={hasVersions}>
+                        <section class="box">
+                            <h2 class="heading">Versions</h2>
+                            <ul class="versions">
+                                <template for:each={versionRows} for:item="v">
+                                    <li key={v.key}>{v.text}</li>
+                                </template>
+                            </ul>
+                            <p class="sub">Saved results keep the version they were made with.</p>
+                        </section>
+                    </template>
+                </aside>
+            </div>
+        </template>
+    </div>
+</template>

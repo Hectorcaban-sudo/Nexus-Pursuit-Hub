@@ -52,6 +52,7 @@
 | 36  | BD user         | get a bid / no-bid brief, an opportunity SWOT, competitors, gaps, win themes or teaming ideas for a notice, built from Nexus data with sources                               | Analyze this notice                  |
 | 37  | BD user         | see what this kind of work has sold for (per year, by agency, department or NAICS), the predecessor's spend, whether incumbents keep their work, and where a price would sit | Price-to-Win card                    |
 | 38  | BD user         | see the next steps for this kind of notice, tick them with my team, and have them carried into the Opportunity when I push                                                   | Next steps                           |
+| 39  | Capture lead    | write, test, version and publish our own analyses (steps, output, the Nexus facts they may use) so everyone can run them on a notice                                         | Analysis playbooks (Analyses tab)    |
 
 ## GovWin IQ coverage
 

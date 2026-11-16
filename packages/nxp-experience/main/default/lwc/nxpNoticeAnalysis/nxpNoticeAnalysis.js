@@ -41,8 +41,9 @@ export default class NxpNoticeAnalysis extends LightningElement {
     get chips() {
         return this.kinds.map((k) => ({
             ...k,
-            className: k.key === this.selected ? 'chip chip_on' : 'chip',
-            pressed: k.key === this.selected ? 'true' : 'false'
+            className: (k.key === this.selected ? 'chip chip_on' : 'chip') + (k.org ? ' chip_org' : ''),
+            pressed: k.key === this.selected ? 'true' : 'false',
+            title: k.description || k.label
         }));
     }
 

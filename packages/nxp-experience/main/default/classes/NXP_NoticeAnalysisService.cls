@@ -60,6 +60,18 @@ public with sharing class NXP_NoticeAnalysisService {
         public String key;
         @AuraEnabled
         public String label;
+        /** BD, Capture or Proposal. */
+        @AuraEnabled
+        public String category;
+        @AuraEnabled
+        public String description;
+        /** True for an analysis playbook your organization published (NXP_Analysis_Playbook__c). */
+        @AuraEnabled
+        public Boolean org = false;
+        @AuraEnabled
+        public Integer version;
+        @AuraEnabled
+        public List<String> sources = new List<String>();
         public Kind() {
             this.key = null;
         }
@@ -138,7 +150,7 @@ public with sharing class NXP_NoticeAnalysisService {
         'teaming'
     };
 
-    private static final String FORMAT =
+    public static final String FORMAT =
         '\n\nAnswer only from the facts below. Each fact starts with its source label in square brackets. ' +
         'Tag every item with the labels of the facts it rests on. If no fact supports an item, give it no sources ' +
         'and set "assumption": true. Never invent vendors, dates, amounts or requirements. ' +
@@ -158,19 +170,73 @@ public with sharing class NXP_NoticeAnalysisService {
     }
 
     public static Boolean isKind(String key) {
-        return key != null && KINDS.containsKey(key);
+        return key != null && (KINDS.containsKey(key) || key.startsWith(NXP_AnalysisPlaybookService.PREFIX));
     }
 
+    /** The six Nexus analyses, then the analysis playbooks your organization published. */
     public static List<Kind> kinds() {
+        List<Kind> out = defaultKinds();
+        out.addAll(NXP_AnalysisPlaybookService.publishedKinds());
+        return out;
+    }
+
+    public static List<Kind> defaultKinds() {
         List<Kind> out = new List<Kind>();
         for (String key : ORDER) {
-            out.add(new Kind(key, KINDS.get(key)[0]));
+            Kind k = new Kind(key, KINDS.get(key)[0]);
+            k.category = DEFAULT_META.get(key)[0];
+            k.description = DEFAULT_META.get(key)[1];
+            k.sources = DEFAULT_META.get(key)[2].split(';');
+            k.version = 2;
+            out.add(k);
         }
         return out;
     }
 
+    /** The instructions of a Nexus analysis, for Copy on the Analyses tab. */
+    public static String instructionsOf(String key) {
+        return KINDS.containsKey(key) ? KINDS.get(key)[1] : null;
+    }
+
+    /** key -> category, card description, sources it uses. */
+    private static final Map<String, List<String>> DEFAULT_META = new Map<String, List<String>>{
+        'brief' => new List<String>{
+            'Capture',
+            'Bid, lean bid, lean no-bid or no-bid, with reasons each way, what would change it and the next steps.',
+            'Notice;Documents;Incumbent;Award history;Company Profile'
+        },
+        'swot' => new List<String>{
+            'Capture',
+            'Strengths, weaknesses, opportunities and threats for us on this notice, with ranked strategies.',
+            'Notice;Documents;Incumbent;Company Profile'
+        },
+        'competitors' => new List<String>{
+            'BD',
+            'Who holds the work, who else wins here and how we compare.',
+            'Incumbent;Award history;Company Profile'
+        },
+        'gaps' => new List<String>{
+            'Proposal',
+            'Requirements from the documents checked against our profile and vehicles, and questions for the CO.',
+            'Documents;Company Profile;Contract vehicles'
+        },
+        'themes' => new List<String>{
+            'Capture',
+            'Win themes with proof points, discriminators and incumbent weaknesses to address.',
+            'Notice;Documents;Incumbent;Company Profile'
+        },
+        'teaming' => new List<String>{
+            'BD',
+            'What a partner should bring, and candidates from the award data.',
+            'Award history;Incumbent;Company Profile'
+        }
+    };
+
     /** One analysis of a notice: facts always, the AI part when AI is available. */
     public static Analysis analyze(Id noticeId, String kind) {
+        if (kind != null && kind.startsWith(NXP_AnalysisPlaybookService.PREFIX)) {
+            return NXP_AnalysisPlaybookService.run(noticeId, kind.removeStart(NXP_AnalysisPlaybookService.PREFIX));
+        }
         if (!KINDS.containsKey(kind)) {
             throw new AnalysisException('Unknown analysis: ' + kind);
         }
@@ -457,8 +523,7 @@ public with sharing class NXP_NoticeAnalysisService {
     // ------------------------------------------------------------------ the answer
 
     /** Reads the model's JSON into the analysis; keeps the text when it isn't JSON. */
-    @TestVisible
-    private static void read(String raw, Analysis a) {
+    public static void read(String raw, Analysis a) {
         if (String.isBlank(raw)) {
             a.note = 'The AI returned nothing. The facts are below.';
             return;
@@ -602,7 +667,7 @@ public with sharing class NXP_NoticeAnalysisService {
         }
         ContentVersion v = new ContentVersion(
             Title = (a.label + ' ' + a.generatedAt.format('yyyy-MM-dd')).left(255),
-            PathOnClient = 'nexus-' + a.kind + '.md',
+            PathOnClient = 'nexus-' + a.kind.replaceAll('[^A-Za-z0-9_-]', '-') + '.md',
             VersionData = Blob.valueOf(toText(a, n)),
             FirstPublishLocationId = noticeId
         );
